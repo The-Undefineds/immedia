@@ -4,6 +4,7 @@ var jshint = require('gulp-jshint');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
+var nodemon = require('gulp-nodemon');
 
 //Lints our JS files in our server folder for errors
 
@@ -29,6 +30,20 @@ gulp.task('scripts', function(){
 gulp.task('watch', function(){
   gulp.watch('server/*.js', ['lint', 'scripts']);
 })
+
+//Lints our JS files before running the server in development mode
+//It will alert you whenever the server is retarted
+gulp.task('develop', function(){
+  nodemon({
+    scripts: 'server/server.js',
+    ext: 'html js',
+    tasks: ['lint'],
+    env: {'NODE_ENV': 'development'}
+  })
+  .on('restart', function(){
+    console.log('Searver Restarted!')
+  })
+});
 
 //Default Gulp tasks
 gulp.task('default', ['lint', 'scripts', 'watch'])
