@@ -1,0 +1,32 @@
+{
+  "name": "Immedia",
+  "description": "Physics-like animations for pretty particles",
+  "main": [
+    "js/motion.js",
+    "sass/motion.scss"
+  ],
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+  ],
+  "authors": [
+    "Uche Nnadi <ucheunnadi@gmail.com>,
+     Jackson Sierra <add your email>,
+     OJ <add your email>,
+     Ryan <add your email>,
+     Joel <add your email>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

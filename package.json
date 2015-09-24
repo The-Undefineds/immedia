@@ -1,0 +1,17 @@
+{
+  "name": "Immedia",
+  "description": "Our Immedia App Node dependencies",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "4.13.3",
+    "gulp": "3.9.0",
+    "gulp-concat": "2.6.0",
+    "gulp-react": "3.0.1",
+    "gulp-util": "3.0.6",
+    "react": "0.13.3"
+  },
+
+  "devDependencies": {
+    
+  }
+}
