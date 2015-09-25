@@ -1,11 +1,11 @@
 var gulp = require('gulp');
-var react = require('gulp-react');
-var jshint = require('gulp-jshint');
-var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-var rename = require('gulp-rename');
-var nodemon = require('gulp-nodemon');
 var htmlreplace = require('gulp-html-replace');
+var source = require('vinyl-source-stream');
+var browserify = require('browserify');
+var watchify = require('watchify');
+var reactify = require('reactify');
+var streamify = require('gulp-streamify');
 
 //All given paths for all our files
 
@@ -19,6 +19,7 @@ var path = {
   DEST_BUILD: 'dist/build',
   DEST: 'dist'
 };
+
 
 //transforms/transpiles our JSX files into JS(javascript)
 
@@ -72,6 +73,43 @@ gulp.task('develop', function(){
     console.log('Searver Restarted!')
   })
 });
+
+
+//More Detail Gulp Task Management
+var path = {
+  HTML: 'client/index.html',
+  MINIFIED_OUT: 'build.min.js',
+  OUT: 'build.js',
+  DEST: 'dist',
+  DEST_BUILD: 'dist/build',
+  DEST_SRC: 'dist/src',
+  ENTRY_POINT: 'yet to be set'
+};
+
+gulp.task('copy', function(){
+  gulp.src(path.HTML)
+    .pipe(gulp.dest(path.DEST));
+});
+
+gulp.task('watch', function(){
+  gulp.watch(path.HTML, ['copy'])
+
+  var watcher = watchify(browserify({
+    entries: [path.ENTRY_POINT],
+    transform: [reactify],
+    debug: true,
+    cache: {}, packageCache: {}, fullPaths: true
+  }));
+
+  return watcher.on('update', function(){
+    watcher.bundle()
+      .pipe(source(path.OUT))
+      .pipe(gulp.dest(path.DEST_SRC))
+  })
+    .bundle()
+    .pipe(source(path.OUT))
+    .pipe(gulp.dest(DEST_SRC))
+})
 
 //Default Gulp tasks
 gulp.task('default', ['watch'])
