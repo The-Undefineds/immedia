@@ -17,4 +17,5 @@ var ResultsView = React.createClass({
   }
 });
 
-module.exports = ResultsView;
+React.render(<>)
+

@@ -6,6 +6,7 @@ var SearchBar = require('home_page/searchbar'),
 var HomePage = React.createClass({
 
   getInitialState: function(){
+    console.log('running');
     return {
 
     }
@@ -17,11 +18,10 @@ var HomePage = React.createClass({
     return (
         <h1>Immedia</h1>
         <p>{this.tagline}</p>
-        <SearchBar />
+        <SearchBar searchInit={this.props.searchInit} atHome={this.props.atHome} />
         <TopSearches />
       )
   }
 });
 
-var element = React.createElement(HomePage);
-React.render(element, document.querySelector('.container'));
+module.exports = HomePage;
