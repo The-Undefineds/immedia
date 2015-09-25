@@ -1,77 +1,92 @@
 var gulp = require('gulp');
-var react = require('gulp-react');
-var jshint = require('gulp-jshint');
-var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-var rename = require('gulp-rename');
-var nodemon = require('gulp-nodemon');
 var htmlreplace = require('gulp-html-replace');
+var source = require('vinyl-source-stream');
+var browserify = require('browserify');
+var watchify = require('watchify');
+var reactify = require('reactify');
+var streamify = require('gulp-streamify');
 
-//All given paths for all our files
+//used for restarting the server upon change in our server file
+var nodemon = require('gulp-nodemon');
 
+//used for refreshing the browser upon change in specified files
+//as of v0.0.1 this modules has not been used in the gulpfile
+var notify = require('gulp-notify');
+var livereload = require('gulp-livereload');
+
+
+//More seemless Gulp Task Management
 var path = {
-  HTML: 'client/index.html',
-  JSX: ['client/*.jsx', 'client/**/*.jsx'],
-  JSX_AND_SERVER_JS: ['client/*.jsx', 'client/**/*.jsx','server/server.js'],
-  ALL: ['client/*.jsx', 'client/**/*.jsx', 'server/server.js', 'client/index.html'],
+  HTML: './client/index.html',
   MINIFIED_OUT: 'build.min.js',
-  DEST_SRC: 'dist/src',
+  OUT: 'build.js',
+  DEST: 'dist',
   DEST_BUILD: 'dist/build',
-  DEST: 'dist'
+  DEST_SRC: 'dist/src',
+  ENTRY_POINT: './client/src/mainview.jsx'
 };
-
-//transforms/transpiles our JSX files into JS(javascript)
-
-gulp.task.('transform', function(){
-  gulp.src(path.JSX)
-    .pipe(react())
-    .pipe(gulp.dest(path.DEST_SRC));
-});
-
-//allows our transformed JSX files to be referenced by the index.html
 
 gulp.task('copy', function(){
   gulp.src(path.HTML)
     .pipe(gulp.dest(path.DEST));
 });
 
-//Lints our JS files in our server folder for errors
+//Watches for any changes in our JSX files to javascript
+gulp.task('watch', function(){
+  gulp.watch(path.HTML, ['copy'])
 
-gulp.task('lint', function(){
-  return gulp.src(path.JSX_AND_SERVER_JS)
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'));
-});
+  var watcher = watchify(browserify({
+    entries: [path.ENTRY_POINT],
+    transform: [reactify],
+    debug: true,
+    cache: {}, packageCache: {}, fullPaths: true
+  }));
+
+  return watcher.on('update', function(){
+    watcher.bundle()
+      .pipe(source(path.OUT))
+      .pipe(gulp.dest(path.DEST_SRC))
+  })
+    .bundle()
+    .pipe(source(path.OUT))
+    .pipe(gulp.dest(path.DEST_SRC))
+})
 
 //Concatenates and Minifies our JS files
-//concates all js files in our server folder, renames it then saves it in the dist folder
+//concates all JSX files, renames it then saves it in the dist folder
+
 gulp.task('build', function(){
-  return gulp.src(path.JSX)
-        .pipe(react())
-        .pipe(concat(path.MINIFIED_OUT))
-        .pipe(uglify(path.MINIFIED_OUT))
-        .pipe(gulp.dest(path.DEST_BUILD));
-})
+  browserify({
+    entries: [path.ENTRY_POINT],
+    transform: [reactify]
+  })
+  .bundle()
+  .pipe(source(path.MINIFIED_OUT))
+  .pipe(streamify(uglify(path.MINIFIED_OUT)))
+  .pipe(gulp.dest(path.DEST_BUILD))
+});
 
-//Watches for any changes in our JS files in our server folder
+//restarts the server whenever there is any change on server/server.js
+gulp.task('nodemon', function(){
 
-gulp.task('watch', function(){
-  gulp.watch(path.JSX_AND_SERVER_JS, ['lint', 'transform', 'build']);
-})
-
-//Lints our JS files before running the server in development mode
-//It will alert you whenever the server is retarted
-gulp.task('develop', function(){
   nodemon({
-    scripts: 'server/server.js',
+    scripts: './server/server.js',
     ext: 'html js',
-    tasks: ['lint'],
     env: {'NODE_ENV': 'development'}
   })
+  .on('start', function(){
+    console.clear();
+    console.log('Server Just Started')
+  })
   .on('restart', function(){
-    console.log('Searver Restarted!')
+    console.clear();
+    console.log('Server Restarted!')
   })
 });
 
 //Default Gulp tasks
-gulp.task('default', ['watch'])
+gulp.task('default', ['watch', 'nodemon']);
+
+//Run Production tasks
+gulp.task('production', ['build']);

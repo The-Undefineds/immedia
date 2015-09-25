@@ -2,8 +2,9 @@ var React = require('react');
 
 var TimeLine = React.createClass({
 
-  render = function(){
+  render: function(){
     return (
+      <div></div>
       )
   }
 });

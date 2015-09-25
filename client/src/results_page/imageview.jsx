@@ -2,8 +2,9 @@ var React = require('react');
 
 var ImageView = React.createClass({
 
-  render = function(){
+  render: function(){
     return (
+      <div></div>
       )
   }
 });

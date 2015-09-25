@@ -4,8 +4,7 @@ var TopSearches = React.createClass({
 
   render: function(){
     return (
-        
-      
+      <div></div>
       )
   }
 });
