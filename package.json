@@ -5,7 +5,12 @@
   "dependencies": {
     "express": "4.13.3",
     "gulp": "3.9.0",
-    "react": "0.13.3"
+    "react": "0.13.3",
+    "gulp-concat": "2.6.0",
+    "gulp-react": "3.0.1",
+    "gulp-util": "3.0.6",
+    "react-router": "^0.13.3",
+    "reactify": "^1.1.1"
   },
   "devDependencies": {
     "gulp-concat": "^2.6.0",
