@@ -1,21 +1,22 @@
 var React = require('react');
 
-var TimeLine = require('results_page/timeline'),
-    WikiView = require('results_page/wikiview'),
-    ImageView = require('results_page/imageview'),
-    Preview = require('results_page/preview');
+var TimeLine = require('./results_page/timeline.jsx'),
+    WikiView = require('./results_page/wikiview.jsx'),
+    ImageView = require('./results_page/imageview.jsx'),
+    Preview = require('./results_page/preview.jsx');
 
 var ResultsView = React.createClass({
 
-  render = function(){
+  render: function(){
     return (
-      <TimeLine />
-      <WikiView />
-      <ImageView />
-      <Preview />
+      <div>
+        <TimeLine />
+        <WikiView />
+        <ImageView />
+        <Preview />
+      </div>
       )
   }
 });
 
-React.render(<>)
-
+module.exports = ResultsView;

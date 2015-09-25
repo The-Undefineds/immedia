@@ -1,7 +1,7 @@
-// var React = require('react');
+var React = require('react');
 
-var HomePage = require('homepage'),
-    ResultsView = require('results');
+var HomePage = require('./homepage.jsx');
+var ResultsView = require('./results.jsx');
 
 var MainView = React.createClass({
 
@@ -22,8 +22,10 @@ var MainView = React.createClass({
 
   render: function(){
     return (
-        { this.state.atHome ? <HomePage searchInit={this.searchInit} atHome={this.state.atHome} /> : null }
+      <div>
+        // { this.state.atHome ? <HomePage searchInit={this.searchInit} atHome={this.state.atHome} /> : null }
         { !this.state.atHome ? <ResultsView /> : null }
+      </div>
       )
   }
 });
