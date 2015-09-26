@@ -69,18 +69,13 @@ gulp.task('build', function(){
 
 //restarts the server whenever there is any change on server/server.js
 gulp.task('nodemon', function(){
-
+  console.log('in nodemon')
   nodemon({
-    scripts: './server/server.js',
+    script: './server/server.js',
     ext: 'js',
+    tasks: ['watch'],
     env: {'NODE_ENV': 'development'}
   })
-  .on('start', function(){
-    console.clear();
-    console.log('Server Just Started')
-  })
-  .on('start', ['watch'])
-  .on('change', ['watch'])
   .on('restart', function(){
     console.clear();
     console.log('Server Restarted!')
