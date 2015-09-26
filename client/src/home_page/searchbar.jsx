@@ -26,9 +26,9 @@ var SearchBar = React.createClass({
   render: function(){
     return (
       <div>
-        <input type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} onSubmit={this.handleSubmit} />
+        <input type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} />
         <span>
-          <button type='button' > Immedia Search </button>
+          <button type='button' onClick={this.handleSubmit} > Immedia Search </button>
         </span>
       </div>
       )
