@@ -6,14 +6,9 @@ var ResultsView = require('./results.jsx');
 var MainView = React.createClass({
 
   getInitialState: function(){
-    console.log('running');
     return {
       atHome : true
     }
-  },
-
-  componentWillMount: function(){
-    console.log('runnnnnnning')
   },
 
   searchInit: function(){
