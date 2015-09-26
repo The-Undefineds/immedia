@@ -72,13 +72,15 @@ gulp.task('nodemon', function(){
 
   nodemon({
     scripts: './server/server.js',
-    ext: 'html js',
+    ext: 'js',
     env: {'NODE_ENV': 'development'}
   })
   .on('start', function(){
     console.clear();
     console.log('Server Just Started')
   })
+  .on('start', ['watch'])
+  .on('change', ['watch'])
   .on('restart', function(){
     console.clear();
     console.log('Server Restarted!')
@@ -86,7 +88,7 @@ gulp.task('nodemon', function(){
 });
 
 //Default Gulp tasks
-gulp.task('default', ['watch', 'nodemon']);
+gulp.task('default', ['copy', 'nodemon']);
 
 //Run Production tasks
 gulp.task('production', ['build']);
