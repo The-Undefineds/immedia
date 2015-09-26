@@ -5,13 +5,6 @@ var SearchBar = require('./home_page/searchbar.jsx'),
 
 var HomePage = React.createClass({
 
-  getInitialState: function(){
-    console.log('running');
-    return {
-
-    }
-  },
-
   tagline: "If you don’t know where you are going, you might wind up someplace else.",
 
   render: function(){
