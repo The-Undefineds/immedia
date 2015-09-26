@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "dependencies": {
     "express": "4.13.3",
+    "request": "^2.63.0",
     "gulp": "3.9.0",
     "react": "0.13.3",
     "gulp-concat": "2.6.0",
