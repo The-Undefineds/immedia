@@ -7,6 +7,7 @@ var url = '127.0.0.1'; //Change url as necessary
 
 //app.use();
 
+app.use(express.static(('dist')))
 //Please put code in here//
 
 
