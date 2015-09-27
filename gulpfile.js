@@ -47,6 +47,7 @@ gulp.task('watch', function(){
     watcher.bundle()
       .pipe(source(path.OUT))
       .pipe(gulp.dest(path.DEST_SRC))
+      console.log('Updated');
   })
     .bundle()
     .pipe(source(path.OUT))
@@ -73,17 +74,19 @@ gulp.task('nodemon', function(){
   nodemon({
     script: './server/server.js',
     ext: 'js',
-    tasks: ['watch'],
+    // tasks: ['watch'],
     env: {'NODE_ENV': 'development'}
   })
+  .on('start', function(){
+    console.log('Server Started!!!');
+  })
   .on('restart', function(){
-    console.clear();
-    console.log('Server Restarted!')
+    console.log('Server Restarted!!!');
   })
 });
 
 //Default Gulp tasks
-gulp.task('default', ['copy', 'nodemon']);
+gulp.task('default', ['copy', 'watch', 'nodemon']);
 
 //Run Production tasks
 gulp.task('production', ['copy', 'build']);

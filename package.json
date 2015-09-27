@@ -4,14 +4,11 @@
   "version": "0.0.1",
   "dependencies": {
     "express": "4.13.3",
-    "request": "^2.63.0",
     "gulp": "3.9.0",
     "react": "0.13.3",
-    "gulp-concat": "2.6.0",
-    "gulp-react": "3.0.1",
-    "gulp-util": "3.0.6",
     "react-router": "^0.13.3",
-    "reactify": "^1.1.1"
+    "reactify": "^1.1.1",
+    "request": "^2.64.0"
   },
   "devDependencies": {
     "browserify": "^11.2.0",
