@@ -86,4 +86,4 @@ gulp.task('nodemon', function(){
 gulp.task('default', ['copy', 'nodemon']);
 
 //Run Production tasks
-gulp.task('production', ['build']);
+gulp.task('production', ['copy', 'build']);
