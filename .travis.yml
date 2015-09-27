@@ -1,9 +1,12 @@
 language: node_js
 node_js:
   - "0.12"
+branch:
+  only:
+    - master
 before_script:
-  - npm install -g gulp
-script: gulp production
+  - gulp production
+script: 
 cache:
   directories:
     - node_modules
