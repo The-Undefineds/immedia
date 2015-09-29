@@ -1,6 +1,7 @@
 var React = require('react');
 
-var TimeLine = require('./results_page/timeline.jsx'),
+var TreeTimeLine = require('./results_page/treetimeline.jsx'),
+    ForceTimeLine = require('./results_page/forcetimeline.jsx'),
     WikiView = require('./results_page/wikiview.jsx'),
     ImageView = require('./results_page/imageview.jsx'),
     Preview = require('./results_page/preview.jsx'),
@@ -13,7 +14,8 @@ var ResultsView = React.createClass({
       <div>
         <h1>[results_page placeholder]</h1>
         <TopBar />
-        <TimeLine />
+        <TreeTimeLine />
+        <ForceTimeLine />
         <WikiView />
         <ImageView />
         <Preview />

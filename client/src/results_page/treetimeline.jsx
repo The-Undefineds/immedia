@@ -1,12 +1,14 @@
+var React = require('react');
+
 var data = {
   name: 'data',
   children: [
       {
-      date: '2015-09-25',
+      date: '2015-09-29',
       children: [],
     },
         {
-      date: '2015-09-24',
+      date: '2015-09-28',
       children: [
         {
           source: 'NYT',
@@ -31,15 +33,15 @@ var data = {
         ],
       },
         {
-      date: '2015-09-23',
+      date: '2015-09-27',
       children: [],
     },
         {
-      date: '2015-09-22',
+      date: '2015-09-26',
       children: [],
     },
         {
-      date: '2015-09-21',
+      date: '2015-09-25',
       children: [
         {
           source: 'NYT',
@@ -69,11 +71,11 @@ var data = {
           ]
     },
         {
-      date: '2015-09-20',
+      date: '2015-09-24',
       children: [],
     },
         {
-      date: '2015-09-19',
+      date: '2015-09-23',
       children: [],
     },
   ]
@@ -84,11 +86,11 @@ var d = new Date();
 d.setDate(d.getDate() - 7);
 dateWeekAgo = d.toJSON().slice(0, 10);
 
-var TimeLine = React.createClass({
+var TreeTimeLine = React.createClass({
   
   render: function() {
     return (
-      <svg></svg>
+      <div id="d3container"></div>
     )
   },
 
@@ -99,8 +101,8 @@ var TimeLine = React.createClass({
       bottom: 40,
       left: 40
     };
-    var width = 800,
-        height = 600;
+    var width = 1200,
+        height = 800;
 
     var y = d3.time.scale()
       .domain([new Date(dateWeekAgo), new Date(dateToday)])
@@ -114,7 +116,7 @@ var TimeLine = React.createClass({
       .tickSize(20)
       .tickPadding(5)
 
-    var svg = d3.select('body').append('svg')
+    var svg = d3.select('#d3container').append('svg')
       .attr('class', 'timeLine')
       .attr('width', width)
       .attr('height', height)
@@ -139,21 +141,21 @@ var TimeLine = React.createClass({
       .attr('y', function(d) { return y(new Date(d.date)); })
 
     //-----set up D3 force physics------------
-    var force = d3.layout.force()
-      .on("tick", tick)
-      .charge(function(d) { return d._children ? -d.size / 100 : -30; })
-      .linkDistance(function(d) { return d.target._children ? 80 : 30; })
-      .size([width, height - 160]);
+    // var force = d3.layout.force()
+    //   .on("tick", tick)
+    //   .charge(function(d) { return d._children ? -d.size / 100 : -30; })
+    //   .linkDistance(function(d) { return d.target._children ? 80 : 30; })
+    //   .size([width, height - 160]);
 
-    var tick = function() {
-      link.attr("x1", function(d) { return d.source.x; })
-          .attr("y1", function(d) { return d.source.y; })
-          .attr("x2", function(d) { return d.target.x; })
-          .attr("y2", function(d) { return d.target.y; });
+    // var tick = function() {
+    //   link.attr("x1", function(d) { return d.source.x; })
+    //       .attr("y1", function(d) { return d.source.y; })
+    //       .attr("x2", function(d) { return d.target.x; })
+    //       .attr("y2", function(d) { return d.target.y; });
 
-      node.attr("x", function(d) { return d.x; })
-          .attr("y", function(d) { return d.y; });
-    }
+    //   node.attr("x", function(d) { return d.x; })
+    //       .attr("y", function(d) { return d.y; });
+    // }
 
     //-----draw tree from each tick on yAxis timeline ------
     var i = 0;
@@ -218,12 +220,12 @@ var TimeLine = React.createClass({
 
       // Enter any new nodes at the parent's previous position.
       var nodeEnter = node.enter().append("svg:g")
-          .attr("class", "node")
-          // .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-          .on("click", function(d) { 
-            toggle(d); 
-            update(d); 
-          })
+        .attr("class", "node")
+        // .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+        .on("click", function(d) { 
+          toggle(d); 
+          update(d); 
+        })
           // .on("mouseover", function(d) {
           //     nodeEnter.append("svg:text")
           //     .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
@@ -238,38 +240,36 @@ var TimeLine = React.createClass({
           // })
 
       var defs = svg.append('svg:defs');
-            defs.append('svg:pattern')
-                .attr('id', 'tile-twit')
-                // .attr('patternUnits', 'userSpaceOnUse')
-                .attr('width', '20')
-                .attr('height', '20')
-                .append('svg:image')
-                .attr('xlink:href', 'https://g.twimg.com/Twitter_logo_blue.png')
-                .attr('x', 4)
-                .attr('y', 5)
-                .attr('width', 15)
-                .attr('height', 15)
-            defs.append('svg:pattern')
-                .attr('id', 'tile-nyt')
-                // .attr('patternUnits', 'userSpaceOnUse')
-                .attr('width', '20')
-                .attr('height', '20')
-                .append('svg:image')
-                .attr('xlink:href', 'http://www.hitthefloor.com/wp-content/uploads/2014/03/20-new-york-times-t-1.jpg')
-                .attr('x', -7)
-                .attr('y', -7)
-                .attr('width', 40)
-                .attr('height', 40)
+        defs.append('svg:pattern')
+          .attr('id', 'tile-twit')
+          .attr('width', '20')
+          .attr('height', '20')
+          .append('svg:image')
+          .attr('xlink:href', 'https://g.twimg.com/Twitter_logo_blue.png')
+          .attr('x', 4)
+          .attr('y', 5)
+          .attr('width', 15)
+          .attr('height', 15)
+        defs.append('svg:pattern')
+          .attr('id', 'tile-nyt')
+          .attr('width', '20')
+          .attr('height', '20')
+          .append('svg:image')
+          .attr('xlink:href', 'http://www.hitthefloor.com/wp-content/uploads/2014/03/20-new-york-times-t-1.jpg')
+          .attr('x', -7)
+          .attr('y', -7)
+          .attr('width', 40)
+          .attr('height', 40)
 
       nodeEnter.append("svg:circle")
-          .attr("r", 1e-6)
-          .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; })
-          .style({
-            cursor: 'pointer',
-            fill: '#fff',
-            stroke: 'steelblue',
-            strokeWidth: '1.5px',
-          })
+        .attr("r", 1e-6)
+        .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; })
+        .style({
+          cursor: 'pointer',
+          fill: '#fff',
+          stroke: 'steelblue',
+          strokeWidth: '1.5px',
+        })
 
 
 
@@ -345,12 +345,11 @@ var TimeLine = React.createClass({
           .data(tree.links(nodes), function(d) { return d.target.id; })
 
 
-      // Enter any new links at the parent's previous position.
       link.enter().insert("svg:path", "g")
           .attr("class", "link")
           .attr("d", function(d) {
-            var o = {x: source.x0, y: source.y0};
-            return diagonal({source: o, target: o});
+            var origin = { x: source.x0, y: source.y0 };
+            return diagonal({ source: origin, target: origin });
           })
           .style({
             fill: 'none',
@@ -361,12 +360,10 @@ var TimeLine = React.createClass({
           .duration(duration)
           .attr("d", diagonal)
 
-      // Transition links to their new position.
       link.transition()
           .duration(duration)
           .attr("d", diagonal);
 
-      // Transition exiting nodes to the parent's new position.
       link.exit().transition()
           .duration(duration)
           .attr("d", function(d) {
@@ -374,15 +371,13 @@ var TimeLine = React.createClass({
             return diagonal({source: o, target: o});
           })
           .remove();
-
-      // Stash the old positions for transition.
+.
       nodes.forEach(function(d) {
         d.x0 = d.x;
         d.y0 = d.y;
       });
     }
 
-    // Toggle children.
     function toggle(d) {
       if (d.children) {
         d._children = d.children;
@@ -397,7 +392,4 @@ var TimeLine = React.createClass({
 
 });
 
-React.render(
-  <TimeLine />,
-  document.getElementById("container")
-)
+module.exports = TreeTimeLine; 

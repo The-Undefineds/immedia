@@ -1,12 +1,14 @@
+var React = require('react');
+
 var data = {
   name: 'data',
   children: [
       {
-      date: '2015-09-25',
+      date: '2015-09-29',
       children: [],
     },
         {
-      date: '2015-09-24',
+      date: '2015-09-28',
       children: [
         {
           source: 'NYT',
@@ -31,15 +33,15 @@ var data = {
         ],
       },
         {
-      date: '2015-09-23',
+      date: '2015-09-27',
       children: [],
     },
         {
-      date: '2015-09-22',
+      date: '2015-09-26',
       children: [],
     },
         {
-      date: '2015-09-21',
+      date: '2015-09-25',
       children: [
         {
           source: 'NYT',
@@ -66,11 +68,11 @@ var data = {
           ]
     },
         {
-      date: '2015-09-20',
+      date: '2015-09-24',
       children: [],
     },
         {
-      date: '2015-09-19',
+      date: '2015-09-23',
       children: [],
     },
   ]
@@ -140,34 +142,6 @@ var testData2 = {
   }
 }
 
-// data['2015-09-25'] = {
-//   date: '2015-09-25',
-//   children: [],
-// };
-// data['2015-09-24'] = {
-//   date: '2015-09-24',
-//   children: [],
-// };
-// data['2015-09-23'] = {
-//   date: '2015-09-23',
-//   children: [],
-// };
-// data['2015-09-22'] = {
-//   date: '2015-09-22',
-//   children: [],
-// };
-// data['2015-09-21'] = {
-//   date: '2015-09-21',
-//   children: [],
-// };
-// data['2015-09-20'] = {
-//   date: '2015-09-20',
-//   children: [],
-// };
-// data['2015-09-19'] = {
-//   date: '2015-09-19',
-//   children: [],
-// };
 
 // function sortByDate (chunk) {
 //   var source = chunk.source;
@@ -190,7 +164,7 @@ d.setDate(d.getDate() - 6);
 dateWeekAgo = d.toJSON().slice(0, 10);
 
 
-var TimeLine = React.createClass({
+var ForceTimeLine = React.createClass({
 
   render: function() {
     return (
@@ -247,12 +221,6 @@ var TimeLine = React.createClass({
       .on("tick", tick)
       .gravity(0)
       .linkDistance(80)
-      // .charge(function(d) { 
-      //   return d._children ? -d.size / 100 : -50; 
-      // })
-      // .linkDistance(function(d) { 
-      //   return d.target._children ? 80 : 50; 
-      // })
       .size([width, height - 160]);
 
       root = data;
@@ -325,34 +293,24 @@ var TimeLine = React.createClass({
             }
             return 10;
           })
-          .on("click", click)
+          .on("click", toggle)
           .call(force.drag);
-
-
-      // node.enter().append('svg:image')
-      //     .attr('x', function(d) { return d.x; })
-      //     .attr('y', function(d) { return d.y; })
-      //     .attr('width', 15)
-      //     .attr('height', 15)
-      //     .attr('xlink:href', 'https://g.twimg.com/Twitter_logo_blue.png')
-
-
 
       node.exit().remove();
     }
 
     function tick() {
       link.attr("x1", function(d) { return d.source.x; })
-          .attr("y1", function(d) { return d.source.y; })
-          .attr("x2", function(d) { return d.target.x; })
-          .attr("y2", function(d) { return d.target.y; });
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
 
       node.attr("cx", function(d) { return d.x; })
-          .attr("cy", function(d) { return d.y; });
+        .attr("cy", function(d) { return d.y; });
     }
 
     // Toggle children.
-    function click(d) {
+    function toggle(d) {
       console.log(d);
       if (d.children) {
         d._children = d.children;
@@ -381,7 +339,4 @@ var TimeLine = React.createClass({
 
 });
 
-React.render(
-  <TimeLine />,
-  document.getElementById("container")
-)
+module.exports = ForceTimeLine;
