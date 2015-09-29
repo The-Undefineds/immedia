@@ -3,10 +3,6 @@ var React = require('react');
 var data = {
   name: 'data',
   children: [
-      {
-      date: '2015-09-29',
-      children: [],
-    },
         {
       date: '2015-09-28',
       children: [
@@ -93,7 +89,6 @@ var TreeTimeLine = React.createClass({
       <div id="d3container"></div>
     )
   },
-
   componentDidMount: function() {
     var margin = {
       top: 40,
@@ -101,7 +96,7 @@ var TreeTimeLine = React.createClass({
       bottom: 40,
       left: 40
     };
-    var width = 1200,
+    var width = 800,
         height = 800;
 
     var y = d3.time.scale()
@@ -140,22 +135,6 @@ var TreeTimeLine = React.createClass({
       .data(data)
       .attr('y', function(d) { return y(new Date(d.date)); })
 
-    //-----set up D3 force physics------------
-    // var force = d3.layout.force()
-    //   .on("tick", tick)
-    //   .charge(function(d) { return d._children ? -d.size / 100 : -30; })
-    //   .linkDistance(function(d) { return d.target._children ? 80 : 30; })
-    //   .size([width, height - 160]);
-
-    // var tick = function() {
-    //   link.attr("x1", function(d) { return d.source.x; })
-    //       .attr("y1", function(d) { return d.source.y; })
-    //       .attr("x2", function(d) { return d.target.x; })
-    //       .attr("y2", function(d) { return d.target.y; });
-
-    //   node.attr("x", function(d) { return d.x; })
-    //       .attr("y", function(d) { return d.y; });
-    // }
 
     //-----draw tree from each tick on yAxis timeline ------
     var i = 0;
@@ -166,12 +145,6 @@ var TreeTimeLine = React.createClass({
 
     var diagonal = d3.svg.diagonal()
         .projection(function(d) { return [d.y, d.x]; });
-
-    // var vis = d3.select("#container").append("svg:svg")
-    //     .attr("width", width + margin.right + margin.left)
-    //     .attr("height", height + margin.top + margin.bottom)
-    //     .append("svg:g")
-    //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
       root = data;
       root.x0 = height / 1.5;
@@ -191,21 +164,14 @@ var TreeTimeLine = React.createClass({
       update(root);
 
     function update(source) {
-      var duration = d3.event && d3.event.altKey ? 5000 : 500;
+      var duration = 500;
 
-      // Compute the new tree layout.
       var nodes = tree.nodes(root).reverse();
       var links = d3.layout.tree().links(nodes);
 
-      force
-        .nodes(nodes)
-        .links(links)
-        .start();
-
-      // Normalize for fixed-depth.
       nodes.forEach(function(d) { 
         if (d.depth === 1) {
-          d.x = y(new Date(d.date)) - 20;
+          d.x = y(new Date(d.date)) - 35;
           d.y = 0;
           d.fixed = true;
         }
@@ -221,23 +187,22 @@ var TreeTimeLine = React.createClass({
       // Enter any new nodes at the parent's previous position.
       var nodeEnter = node.enter().append("svg:g")
         .attr("class", "node")
-        // .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
         .on("click", function(d) { 
           toggle(d); 
           update(d); 
         })
-          // .on("mouseover", function(d) {
-          //     nodeEnter.append("svg:text")
-          //     .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
-          //     .attr("dy", ".35em")
-          //     .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
-          //     .text(function(d) { return d.title; })
-          //     .style("fill-opacity", 1);
-          // })
-          // .on("mouseout", function(d) {
-          //     nodeEnter.select('text')
-          //       .style('fill-opacity', 0);
-          // })
+        .on("mouseover", function(d) {
+          nodeEnter.append("svg:text")
+            .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+            .attr("dy", ".35em")
+            .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
+            .text(function(d) { return d.title; })
+            .style("fill-opacity", 1);
+        })
+        .on("mouseout", function(d) {
+            nodeEnter.select('text')
+              .style('fill-opacity', 0);
+        })
 
       var defs = svg.append('svg:defs');
         defs.append('svg:pattern')
@@ -271,16 +236,6 @@ var TreeTimeLine = React.createClass({
           strokeWidth: '1.5px',
         })
 
-
-
-      // nodeEnter.append("svg:text")
-      //     .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
-      //     .attr("dy", ".35em")
-      //     .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
-      //     .text(function(d) { return d.title; })
-      //     .style("fill-opacity", 1e-6);
-
-      // Transition nodes to their new position.
       var nodeUpdate = node.transition()
           .duration(duration)
           .attr("transform", function(d) { 
@@ -321,14 +276,6 @@ var TreeTimeLine = React.createClass({
             return d._children ? "lightsteelblue" : "#fff"; 
           });
 
-      // nodeUpdate.select("text")
-      //     .style("fill-opacity", function(d) {
-      //       if (d.title) {
-      //         return 1;
-      //       }
-      //     });
-
-      // Transition exiting nodes to the parent's new position.
       var nodeExit = node.exit().transition()
           .duration(duration)
           .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
@@ -337,13 +284,8 @@ var TreeTimeLine = React.createClass({
       nodeExit.select("circle")
           .attr("r", 1e-6);
 
-      // nodeExit.select("text")
-      //     .style("fill-opacity", 1e-6);
-
-      // Update the links…
       var link = svg.selectAll("path.link")
           .data(tree.links(nodes), function(d) { return d.target.id; })
-
 
       link.enter().insert("svg:path", "g")
           .attr("class", "link")

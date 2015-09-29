@@ -15,7 +15,6 @@ var ResultsView = React.createClass({
         <h1>[results_page placeholder]</h1>
         <TopBar />
         <TreeTimeLine />
-        <ForceTimeLine />
         <WikiView />
         <ImageView />
         <Preview />
