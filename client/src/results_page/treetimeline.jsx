@@ -371,7 +371,7 @@ var TreeTimeLine = React.createClass({
             return diagonal({source: o, target: o});
           })
           .remove();
-.
+
       nodes.forEach(function(d) {
         d.x0 = d.x;
         d.y0 = d.y;
