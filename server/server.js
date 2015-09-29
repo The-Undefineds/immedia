@@ -37,3 +37,5 @@ app.post('/api/youtube', function(req, res){
 
 app.listen(port, url);
 console.log('Now listening to... ' + url + ':' + port);
+
+module.exports = app;
