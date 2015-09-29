@@ -9,12 +9,16 @@ var TreeTimeLine = require('./results_page/treetimeline.jsx'),
 
 var ResultsView = React.createClass({
 
+  getInitialState: function() {
+    return {}
+  },
+
   render: function(){
     return (
       <div>
-        <h1>[results_page placeholder]</h1>
+        <h1>Results</h1>
         <TopBar />
-        <TreeTimeLine />
+        <TreeTimeLine data={this.state.data}/>
         <WikiView />
         <ImageView />
         <Preview />

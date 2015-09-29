@@ -1,81 +1,82 @@
 var React = require('react');
 
+
 var data = {
-  name: 'data',
-  children: [
-        {
-      date: '2015-09-28',
-      children: [
-        {
-          source: 'NYT',
-          children: [      
-          {
-            title: 'Elon Musk',
-          }, {
-            title: 'Larry Page',
-          }
-          ]
-        },
-        {
-          source: 'Twitter',
-          children: [
-          {
-            title: 'Chuck Norris',
-          }, {
-            title: 'The Rock',
-          }
-          ],
-        }
-        ],
-      },
-        {
-      date: '2015-09-27',
-      children: [],
-    },
-        {
-      date: '2015-09-26',
-      children: [],
-    },
-        {
-      date: '2015-09-25',
-      children: [
-        {
-          source: 'NYT',
-          children: [      
-          {
-            title: 'Donald Trump',
-            img: 'http://www.liberationnews.org/wp-content/uploads/2015/07/donaldtrump61815.jpg'
-          }, {
-            title: 'Sarah Palin',
-            img: 'http://bluegrasspolitics.bloginky.com/files//2010/09/sarah-palin.jpg'
-          }, {
-            title: 'Ted Nugent',
-            img: 'http://www.burntorangereport.com/wp-content/uploads/2014/11/ted-cruz-smarmy.jpg'
-          }
-          ]
-        },
-        {
-          source: 'Twitter',
-          children: [
-          {
-            title: 'Kardashian 1',
-          }, {
-            title: 'Kardashian 2',
-          }
-          ]
-        }
-          ]
-    },
-        {
-      date: '2015-09-24',
-      children: [],
-    },
-        {
-      date: '2015-09-23',
-      children: [],
-    },
-  ]
-};
+        name: 'data',
+        children: [
+              {
+            date: '2015-09-28',
+            children: [
+              {
+                source: 'NYT',
+                children: [      
+                {
+                  title: 'Elon Musk',
+                }, {
+                  title: 'Larry Page',
+                }
+                ]
+              },
+              {
+                source: 'Twitter',
+                children: [
+                {
+                  title: 'Chuck Norris',
+                }, {
+                  title: 'The Rock',
+                }
+                ],
+              }
+              ],
+            },
+              {
+            date: '2015-09-27',
+            children: [],
+          },
+              {
+            date: '2015-09-26',
+            children: [],
+          },
+              {
+            date: '2015-09-25',
+            children: [
+              {
+                source: 'NYT',
+                children: [      
+                {
+                  title: 'Donald Trump',
+                  img: 'http://www.liberationnews.org/wp-content/uploads/2015/07/donaldtrump61815.jpg'
+                }, {
+                  title: 'Sarah Palin',
+                  img: 'http://bluegrasspolitics.bloginky.com/files//2010/09/sarah-palin.jpg'
+                }, {
+                  title: 'Ted Nugent',
+                  img: 'http://www.burntorangereport.com/wp-content/uploads/2014/11/ted-cruz-smarmy.jpg'
+                }
+                ]
+              },
+              {
+                source: 'Twitter',
+                children: [
+                {
+                  title: 'Kardashian 1',
+                }, {
+                  title: 'Kardashian 2',
+                }
+                ]
+              }
+                ]
+          },
+              {
+            date: '2015-09-24',
+            children: [],
+          },
+              {
+            date: '2015-09-23',
+            children: [],
+          },
+        ]
+      }
 
 var dateToday = new Date().toJSON().slice(0,10);
 var d = new Date();
@@ -84,6 +85,14 @@ dateWeekAgo = d.toJSON().slice(0, 10);
 
 var TreeTimeLine = React.createClass({
   
+  // d3data: this.props.data,
+
+  getInitialState: function() {
+    return {
+      data: data,
+    }
+  },
+
   render: function() {
     return (
       <div id="d3container"></div>
@@ -132,7 +141,7 @@ var TreeTimeLine = React.createClass({
       .call(yAxis);
 
     var timeLine = svg.selectAll('.timeLine')
-      .data(data)
+      .data(this.state.data)
       .attr('y', function(d) { return y(new Date(d.date)); })
 
 
@@ -146,7 +155,7 @@ var TreeTimeLine = React.createClass({
     var diagonal = d3.svg.diagonal()
         .projection(function(d) { return [d.y, d.x]; });
 
-      root = data;
+      root = this.state.data;
       root.x0 = height / 1.5;
       root.y0 = 0;
 
@@ -187,17 +196,19 @@ var TreeTimeLine = React.createClass({
       // Enter any new nodes at the parent's previous position.
       var nodeEnter = node.enter().append("svg:g")
         .attr("class", "node")
-        .on("click", function(d) { 
+        .on("click", function(d) {
           toggle(d); 
           update(d); 
         })
         .on("mouseover", function(d) {
-          nodeEnter.append("svg:text")
-            .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
-            .attr("dy", ".35em")
-            .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
+          nodeEnter.append("svg:title")
+            // .attr("x", function(d) { 
+            //   console.log(d);
+            //   return d.children || d._children ? -10 : 10; })
+            // .attr("dy", ".35em")
+            // .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
             .text(function(d) { return d.title; })
-            .style("fill-opacity", 1);
+            .style("fill-opacity", 1)
         })
         .on("mouseout", function(d) {
             nodeEnter.select('text')

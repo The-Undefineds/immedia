@@ -3,10 +3,6 @@ var React = require('react');
 var data = {
   name: 'data',
   children: [
-      {
-      date: '2015-09-29',
-      children: [],
-    },
         {
       date: '2015-09-28',
       children: [
@@ -78,71 +74,6 @@ var data = {
   ]
 };
 
-var testData1 = {
-  source: 'NYT',
-  data: {
-    '2015-09-25': [
-      {
-        title: 'Donald Trump',
-      }, {
-        title: 'Sarah Palin',
-      }, {
-        title: 'Ted Nugent',
-      }
-    ],
-    '2015-09-23': [
-      {
-        title: 'Elon Musk',
-      }, {
-        title: 'Steve Jobs',
-      }, {
-        title: 'Steve Wozniak',
-      }, {
-        title: 'Bill Gates',
-      }, {
-        title: 'Larry Page',
-      }
-    ],
-    '2015-09-21': [
-      {
-        title: 'Milli Vanilli',
-      }, {
-        title: 'Vanilla Ice',
-      }
-    ],
-  }
-};
-
-var testData2 = {
-  source: 'Twitter',
-  data: {
-    '2015-09-25': [
-      {
-        title: 'Kardashian 1',
-      }, {
-        title: 'Kardashian 2',
-      }
-    ],
-    '2015-09-23': [
-      {
-        title: 'Me',
-      }, {
-        title: 'You',
-      }, {
-        title: 'Them',
-      }
-    ],
-    '2015-09-22': [
-      {
-        title: 'Milli Vanilli',
-      }, {
-        title: 'Vanilla Ice',
-      }
-    ],
-  }
-}
-
-
 // function sortByDate (chunk) {
 //   var source = chunk.source;
 //   for (var key in chunk.data) {
@@ -154,9 +85,6 @@ var testData2 = {
 //     }
 //   }
 // }
-
-// sortByDate(testData1);
-// sortByDate(testData2);
 
 var dateToday = new Date().toJSON().slice(0,10);
 var d = new Date();
@@ -212,8 +140,6 @@ var ForceTimeLine = React.createClass({
         'shape-rendering': 'crispEdges',
       })
       .call(yAxis);
-
-    //-----set up D3 force physics------------
     
     var link, root, node;
 
@@ -225,10 +151,13 @@ var ForceTimeLine = React.createClass({
 
       root = data;
       root.fixed = true;
-      root.x = -20;
+      root.x = 0;
       root.y = height / 2;
       for (var i = 0; i < root.children.length; i++) {
         root.children[i].depth1 = true;
+        root.children[i].y = y(new Date(d.date)) - 20;
+        root.children[i].x = 0;
+        root.children[i].fixed = true;
       }
       update();
 
@@ -266,30 +195,30 @@ var ForceTimeLine = React.createClass({
       node.transition()
           .attr("r", function(d) {
             if (d._children) {
-              return d._children.length * 3;
+              return d._children.length * 5;
             }
-            return 8;
+            if (d.source) {
+              return 10
+            }
+            if (d.title) {
+              return 20;
+            }
+            return 10;
           })
 
       node.enter().append("svg:circle")
           .attr("class", "node")
-          .attr("cx", function(d) {
-            if (d.depth1) {
-              d.fixed = true;
-              return 20;
-            } 
-            return d.x; 
-          })
-          .attr("cy", function(d) { 
-            if (d.depth1) {
-              d.fixed = true;
-              return  y(new Date(d.date));
-            }
-            return d.y; 
-          })
+          .attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; })
           .attr("r", function(d) {
             if (d._children) {
-              return d._children.length * 2;
+              return d._children.length * 3;
+            }
+            if (d.source) {
+              return 10
+            }
+            if (d.title) {
+              return 20;
             }
             return 10;
           })
@@ -309,7 +238,6 @@ var ForceTimeLine = React.createClass({
         .attr("cy", function(d) { return d.y; });
     }
 
-    // Toggle children.
     function toggle(d) {
       console.log(d);
       if (d.children) {
