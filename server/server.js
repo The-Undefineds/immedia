@@ -9,6 +9,8 @@ var url = '127.0.0.1'; //Change url as necessary
 //app.use();
 
 app.use(express.static(('dist')))
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 //Please put code in here//
 
 /* The would-be code for youtube. v1.0
