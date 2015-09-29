@@ -7,20 +7,24 @@ var MainView = React.createClass({
 
   getInitialState: function(){
     return {
-      atHome : true
+      atHome : true,
+      searchTerm : '',
     }
   },
 
-  searchInit: function(){
+  searchInit: function( searchTerm){
     console.log('bang!');
-    this.setState({ atHome : false });
+    
+    this.setState({ atHome : false,
+                    searchTerm: searchTerm,
+                  });
   },
 
   render: function(){
     return (
       <div>
-        { this.state.atHome ? <HomePage searchInit={this.searchInit} atHome={this.state.atHome} /> : null }
-        { !this.state.atHome ? <ResultsView /> : null }
+        { this.state.atHome ? <HomePage searchInit={this.searchInit} atHome={this.state.atHome}/> : null }
+        { !this.state.atHome ? <ResultsView searchTerm={this.state.searchTerm}/> : null }
       </div>
       )
   }

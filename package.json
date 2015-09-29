@@ -6,8 +6,10 @@
     "express": "4.13.3",
     "gulp": "3.9.0",
     "react": "0.13.3",
+    "react-redux": "^3.0.1",
     "react-router": "^0.13.3",
     "reactify": "^1.1.1",
+    "redux": "^3.0.2",
     "request": "^2.64.0"
   },
   "devDependencies": {
