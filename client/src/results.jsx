@@ -11,19 +11,14 @@ var ResultsView = React.createClass({
 
   getInitialState: function(){
     return {
-      data: {
-        nyt: {},
-        youtube: {},
-        twitter: {},
-        wikipedia: {}
-      },
-
-      hasMouseOver: false,
-        
+      nyt: {},
+      youtube: {},
+      twitter: {},
+      wikipedia: {},
     };
   },
   componentDidMount: function(){
-    for(key in this.state){
+    for(key in this.state.data){
       this.handleQuery({
         searchTerm: this.props.searchTerm,
         url: '127.0.0.1/api/' + key
@@ -38,7 +33,18 @@ var ResultsView = React.createClass({
       type: 'POST',
       success: function(data){
         var source = data.source;
-        this.setState({data[source]: data})
+        if(source === 'nyt'){
+          this.setState({nyt: data})
+        }
+        else if(source === 'twitter'){
+          this.setState({twitter: data})
+        }
+        else if(source === 'youtube'){
+          this.setState({youtube: data})
+        }
+        else if(source === 'wikipedia'){
+          this.setState({wikipedia: data})
+        }
       }.bind(this),
       error: function(xhr, status, err){
         console.error(searchQuery.url, status, err.toString())
@@ -46,20 +52,20 @@ var ResultsView = React.createClass({
     })
   },
 
-  mouseOver: function(){
-    this.setState({hasMouseOver: true});
-  },
+  // mouseOver: function(){
+  //   this.setState({hasMouseOver: true});
+  // },
 
-  mouseOut: function(){
-    this.setState({hasMouseOver: false});
-  },
+  // mouseOut: function(){
+  //   this.setState({hasMouseOver: false});
+  // },
 
   render: function(){
     return (
       <div>
         <h1>Results</h1>
         <TopBar />
-        <TreeTimeLine />
+        <TreeTimeLine data={this.state}/>
         <WikiView data={this.state.data.wikipedia}/>
         <ImageView data={this.state.data.wikipedia}/>
         <Preview />

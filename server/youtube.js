@@ -1,5 +1,5 @@
 var request = require('request');
-var key = require('./keys');
+// var key = require('./keys');
 
 var youtube = 'https://www.googleapis.com/youtube/v3';
 
