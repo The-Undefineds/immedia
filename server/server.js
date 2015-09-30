@@ -1,10 +1,12 @@
 //Require needed modules
+var http = require('http');
 var express = require('express');
 var bodyParser = require('body-parser');
 var youtube = require('./youtube');
 var nyt = require('./nyt.js');
 
 var app = express();
+var server = http.createServer(app);
 var port = 3000;
 var url = '127.0.0.1'; //Change url as necessary
 
