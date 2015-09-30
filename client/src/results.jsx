@@ -49,20 +49,20 @@ var ResultsView = React.createClass({
   },
   
   componentDidMount: function(){
-    for(key in this.queryResults){
+    for(var id in this.queryResults){
       this.handleQuery({
         searchTerm: this.props.searchTerm,
-        url: 'http://127.0.0.1:3000/api/' + key
+        url: 'http://127.0.0.1:3000/api/' + id
       })
     }
   },
 
   handleQuery: function(searchQuery){
-    $.ajax({
+    $.post({
       url: searchQuery.url,
       data: searchQuery,
       dataType: 'jsonp',
-      type: 'POST',
+      // type: 'POST',
   //       xhrFields: {
   //   withCredentials: true
   // },
