@@ -9,10 +9,6 @@ var TreeTimeLine = require('./results_page/treetimeline.jsx'),
 
 var ResultsView = React.createClass({
 
-<<<<<<< HEAD
-  getInitialState: function() {
-    return {}
-=======
   getInitialState: function(){
     return {
       data: {
@@ -56,7 +52,6 @@ var ResultsView = React.createClass({
 
   mouseOut: function(){
     this.setState({hasMouseOver: false});
->>>>>>> [update] add post request from client to server
   },
 
   render: function(){
@@ -65,7 +60,6 @@ var ResultsView = React.createClass({
         <h1>Results</h1>
         <TopBar />
         <TreeTimeLine />
-        <TimeLine />
         <WikiView data={this.state.data.wikipedia}/>
         <ImageView data={this.state.data.wikipedia}/>
         <Preview />
