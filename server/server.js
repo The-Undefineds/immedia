@@ -2,6 +2,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var youtube = require('./youtube');
+var nyt = require('./nyt.js');
 
 var app = express();
 var port = 3000;
@@ -20,6 +21,8 @@ Explanation:
   v2.0 will send back title, date, videoId, and thumbnails 
   v2.0 only sends back the first video on the list */
 app.post('/api/youtube', youtube.search);
+
+app.post('/api/nyt', nyt.getArticles);
 
 ///////////////////////////
 
