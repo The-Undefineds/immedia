@@ -38,9 +38,9 @@ function callYoutube(date, item, callback){
         children : []
       }
       
-      for (var i = 0; i < body.items.length && data[date].children.length <= 5; i++){
+      for (var i = 0; i < body.items.length && obj[date].children.length <= 5; i++){
         if (body.items[i].snippet.publishedAt.slice(0, 10) === date){
-          data[date].children.push({
+          obj[date].children.push({
             title : body.items[i].snippet.title,
             id : body.items[i].id.videoId,
             thumbnail : body.items[i].snippet.thumbnails
