@@ -1,14 +1,14 @@
 var keys = require('./keys.js');
 var Q = require('Q');
-var request = require('request');
-
+var Promise = require('bluebird');
+var request = Promise.promisify(require('request'));
 
 var getDateFromToday = function(days, delimiter) {
   delimiter = delimiter || '';
   var today = new Date();
   var desiredDate = new Date(today.setDate(today.getDate() + days));
   var year = desiredDate.getFullYear().toString();
-  var month = ((desiredDate.getMonth().toString()[1]) ? desiredDate.getMonth() : "0" + desiredDate.getMonth()).toString();
+  var month = (((desiredDate.getMonth()+1).toString()[1]) ? desiredDate.getMonth()+1 : "0" + (desiredDate.getMonth()+1)).toString();
   var day = ((desiredDate.getDate().toString()[1]) ? desiredDate.getDate() : "0" + desiredDate.getDate()).toString();
 
   return year + delimiter + month + delimiter + day;
@@ -27,6 +27,7 @@ module.exports = {
 
     // Most-Popular NYT article parameters (note: cannot search by topic)
     var timePeriod = 7;
+    var mostPopularURI = 'http://api.nytimes.com/svc/mostpopular/v2/mostviewed/all-sections/';
     var queryStringMostPopular = mostPopularURI + timePeriod + '.json?api-key=' + keys.nytMostPopular;
     var mostPopular = {};
 
@@ -39,7 +40,7 @@ module.exports = {
       Create promise chain to search Most Popular articles and whether any
       articles for the given query match by the unique NYT website url
     */
-    Q(articleSearchURI + 'q=' + searchTerm + '&' + 'begin_date=' + beginDate + '&' + 'page=' + 0 + '&' + 'api-key=' + articleSearchAPIKey)
+    Q(articleSearchURI + 'q=' + searchTerm + '&' + 'begin_date=' + beginDate + '&' + 'page=' + 0 + '&' + 'api-key=' + keys.nytArticleSearch)
       .then(request)                                                                                // GET request for FIRST PAGE of Article Search results
       .then(function(response) {
         var body = JSON.parse(response[1]).response;
@@ -50,12 +51,12 @@ module.exports = {
 
         for(var j = 0; j < articles.length; j++) {
           articleSearch[articles[j]['web_url']] = articles[j];                                      // Maintain object to track articles by NYT web url key
-          if(articleSearchDate[articles[j]['pub_date'].substring(0, 9)] === undefined) {
-            articleSearchDate[articles[j]['pub_date'].substring(0, 9)] = [
+          if(articleSearchDate[articles[j]['pub_date'].substring(0, 10)] === undefined) {
+            articleSearchDate[articles[j]['pub_date'].substring(0, 10)] = [
               articles[j]
             ];
           } else {
-            articleSearchDate[articles[j]['pub_date'].substring(0, 9)].push(
+            articleSearchDate[articles[j]['pub_date'].substring(0, 10)].push(
               articles[j]
             );
           }
@@ -63,7 +64,7 @@ module.exports = {
 
         for(var i = 1; i < numRequests ; i++) {
           getRequestURIs.push(                                                                      // Create an array to carry-out parallel async requests
-            request(articleSearchURI + 'q=' + searchTerm + '&' + 'begin_date=' + beginDate + '&' + 'page=' + i + '&' + 'api-key=' + articleSearchAPIKey)
+            request(articleSearchURI + 'q=' + searchTerm + '&' + 'begin_date=' + beginDate + '&' + 'page=' + i + '&' + 'api-key=' + keys.nytArticleSearch)
           );
         }
         return getRequestURIs;
@@ -73,7 +74,6 @@ module.exports = {
         for(var i = 0; i < responses.length; i++) {
           var articles = Array.prototype.slice.call(JSON.parse(responses[i][1]).response.docs);
           for(var j = 0; j < articles.length; j++) {
-            // console.log('TRUMP: ', articles[j]['web_url']);
             articleSearch[articles[j]['web_url']] = articles[j];                                    // Add articles from parallel async requests to object from line 46
           }
         }
@@ -84,7 +84,6 @@ module.exports = {
       .then(function(response) {
         var articles = Array.prototype.slice.call(JSON.parse(response[1]).results);
         for(var i = 0; i < articles.length; i++) {
-          // console.log('Popular: ', articles[i]['url']);
           mostPopular[articles[i]['url']] = articles[i];                                            // Maintain object to track most popular articles by NYT web url key
         }
         return;
@@ -92,7 +91,6 @@ module.exports = {
       .then(function() {
         for(var article in mostPopular) {
           if(article in articleSearch) {
-            console.log(mostPopular[article]['title'], ', ', mostPopular[article]['url']);
             if(results[mostPopular[article]['published_date']] === undefined) {
               results[mostPopular[article]['published_date']] = {
                 'source': 'nyt',
@@ -117,7 +115,7 @@ module.exports = {
             }
           }
         }
-        if(Object.keys(results).length === 1 && Object.keys(articleSearchDate).length !== 0) {
+        if(Object.keys(articleSearchDate).length !== 0) {
           var dates = Object.keys(articleSearchDate).sort(function(a, b) {
             return Number(b.substring(b.length - 2)) - Number(a.substring(a.length - 2));
           });
@@ -136,22 +134,30 @@ module.exports = {
                 ]
               };
             } else {
-              results[dates[0]]['children'].push(
-                {
-                  'title': articles[i]['headline']['main'],
-                  'url': articles[i]['web_url'],
-                  'img': '',
-                  'date': dates[0]
+              var existingArticles = results[dates[0]]['children'];
+              for(var j = 0; j < existingArticles.length; j++) {
+                if(articles[i]['web_url'] === existingArticles[j]['url']) {
+                  break;
                 }
-              );
+              }
+              if(j === existingArticles.length) {
+                results[dates[0]]['children'].push(
+                  {
+                    'title': articles[i]['headline']['main'],
+                    'url': articles[i]['web_url'],
+                    'img': '',
+                    'date': dates[0]
+                  }
+                );
+              }
             }
           }
         }
+
+        res.send(results);
         return;
       })
       .done();
-
-      res.send(results);
   }
 
 };
