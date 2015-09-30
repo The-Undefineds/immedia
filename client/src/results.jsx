@@ -15,7 +15,7 @@ var ResultsView = React.createClass({
     };
   },
 
-  : {
+  queryResults: {
     nyt: {},
     youtube: {},
     twitter: {},
