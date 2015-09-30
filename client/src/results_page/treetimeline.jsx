@@ -12,34 +12,34 @@ var generateDates = function(timeSpan) {
 generateDates(7);
 
 var d3data = {
-  name: 'd3data',
+  // name: 'd3data',
   children: [
-  {
-    date: dates[0],
-    children: []
-  }, {
-    date: dates[1],
-    children: []
-  }, {
-    date: dates[2],
-    children: []
-  }, {
-    date: dates[3],
-    children: []
-  }, {
-    date: dates[4],
-    children: []
-  }, {
-    date: dates[5],
-    children: []
-  }, {
-    date: dates[6],
-    children: []
-  }
+    {
+      date: dates[0],
+      children: []
+    }, {
+      date: dates[1],
+      children: []
+    }, {
+      date: dates[2],
+      children: []
+    }, {
+      date: dates[3],
+      children: []
+    }, {
+      date: dates[4],
+      children: []
+    }, {
+      date: dates[5],
+      children: []
+    }, {
+      date: dates[6],
+      children: []
+    }
   ]
 }
 
-var queryResults: {
+var queryResults = {
     nyt: {
         '2015-09-29':{
           source: 'nyt',
@@ -218,6 +218,7 @@ var TreeTimeLine = React.createClass({
       var nodeEnter = node.enter().append("svg:g")
         .attr("class", "node")
         .on("click", function(d) {
+          console.log(d);
           toggle(d); 
           update(d); 
         })
@@ -377,8 +378,6 @@ var TreeTimeLine = React.createClass({
 
   processData: function(data) {
     //to-do: only process new data
-    console.log(data);
-    console.log(d3data);
     for (var source in data) {
       for (var date in data[source]) {
         var daysAgo = moment(date).fromNow().slice(0,1);
@@ -387,25 +386,30 @@ var TreeTimeLine = React.createClass({
         } else {
           daysAgo = Number(daysAgo);
         }
-        // if (d3data.children[daysAgo]) {
+        if (d3data.children[daysAgo]) {
         //   if (d3data.children[daysAgo].children) {
         // d3data.children[daysAgo].children = d3data.children[daysAgo].children || [];
             d3data.children[daysAgo].children.push(data[source][date]);
         //   } else if (d3data.children[daysAgo]._children) {
         //     d3data.children[daysAgo]._children.push(data[source][date]);
         //   } else {console.log('shit')}
-        // }
+        }
       }
     }
   },
 
-  componentDidMount: function() {
-    this.processData(queryResults);
-  },
+  // componentDidMount: function() {
+
+  // },
 
   componentWillReceiveProps: function() {
-    this.processData(this.props.data);
+    // this.processData(this.props.data); 
+    console.log('this.props.data:', this.props.data);
+    console.log('test results:', queryResults);  
+    // this.processData(queryResults);
+    this.processData(queryResults);
     this.renderCanvas();
+    // this.renderCanvas();
   }
 
 });

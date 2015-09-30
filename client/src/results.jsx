@@ -12,84 +12,15 @@ var ResultsView = React.createClass({
 
   getInitialState: function(){
     return {
-      wasSearchedFromTopBar: false,
-      searchTerm: '',
-      nyt: {},
-      youtube: {},
-      wikipedia: {},
-      twitter: {},
+      // wasSearchedFromTopBar: false,
+      // searchTerm: '',
+      // nyt: {},
+      // youtube: {},
+      // wikipedia: {},
+      // twitter: {},
+      rerender: true,
     };
   },
-
-  // queryResults: {
-  //   nyt: {
-  //       '2015-09-29':{
-  //         source: 'nyt',
-  //         children: [
-  //           {
-  //             title: 'Elon Musk',
-  //             img: 'https://lh5.googleusercontent.com/-89xTT1Ctbrk/AAAAAAAAAAI/AAAAAAAAAAA/5gt6hkVvJHY/s0-c-k-no-ns/photo.jpg'
-  //           }, {
-  //             title: 'Sergie Brin',
-  //             img: 'http://www.technologytell.com/gadgets/files/2014/05/Sergey-Brin-should-have-stayed-away-from-Google-Plus.jpg'
-  //           }
-  //         ]
-  //       },
-  //       '2015-09-27':{
-  //         source: 'nyt',
-  //         children: [
-  //           {
-  //             title: 'Pope Francis',
-  //             img: 'http://m.snopes.com/wp-content/uploads/2015/07/pope-francis.jpg'
-  //           }, {
-  //             title: 'Barack Obama',
-  //             img: 'https://pbs.twimg.com/profile_images/1645586305/photo.JPG'
-  //           }
-  //         ]
-  //       }
-  //     },
-  //   youtube: {
-  //       '2015-09-29': {
-  //         source: 'youtube',
-  //         children: [
-  //         {
-  //           title: 'Nickelback',
-  //           img: 'http://www.blogcdn.com/www.joystiq.com/media/2008/11/nickelback.jpg'
-  //         }, {
-  //           title: 'Creed',
-  //           img: 'http://www.ew.com/sites/default/files/i/daily/629//creed_l.jpg'
-  //         }
-  //       ]
-  //     }
-  //   },
-  //   twitter: {
-  //       '2015-09-29': {
-  //         source: 'twitter',
-  //         children: [
-  //         {
-  //           title: 'Donald Trump',
-  //           img: 'http://uziiw38pmyg1ai60732c4011.wpengine.netdna-cdn.com/wp-content/dropzone/2015/08/RTX1GZCO.jpg'
-  //         }, {
-  //           title: 'The Donald',
-  //           img: 'http://www.liberationnews.org/wp-content/uploads/2015/07/donaldtrump61815.jpg'
-  //         }
-  //         ]
-  //       },
-  //       '2015-09-27': {
-  //         source: 'twitter',
-  //         children: [
-  //         {
-  //           title: 'Kim Kardashian',
-  //           img: 'http://media2.popsugar-assets.com/files/2014/11/04/920/n/1922153/961af48ae3ec88c3_thumb_temp_cover_file23876211415134157.xxxlarge/i/Kim-Kardashian-Bleached-Brows.jpg'
-  //         }, {
-  //           title: 'Rihanna',
-  //           img: 'http://i.huffpost.com/gen/2717304/images/o-RIHANNA-DIOR-facebook.jpg'
-  //         }
-  //         ]
-  //       },
-  //     },
-  //   wikipedia: {},
-  // },
   
   // componentDidMount: function(){
   //   for(var id in this.queryResults){
@@ -130,6 +61,10 @@ var ResultsView = React.createClass({
     // 'twitter',
     'youtube'
   ],
+
+  searchResults: {},
+
+  getCounter: 0,
   
   componentDidMount: function(){
     for(var i = 0; i < this.apis.length; i++){
@@ -146,9 +81,14 @@ var ResultsView = React.createClass({
   handleQuery: function(searchQuery){
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
-        var obj = {};
-        obj[searchQuery.api] = response;
-        this.setState(obj);
+        // var obj = {};
+        // obj[searchQuery.api] = response;
+        // this.setState(obj);
+        this.searchResults[searchQuery.api] = response;
+        this.getCounter++;
+        if (this.getCounter === this.apis.length) {
+          this.setState({rerender: !this.state.rerender});
+        }
      }.bind(this));
   },
 
@@ -174,7 +114,7 @@ var ResultsView = React.createClass({
         <HomeButton />
         <TopBar queryTerm={this.queryTerm}/>
         <TreeTimeLine data={
-          { nyt: this.state.nyt, twitter: this.state.twitter, youtube: this.state.youtube }
+          this.searchResults
         }/>
 
         <ImageView data={this.state.wikipedia} />
@@ -185,4 +125,5 @@ var ResultsView = React.createClass({
 });
 
         // <WikiView data={this.state.wikipedia}/>
+        // { nyt: this.state.nyt, twitter: this.state.twitter, youtube: this.state.youtube }
 module.exports = ResultsView;
