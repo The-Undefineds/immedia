@@ -10,6 +10,7 @@ var SearchBar = React.createClass({
 
   handleChange: function(event){
     this.setState({ searchTerm: event.target.value });
+    
   },
 
   enterPressed: function(event){
@@ -20,7 +21,7 @@ var SearchBar = React.createClass({
 
   handleSubmit: function(){
     // send this.state.searchTerm in ajax 
-    this.props.searchInit();
+    this.props.searchInit(this.state.searchTerm);
   },
 
   render: function(){

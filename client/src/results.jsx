@@ -9,8 +9,54 @@ var TreeTimeLine = require('./results_page/treetimeline.jsx'),
 
 var ResultsView = React.createClass({
 
+<<<<<<< HEAD
   getInitialState: function() {
     return {}
+=======
+  getInitialState: function(){
+    return {
+      data: {
+        nyt: {},
+        youtube: {},
+        twitter: {},
+        wikipedia: {}
+      },
+
+      hasMouseOver: false,
+        
+    };
+  },
+  componentDidMount: function(){
+    for(key in this.state){
+      this.handleQuery({
+        searchTerm: this.props.searchTerm,
+        url: '127.0.0.1/api/' + key
+      })
+    }
+  },
+
+  handleQuery: function(searchQuery){
+    $.ajax({
+      url: searchQuery.url,
+      data: searchQuery,
+      type: 'POST',
+      success: function(data){
+        var source = data.source;
+        this.setState({data[source]: data})
+      }.bind(this),
+      error: function(xhr, status, err){
+        console.error(searchQuery.url, status, err.toString())
+      }.bind(this)
+    })
+  },
+
+  mouseOver: function(){
+    this.setState({hasMouseOver: true});
+  },
+
+  mouseOut: function(){
+    this.setState({hasMouseOver: false});
+>>>>>>> [update] add post request from client to server
   },
 
   render: function(){
@@ -19,8 +65,9 @@ var ResultsView = React.createClass({
         <h1>Results</h1>
         <TopBar />
         <TreeTimeLine />
-        <WikiView />
-        <ImageView />
+        <TimeLine />
+        <WikiView data={this.state.data.wikipedia}/>
+        <ImageView data={this.state.data.wikipedia}/>
         <Preview />
       </div>
       )
