@@ -1,4 +1,4 @@
-var keys = require('./keys.js');
+// var keys = require('./keys.js');
 var Q = require('Q');
 var Promise = require('bluebird');
 var request = Promise.promisify(require('request'));
