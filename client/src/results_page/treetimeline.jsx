@@ -12,7 +12,7 @@ var generateDates = function(timeSpan) {
 generateDates(7);
 
 var d3data = {
-  // name: 'd3data',
+  name: 'd3data',
   children: [
     {
       date: dates[0],
@@ -37,77 +37,7 @@ var d3data = {
       children: []
     }
   ]
-}
-
-var queryResults = {
-    nyt: {
-        '2015-09-29':{
-          source: 'nyt',
-          children: [
-            {
-              title: 'Elon Musk',
-              img: 'https://lh5.googleusercontent.com/-89xTT1Ctbrk/AAAAAAAAAAI/AAAAAAAAAAA/5gt6hkVvJHY/s0-c-k-no-ns/photo.jpg'
-            }, {
-              title: 'Sergie Brin',
-              img: 'http://www.technologytell.com/gadgets/files/2014/05/Sergey-Brin-should-have-stayed-away-from-Google-Plus.jpg'
-            }
-          ]
-        },
-        '2015-09-27':{
-          source: 'nyt',
-          children: [
-            {
-              title: 'Pope Francis',
-              img: 'http://m.snopes.com/wp-content/uploads/2015/07/pope-francis.jpg'
-            }, {
-              title: 'Barack Obama',
-              img: 'https://pbs.twimg.com/profile_images/1645586305/photo.JPG'
-            }
-          ]
-        }
-      },
-    youtube: {
-        '2015-09-29': {
-          source: 'youtube',
-          children: [
-          {
-            title: 'Nickelback',
-            img: 'http://www.blogcdn.com/www.joystiq.com/media/2008/11/nickelback.jpg'
-          }, {
-            title: 'Creed',
-            img: 'http://www.ew.com/sites/default/files/i/daily/629//creed_l.jpg'
-          }
-        ]
-      }
-    },
-    twitter: {
-        '2015-09-29': {
-          source: 'twitter',
-          children: [
-          {
-            title: 'Donald Trump',
-            img: 'http://uziiw38pmyg1ai60732c4011.wpengine.netdna-cdn.com/wp-content/dropzone/2015/08/RTX1GZCO.jpg'
-          }, {
-            title: 'The Donald',
-            img: 'http://www.liberationnews.org/wp-content/uploads/2015/07/donaldtrump61815.jpg'
-          }
-          ]
-        },
-        '2015-09-27': {
-          source: 'twitter',
-          children: [
-          {
-            title: 'Kim Kardashian',
-            img: 'http://media2.popsugar-assets.com/files/2014/11/04/920/n/1922153/961af48ae3ec88c3_thumb_temp_cover_file23876211415134157.xxxlarge/i/Kim-Kardashian-Bleached-Brows.jpg'
-          }, {
-            title: 'Rihanna',
-            img: 'http://i.huffpost.com/gen/2717304/images/o-RIHANNA-DIOR-facebook.jpg'
-          }
-          ]
-        },
-      },
-    wikipedia: {},
-  }
+};
 
 var TreeTimeLine = React.createClass({
 
@@ -124,7 +54,7 @@ var TreeTimeLine = React.createClass({
       bottom: 40,
       left: 40
     };
-    var width = 800,
+    var width = 600,
         height = 800;
 
     var y = d3.time.scale()
@@ -378,6 +308,7 @@ var TreeTimeLine = React.createClass({
 
   processData: function(data) {
     //to-do: only process new data
+    //refactor data structure
     for (var source in data) {
       for (var date in data[source]) {
         var daysAgo = moment(date).fromNow().slice(0,1);
@@ -387,29 +318,15 @@ var TreeTimeLine = React.createClass({
           daysAgo = Number(daysAgo);
         }
         if (d3data.children[daysAgo]) {
-        //   if (d3data.children[daysAgo].children) {
-        // d3data.children[daysAgo].children = d3data.children[daysAgo].children || [];
-            d3data.children[daysAgo].children.push(data[source][date]);
-        //   } else if (d3data.children[daysAgo]._children) {
-        //     d3data.children[daysAgo]._children.push(data[source][date]);
-        //   } else {console.log('shit')}
+          d3data.children[daysAgo].children.push(data[source][date]);
         }
       }
     }
   },
 
-  // componentDidMount: function() {
-
-  // },
-
   componentWillReceiveProps: function() {
-    // this.processData(this.props.data); 
-    console.log('this.props.data:', this.props.data);
-    console.log('test results:', queryResults);  
-    // this.processData(queryResults);
-    this.processData(queryResults);
+    this.processData(this.props.data);
     this.renderCanvas();
-    // this.renderCanvas();
   }
 
 });

@@ -13,8 +13,6 @@ var MainView = React.createClass({
   },
 
   searchInit: function(searchTerm){
-    console.log('bang!');
-    
     this.setState({ 
       atHome : false,
       searchTerm: searchTerm,

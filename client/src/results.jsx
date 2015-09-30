@@ -18,18 +18,11 @@ var ResultsView = React.createClass({
       // youtube: {},
       // wikipedia: {},
       // twitter: {},
+      
+      //synchronous method
       rerender: true,
     };
   },
-  
-  // componentDidMount: function(){
-  //   for(var id in this.queryResults){
-  //     this.handleQuery({
-  //       searchTerm: this.props.searchTerm,
-  //       url: 'http://127.0.0.1:3000/api/' + id
-  //     })
-  //   }
-  // },
 
   // handleQuery: function(searchQuery){
   //   $.post({
@@ -84,6 +77,8 @@ var ResultsView = React.createClass({
         // var obj = {};
         // obj[searchQuery.api] = response;
         // this.setState(obj);
+
+        //synch method
         this.searchResults[searchQuery.api] = response;
         this.getCounter++;
         if (this.getCounter === this.apis.length) {
@@ -113,10 +108,10 @@ var ResultsView = React.createClass({
         <h1>Results</h1>
         <HomeButton />
         <TopBar queryTerm={this.queryTerm}/>
+        <WikiView searchTerm={this.props.searchTerm}/>
         <TreeTimeLine data={
           this.searchResults
         }/>
-
         <ImageView data={this.state.wikipedia} />
         <Preview />
       </div>
