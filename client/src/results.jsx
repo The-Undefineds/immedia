@@ -73,7 +73,7 @@ var ResultsView = React.createClass({
         <TreeTimeLine data={
           { nyt: this.state.nyt, twitter: this.state.twitter, youtube: this.state.youtube }
         }/>
-        <WikiView data={this.state.wikipedia}/>
+        <WikiView searchTerm={this.props.searchTerm}/>
         <ImageView data={this.state.wikipedia} />
         <Preview />
       </div>
