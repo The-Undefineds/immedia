@@ -9,25 +9,20 @@ var TreeTimeLine = require('./results_page/treetimeline.jsx'),
 
 var ResultsView = React.createClass({
 
-<<<<<<< HEAD
-  getInitialState: function() {
-    return {}
-=======
   getInitialState: function(){
     return {
-      data: {
-        nyt: {},
-        youtube: {},
-        twitter: {},
-        wikipedia: {}
-      },
-
-      hasMouseOver: false,
-        
+      rerender: false,
     };
   },
+
+  queryResults: {
+    nyt: {},
+    youtube: {},
+    twitter: {},
+    wikipedia: {},
+  },
   componentDidMount: function(){
-    for(key in this.state){
+    for(key in this.state.data){
       this.handleQuery({
         searchTerm: this.props.searchTerm,
         url: '127.0.0.1/api/' + key
@@ -41,8 +36,13 @@ var ResultsView = React.createClass({
       data: searchQuery,
       type: 'POST',
       success: function(data){
+        //this a supposed hack to leverage react automatic rerendering
+        //for when state values are changed.
+        //will be changed after we learn redux react data flow
         var source = data.source;
-        this.setState({data[source]: data})
+        this.queryResults[source] = data;
+        this.setState({rerender: !this.state.rerender});
+      
       }.bind(this),
       error: function(xhr, status, err){
         console.error(searchQuery.url, status, err.toString())
@@ -50,22 +50,20 @@ var ResultsView = React.createClass({
     })
   },
 
-  mouseOver: function(){
-    this.setState({hasMouseOver: true});
-  },
+  // mouseOver: function(){
+  //   this.setState({hasMouseOver: true});
+  // },
 
-  mouseOut: function(){
-    this.setState({hasMouseOver: false});
->>>>>>> [update] add post request from client to server
-  },
+  // mouseOut: function(){
+  //   this.setState({hasMouseOver: false});
+  // },
 
   render: function(){
     return (
       <div>
         <h1>Results</h1>
         <TopBar />
-        <TreeTimeLine />
-        <TimeLine />
+        <TreeTimeLine data={this.queryResults}/>
         <WikiView data={this.state.data.wikipedia}/>
         <ImageView data={this.state.data.wikipedia}/>
         <Preview />
