@@ -28,7 +28,7 @@ var WikiView = React.createClass({
         $('#wikiview').append(x.html());
       })
     });
-  }
+  },
   
   render: function(){
     return (
