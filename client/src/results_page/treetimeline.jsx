@@ -1,111 +1,39 @@
 var React = require('react');
 
+var dates = [];
+var generateDates = function(timeSpan) {
+  for (var i = 0; i < timeSpan; i++) {
+    var date = new Date();
+    date.setDate(date.getDate() - i);
+    dates.push(date.toJSON().slice(0, 10));
+  }
+}
 
-var data = {
-        name: 'data',
-        children: [
-              {
-            date: '2015-09-28',
-            children: [
-              {
-                source: 'NYT',
-                children: [      
-                {
-                  title: 'Elon Musk',
-                }, {
-                  title: 'Larry Page',
-                }
-                ]
-              },
-              {
-                source: 'Twitter',
-                children: [
-                {
-                  title: 'Chuck Norris',
-                }, {
-                  title: 'The Rock',
-                }
-                ],
-              }
-              ],
-            },
-              {
-            date: '2015-09-27',
-            children: [],
-          },
-              {
-            date: '2015-09-26',
-            children: [],
-          },
-              {
-            date: '2015-09-25',
-            children: [
-              {
-                source: 'NYT',
-                children: [      
-                {
-                  title: 'Donald Trump',
-                  img: 'http://www.liberationnews.org/wp-content/uploads/2015/07/donaldtrump61815.jpg'
-                }, {
-                  title: 'Sarah Palin',
-                  img: 'http://bluegrasspolitics.bloginky.com/files//2010/09/sarah-palin.jpg'
-                }, {
-                  title: 'Ted Nugent',
-                  img: 'http://www.burntorangereport.com/wp-content/uploads/2014/11/ted-cruz-smarmy.jpg'
-                }
-                ]
-              },
-              {
-                source: 'Twitter',
-                children: [
-                {
-                  title: 'Kardashian 1',
-                }, {
-                  title: 'Kardashian 2',
-                }
-                ]
-              }
-                ]
-          },
-              {
-            date: '2015-09-24',
-            children: [],
-          },
-              {
-            date: '2015-09-23',
-            children: [],
-          },
-        ]
-      }
-
-var dateToday = new Date().toJSON().slice(0,10);
-var d = new Date();
-d.setDate(d.getDate() - 7);
-dateWeekAgo = d.toJSON().slice(0, 10);
+generateDates(7);
 
 var d3data = {
   name: 'd3data',
   children: [
   {
-    date: '2015-09-29',
+    date: dates[0],
     children: []
   }, {
-    date: '2015-09-28',
+    date: dates[1],
     children: []
   }, {
-    date: '2015-09-27',
+    date: dates[2],
     children: []
   }, {
-    date: '2015-09-26',
+    date: dates[3],
     children: []
   }, {
-    date: '2015-09-25',
+    date: dates[4],
     children: []
   }, {
-    date: '2015-09-24',
+    date: dates[5],
     children: []
   }, {
-    date: '2015-09-23',
+    date: dates[6],
     children: []
   }
   ]
@@ -130,7 +58,7 @@ var TreeTimeLine = React.createClass({
         height = 800;
 
     var y = d3.time.scale()
-      .domain([new Date(dateWeekAgo), new Date(dateToday)])
+      .domain([new Date(dates[dates.length - 1]), new Date('2015-09-30')])
       .rangeRound([height - margin.top - margin.bottom, 0])
 
     var yAxis = d3.svg.axis()
@@ -161,9 +89,9 @@ var TreeTimeLine = React.createClass({
       })
       .call(yAxis);
 
-    // var timeLine = svg.selectAll('.timeLine')
-    //   .data(this.state.data)
-    //   .attr('y', function(d) { return y(new Date(d.date)); })
+    var timeLine = svg.selectAll('.timeLine')
+      .data(d3data)
+      .attr('y', function(d) { return y(new Date(d.date)); })
 
 
     //-----draw tree from each tick on yAxis timeline ------
@@ -206,7 +134,7 @@ var TreeTimeLine = React.createClass({
           d.fixed = true;
         }
         else {
-          d.y = d.depth * 120; 
+          d.y = d.depth * 80; 
           }
         });
 
@@ -221,15 +149,19 @@ var TreeTimeLine = React.createClass({
           toggle(d); 
           update(d); 
         })
-        // .on("mouseover", function(d) {
-        //   nodeEnter.append("svg:title")
-        //     .text(function(d) { return d.title; })
-        //     .style("fill-opacity", 1)
-        // })
-        // .on("mouseout", function(d) {
-        //     nodeEnter.select('text')
-        //       .style('fill-opacity', 0);
-        // })
+        .on("mouseover", function(d) {
+          nodeEnter.append("svg:text")
+            .text(function(d) { return d.title; })
+            .attr({
+              'dx': 20,
+              'dy': -10,
+            })
+            .style("fill-opacity", 1)
+        })
+        .on("mouseout", function(d) {
+            nodeEnter.selectAll('text')
+              .style('fill-opacity', 0);
+        })
 
       var defs = svg.append('svg:defs');
         defs.append('svg:pattern')
@@ -257,7 +189,7 @@ var TreeTimeLine = React.createClass({
           .attr('width', '20')
           .attr('height', '20')
           .append('svg:image')
-          .attr('xlink:href', 'http://www.underconsideration.com/brandnew/archives/youtube_logo_detail.png')
+          .attr('xlink:href', 'https://lh5.ggpht.com/jZ8XCjpCQWWZ5GLhbjRAufsw3JXePHUJVfEvMH3D055ghq0dyiSP3YxfSc_czPhtCLSO=w300')
           .attr('x', 4)
           .attr('y', 5)
           .attr('width', 15)
@@ -372,17 +304,25 @@ var TreeTimeLine = React.createClass({
   },
 
   processData: function(data) {
+    //to-do: only process new data
     for (var source in data) {
       for (var date in data[source]) {
-        var daysAgo = Number(moment(data).fromNow().slice(1,2));
+        var daysAgo = moment(date).fromNow().slice(0,1);
+        if (daysAgo === 'a') {
+          daysAgo = 1;
+        } else {
+          daysAgo = Number(daysAgo);
+        }
         d3data.children[daysAgo].children.push(data[source][date])
       }
     }
-    console.log(d3data);
   },
 
   componentDidMount: function() {
     this.processData(this.props.data);
+    var width = 800,
+      height = 800;
+
     this.renderCanvas();
   }
 
