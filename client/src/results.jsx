@@ -5,12 +5,15 @@ var TreeTimeLine = require('./results_page/treetimeline.jsx'),
     WikiView = require('./results_page/wikiview.jsx'),
     ImageView = require('./results_page/imageview.jsx'),
     Preview = require('./results_page/preview.jsx'),
-    TopBar = require('./results_page/topbar.jsx');
+    TopBar = require('./results_page/topbar.jsx'),
+    HomeButton = require('./results_page/homebutton.jsx');
 
 var ResultsView = React.createClass({
 
   getInitialState: function(){
     return {
+      WasSearchedFromTopBar: false,
+      searchTerm: ''
       rerender: false,
     };
   },
@@ -49,7 +52,10 @@ var ResultsView = React.createClass({
   },
   
   componentDidMount: function(){
+
     for(var id in this.queryResults){
+      //not the best way of reasoning about this, will refactor after MVP.
+      var searchTerm = WasSearchedFromTopBar ? this.state.searchTerm: this.props.searchTerm
       this.handleQuery({
         searchTerm: this.props.searchTerm,
         url: 'http://127.0.0.1:3000/api/' + id
@@ -81,6 +87,12 @@ var ResultsView = React.createClass({
     })
   },
 
+  queryTerm: function(searchTerm){
+    this.setState({
+      searchTerm: searchTerm,
+      WasSearchedFromTopBar: true,
+    });
+  },
   // mouseOver: function(){
   //   this.setState({hasMouseOver: true});
   // },
@@ -93,10 +105,11 @@ var ResultsView = React.createClass({
     return (
       <div>
         <h1>Results</h1>
-        <TopBar />
+        <HomeButton returnHome={this.props.returnHome}/>
+        <TopBar queryTerm={this.queryTerm}/>
         <TreeTimeLine data={this.queryResults}/>
         <WikiView data={this.queryResults.wikipedia}/>
-        <ImageView />
+        <ImageView data={this.queryResults.wikipedia} />
         <Preview />
       </div>
       )
