@@ -11,11 +11,15 @@ var ResultsView = React.createClass({
 
   getInitialState: function(){
     return {
-      nyt: {},
-      youtube: {},
-      twitter: {},
-      wikipedia: {},
+      rerender: false,
     };
+  },
+
+  queryResults: {
+    nyt: {},
+    youtube: {},
+    twitter: {},
+    wikipedia: {},
   },
   componentDidMount: function(){
     for(key in this.state.data){
@@ -32,19 +36,13 @@ var ResultsView = React.createClass({
       data: searchQuery,
       type: 'POST',
       success: function(data){
+        //this a supposed hack to leverage react automatic rerendering
+        //for when state values are changed.
+        //will be changed after we learn redux react data flow
         var source = data.source;
-        if(source === 'nyt'){
-          this.setState({nyt: data})
-        }
-        else if(source === 'twitter'){
-          this.setState({twitter: data})
-        }
-        else if(source === 'youtube'){
-          this.setState({youtube: data})
-        }
-        else if(source === 'wikipedia'){
-          this.setState({wikipedia: data})
-        }
+        this.queryResults[source] = data;
+        this.setState({rerender: !this.state.rerender});
+      
       }.bind(this),
       error: function(xhr, status, err){
         console.error(searchQuery.url, status, err.toString())
@@ -65,7 +63,7 @@ var ResultsView = React.createClass({
       <div>
         <h1>Results</h1>
         <TopBar />
-        <TreeTimeLine data={this.state}/>
+        <TreeTimeLine data={this.queryResults}/>
         <WikiView data={this.state.data.wikipedia}/>
         <ImageView data={this.state.data.wikipedia}/>
         <Preview />
