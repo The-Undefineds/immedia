@@ -25,13 +25,13 @@ var MainView = React.createClass({
   //alone function
   returnHome: function(){
     this.setState({atHome: true});
-  }
+  },
 
   render: function(){
     return (
       <div>
         { this.state.atHome ? <HomePage searchInit={this.searchInit} atHome={this.state.atHome}/> : null }
-        { !this.state.atHome ? <ResultsView searchTerm={this.state.searchTerm} returnHome={this.returnHome}/> : null }
+        { !this.state.atHome ? <ResultsView searchTerm={this.state.searchTerm} /> : null }
       </div>
       )
   }

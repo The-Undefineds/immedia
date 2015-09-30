@@ -10,7 +10,7 @@ var HomeButton = React.createClass({
   render: function(){
     return (
       <div>
-        <button type='button' onClick={this.props.returnHome()} > Home </button>
+        <button type='button' > Home button </button>
       </div>
       )
   }

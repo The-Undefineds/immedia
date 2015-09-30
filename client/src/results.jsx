@@ -13,7 +13,7 @@ var ResultsView = React.createClass({
   getInitialState: function(){
     return {
       WasSearchedFromTopBar: false,
-      searchTerm: ''
+      searchTerm: '',
       rerender: false,
     };
   },
@@ -64,27 +64,11 @@ var ResultsView = React.createClass({
   },
 
   handleQuery: function(searchQuery){
-    $.post({
-      url: searchQuery.url,
-      data: searchQuery,
-      dataType: 'jsonp',
-      // type: 'POST',
-  //       xhrFields: {
-  //   withCredentials: true
-  // },
-      success: function(data){
-        //this a supposed hack to leverage react automatic rerendering
-        //for when state values are changed.
-        //will be changed after we learn redux react data flow
-        var source = data.source;
-        this.queryResults[source] = data;
-        this.setState({rerender: !this.state.rerender});
-      
-      }.bind(this),
-      error: function(xhr, status, err){
-        console.error(searchQuery.url, status, err.toString())
-      }.bind(this)
-    })
+    $.post( searchQuery.url, searchQuery, function(data){
+      var source = data.source;
+      this.queryResults[source] = data;
+      this.setState({rerender: !this.state.rerender});
+    }, 'json')
   },
 
   queryTerm: function(searchTerm){
@@ -105,7 +89,7 @@ var ResultsView = React.createClass({
     return (
       <div>
         <h1>Results</h1>
-        <HomeButton returnHome={this.props.returnHome}/>
+        <HomeButton />
         <TopBar queryTerm={this.queryTerm}/>
         <TreeTimeLine data={this.queryResults}/>
         <WikiView data={this.queryResults.wikipedia}/>
