@@ -66,8 +66,8 @@ var ResultsView = React.createClass({
         <TopBar />
         <TreeTimeLine />
         <TimeLine />
-        <WikiView data={this.state.wikipedia}/>
-        <ImageView />
+        <WikiView data={this.state.data.wikipedia}/>
+        <ImageView data={this.state.data.wikipedia}/>
         <Preview />
       </div>
       )
