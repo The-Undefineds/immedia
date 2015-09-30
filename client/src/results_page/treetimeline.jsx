@@ -83,22 +83,43 @@ var d = new Date();
 d.setDate(d.getDate() - 7);
 dateWeekAgo = d.toJSON().slice(0, 10);
 
-var TreeTimeLine = React.createClass({
-  
-  // d3data: this.props.data,
+var d3data = {
+  name: 'd3data',
+  children: [
+  {
+    date: '2015-09-29',
+    children: []
+  }, {
+    date: '2015-09-28',
+    children: []
+  }, {
+    date: '2015-09-27',
+    children: []
+  }, {
+    date: '2015-09-26',
+    children: []
+  }, {
+    date: '2015-09-25',
+    children: []
+  }, {
+    date: '2015-09-24',
+    children: []
+  }, {
+    date: '2015-09-23',
+    children: []
+  }
+  ]
+}
 
-  getInitialState: function() {
-    return {
-      data: data,
-    }
-  },
+var TreeTimeLine = React.createClass({
 
   render: function() {
     return (
       <div id="d3container"></div>
     )
   },
-  componentDidMount: function() {
+
+  renderCanvas: function() {
     var margin = {
       top: 40,
       right: 40,
@@ -140,9 +161,9 @@ var TreeTimeLine = React.createClass({
       })
       .call(yAxis);
 
-    var timeLine = svg.selectAll('.timeLine')
-      .data(this.state.data)
-      .attr('y', function(d) { return y(new Date(d.date)); })
+    // var timeLine = svg.selectAll('.timeLine')
+    //   .data(this.state.data)
+    //   .attr('y', function(d) { return y(new Date(d.date)); })
 
 
     //-----draw tree from each tick on yAxis timeline ------
@@ -155,7 +176,7 @@ var TreeTimeLine = React.createClass({
     var diagonal = d3.svg.diagonal()
         .projection(function(d) { return [d.y, d.x]; });
 
-      root = this.state.data;
+      root = d3data;
       root.x0 = height / 1.5;
       root.y0 = 0;
 
@@ -200,20 +221,15 @@ var TreeTimeLine = React.createClass({
           toggle(d); 
           update(d); 
         })
-        .on("mouseover", function(d) {
-          nodeEnter.append("svg:title")
-            // .attr("x", function(d) { 
-            //   console.log(d);
-            //   return d.children || d._children ? -10 : 10; })
-            // .attr("dy", ".35em")
-            // .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
-            .text(function(d) { return d.title; })
-            .style("fill-opacity", 1)
-        })
-        .on("mouseout", function(d) {
-            nodeEnter.select('text')
-              .style('fill-opacity', 0);
-        })
+        // .on("mouseover", function(d) {
+        //   nodeEnter.append("svg:title")
+        //     .text(function(d) { return d.title; })
+        //     .style("fill-opacity", 1)
+        // })
+        // .on("mouseout", function(d) {
+        //     nodeEnter.select('text')
+        //       .style('fill-opacity', 0);
+        // })
 
       var defs = svg.append('svg:defs');
         defs.append('svg:pattern')
@@ -236,6 +252,16 @@ var TreeTimeLine = React.createClass({
           .attr('y', -7)
           .attr('width', 40)
           .attr('height', 40)
+        defs.append('svg:pattern')
+          .attr('id', 'tile-youtube')
+          .attr('width', '20')
+          .attr('height', '20')
+          .append('svg:image')
+          .attr('xlink:href', 'http://www.underconsideration.com/brandnew/archives/youtube_logo_detail.png')
+          .attr('x', 4)
+          .attr('y', 5)
+          .attr('width', 15)
+          .attr('height', 15)
 
       nodeEnter.append("svg:circle")
         .attr("r", 1e-6)
@@ -267,13 +293,15 @@ var TreeTimeLine = React.createClass({
           })
           .style("fill", function(d) { 
             var dat = d;
-            if (d.source == 'Twitter') {
+            if (d.source == 'twitter') {
               return 'url(/#tile-twit)';
-            } else if (d.source == 'NYT') {
+            } else if (d.source == 'nyt') {
               return 'url(/#tile-nyt)';
+            } else if (d.source == 'youtube') {
+              return 'url(/#tile-youtube)';
             } else if (d.img) {
               defs.append('svg:pattern')
-                .attr('id', 'tile-img')
+                .attr('id', 'tile-img' + d.id)
                 .attr('width', '20')
                 .attr('height', '20')
                 .append('svg:image')
@@ -282,7 +310,7 @@ var TreeTimeLine = React.createClass({
                 .attr('y', 0)
                 .attr('width', 40)
                 .attr('height', 40)
-              return 'url(/#tile-img)'
+              return 'url(/#tile-img' + d.id + ')'
             }
             return d._children ? "lightsteelblue" : "#fff"; 
           });
@@ -342,6 +370,21 @@ var TreeTimeLine = React.createClass({
       update(root);
     }
   },
+
+  processData: function(data) {
+    for (var source in data) {
+      for (var date in data[source]) {
+        var daysAgo = Number(moment(data).fromNow().slice(1,2));
+        d3data.children[daysAgo].children.push(data[source][date])
+      }
+    }
+    console.log(d3data);
+  },
+
+  componentDidMount: function() {
+    this.processData(this.props.data);
+    this.renderCanvas();
+  }
 
 });
 
