@@ -98,7 +98,7 @@ var TreeTimeLine = React.createClass({
       <div id="d3container"></div>
     )
   },
-  componentDidMount: function() {
+  renderCanvas: function() {
     var margin = {
       top: 40,
       right: 40,
@@ -342,6 +342,10 @@ var TreeTimeLine = React.createClass({
       update(root);
     }
   },
+
+  componentDidMount: function() {
+    this.renderCanvas();
+  }
 
 });
 
