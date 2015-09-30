@@ -1,18 +1,9 @@
-// var keys = require('./keys.js');
+var keys = require('./keys.js');
+var utils = require('./utils.js');
 var Q = require('Q');
 var Promise = require('bluebird');
 var request = Promise.promisify(require('request'));
 
-var getDateFromToday = function(days, delimiter) {
-  delimiter = delimiter || '';
-  var today = new Date();
-  var desiredDate = new Date(today.setDate(today.getDate() + days));
-  var year = desiredDate.getFullYear().toString();
-  var month = (((desiredDate.getMonth()+1).toString()[1]) ? desiredDate.getMonth()+1 : "0" + (desiredDate.getMonth()+1)).toString();
-  var day = ((desiredDate.getDate().toString()[1]) ? desiredDate.getDate() : "0" + desiredDate.getDate()).toString();
-
-  return year + delimiter + month + delimiter + day;
-};
 
 module.exports = {
 
@@ -21,7 +12,7 @@ module.exports = {
 
     // NYT Article Search parameters (note: CAN search by topic)
     var articleSearchURI = 'http://api.nytimes.com/svc/search/v2/articlesearch.json?';
-    var beginDate = getDateFromToday(-7);
+    var beginDate = utils.getDateFromToday(-7);
     var articleSearch = {};
     var articleSearchDate = {};
 
@@ -153,7 +144,6 @@ module.exports = {
             }
           }
         }
-
         res.send(results);
         return;
       })

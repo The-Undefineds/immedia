@@ -5,85 +5,91 @@ var TreeTimeLine = require('./results_page/treetimeline.jsx'),
     WikiView = require('./results_page/wikiview.jsx'),
     ImageView = require('./results_page/imageview.jsx'),
     Preview = require('./results_page/preview.jsx'),
-    TopBar = require('./results_page/topbar.jsx');
+    TopBar = require('./results_page/topbar.jsx'),
+    HomeButton = require('./results_page/homebutton.jsx');
 
 var ResultsView = React.createClass({
 
   getInitialState: function(){
     return {
-      rerender: false,
+      wasSearchedFromTopBar: false,
+      searchTerm: '',
+      nyt: {},
+      youtube: {},
+      wikipedia: {},
+      twitter: {},
     };
   },
 
-  queryResults: {
-    nyt: {
-        '2015-09-29':{
-          source: 'nyt',
-          children: [
-            {
-              title: 'Elon Musk',
-              img: 'https://lh5.googleusercontent.com/-89xTT1Ctbrk/AAAAAAAAAAI/AAAAAAAAAAA/5gt6hkVvJHY/s0-c-k-no-ns/photo.jpg'
-            }, {
-              title: 'Sergie Brin',
-              img: 'http://www.technologytell.com/gadgets/files/2014/05/Sergey-Brin-should-have-stayed-away-from-Google-Plus.jpg'
-            }
-          ]
-        },
-        '2015-09-27':{
-          source: 'nyt',
-          children: [
-            {
-              title: 'Pope Francis',
-              img: 'http://m.snopes.com/wp-content/uploads/2015/07/pope-francis.jpg'
-            }, {
-              title: 'Barack Obama',
-              img: 'https://pbs.twimg.com/profile_images/1645586305/photo.JPG'
-            }
-          ]
-        }
-      },
-    youtube: {
-        '2015-09-29': {
-          source: 'youtube',
-          children: [
-          {
-            title: 'Nickelback',
-            img: 'http://www.blogcdn.com/www.joystiq.com/media/2008/11/nickelback.jpg'
-          }, {
-            title: 'Creed',
-            img: 'http://www.ew.com/sites/default/files/i/daily/629//creed_l.jpg'
-          }
-        ]
-      }
-    },
-    twitter: {
-        '2015-09-29': {
-          source: 'twitter',
-          children: [
-          {
-            title: 'Donald Trump',
-            img: 'http://uziiw38pmyg1ai60732c4011.wpengine.netdna-cdn.com/wp-content/dropzone/2015/08/RTX1GZCO.jpg'
-          }, {
-            title: 'The Donald',
-            img: 'http://www.liberationnews.org/wp-content/uploads/2015/07/donaldtrump61815.jpg'
-          }
-          ]
-        },
-        '2015-09-27': {
-          source: 'twitter',
-          children: [
-          {
-            title: 'Kim Kardashian',
-            img: 'http://media2.popsugar-assets.com/files/2014/11/04/920/n/1922153/961af48ae3ec88c3_thumb_temp_cover_file23876211415134157.xxxlarge/i/Kim-Kardashian-Bleached-Brows.jpg'
-          }, {
-            title: 'Rihanna',
-            img: 'http://i.huffpost.com/gen/2717304/images/o-RIHANNA-DIOR-facebook.jpg'
-          }
-          ]
-        },
-      },
-    wikipedia: {},
-  },
+  // queryResults: {
+  //   nyt: {
+  //       '2015-09-29':{
+  //         source: 'nyt',
+  //         children: [
+  //           {
+  //             title: 'Elon Musk',
+  //             img: 'https://lh5.googleusercontent.com/-89xTT1Ctbrk/AAAAAAAAAAI/AAAAAAAAAAA/5gt6hkVvJHY/s0-c-k-no-ns/photo.jpg'
+  //           }, {
+  //             title: 'Sergie Brin',
+  //             img: 'http://www.technologytell.com/gadgets/files/2014/05/Sergey-Brin-should-have-stayed-away-from-Google-Plus.jpg'
+  //           }
+  //         ]
+  //       },
+  //       '2015-09-27':{
+  //         source: 'nyt',
+  //         children: [
+  //           {
+  //             title: 'Pope Francis',
+  //             img: 'http://m.snopes.com/wp-content/uploads/2015/07/pope-francis.jpg'
+  //           }, {
+  //             title: 'Barack Obama',
+  //             img: 'https://pbs.twimg.com/profile_images/1645586305/photo.JPG'
+  //           }
+  //         ]
+  //       }
+  //     },
+  //   youtube: {
+  //       '2015-09-29': {
+  //         source: 'youtube',
+  //         children: [
+  //         {
+  //           title: 'Nickelback',
+  //           img: 'http://www.blogcdn.com/www.joystiq.com/media/2008/11/nickelback.jpg'
+  //         }, {
+  //           title: 'Creed',
+  //           img: 'http://www.ew.com/sites/default/files/i/daily/629//creed_l.jpg'
+  //         }
+  //       ]
+  //     }
+  //   },
+  //   twitter: {
+  //       '2015-09-29': {
+  //         source: 'twitter',
+  //         children: [
+  //         {
+  //           title: 'Donald Trump',
+  //           img: 'http://uziiw38pmyg1ai60732c4011.wpengine.netdna-cdn.com/wp-content/dropzone/2015/08/RTX1GZCO.jpg'
+  //         }, {
+  //           title: 'The Donald',
+  //           img: 'http://www.liberationnews.org/wp-content/uploads/2015/07/donaldtrump61815.jpg'
+  //         }
+  //         ]
+  //       },
+  //       '2015-09-27': {
+  //         source: 'twitter',
+  //         children: [
+  //         {
+  //           title: 'Kim Kardashian',
+  //           img: 'http://media2.popsugar-assets.com/files/2014/11/04/920/n/1922153/961af48ae3ec88c3_thumb_temp_cover_file23876211415134157.xxxlarge/i/Kim-Kardashian-Bleached-Brows.jpg'
+  //         }, {
+  //           title: 'Rihanna',
+  //           img: 'http://i.huffpost.com/gen/2717304/images/o-RIHANNA-DIOR-facebook.jpg'
+  //         }
+  //         ]
+  //       },
+  //     },
+  //   wikipedia: {},
+  // },
   
   // componentDidMount: function(){
   //   for(var id in this.queryResults){
@@ -118,6 +124,40 @@ var ResultsView = React.createClass({
   //   })
   // },
 
+  apis: [
+    'nyt',
+    // 'wikipedia',
+    // 'twitter',
+    'youtube'
+  ],
+  
+  componentDidMount: function(){
+    for(var i = 0; i < this.apis.length; i++){
+      //not the best way of reasoning about this, will refactor after MVP.
+      var searchTerm = this.state.wasSearchedFromTopBar ? this.state.searchTerm: this.props.searchTerm;
+      this.handleQuery({
+        searchTerm: this.props.searchTerm,
+        url: 'http://127.0.0.1:3000/api/' + this.apis[i],
+        api: this.apis[i]
+      });
+    }
+  },
+
+  handleQuery: function(searchQuery){
+    $.post(searchQuery.url, searchQuery)
+     .done(function(response) {
+        var obj = {};
+        obj[searchQuery.api] = response;
+        this.setState(obj);
+     }.bind(this));
+  },
+
+  queryTerm: function(searchTerm){
+    this.setState({
+      searchTerm: searchTerm,
+      wasSearchedFromTopBar: true,
+    });
+  },
   // mouseOver: function(){
   //   this.setState({hasMouseOver: true});
   // },
@@ -127,17 +167,22 @@ var ResultsView = React.createClass({
   // },
 
   render: function(){
+    console.log('rendering results');
     return (
       <div>
         <h1>Results</h1>
-        <TopBar />
-        <TreeTimeLine data={this.queryResults}/>
-        <WikiView data={this.queryResults.wikipedia}/>
-        <ImageView />
+        <HomeButton />
+        <TopBar queryTerm={this.queryTerm}/>
+        <TreeTimeLine data={
+          { nyt: this.state.nyt, twitter: this.state.twitter, youtube: this.state.youtube }
+        }/>
+
+        <ImageView data={this.state.wikipedia} />
         <Preview />
       </div>
-      )
+    );
   }
 });
 
+        // <WikiView data={this.state.wikipedia}/>
 module.exports = ResultsView;

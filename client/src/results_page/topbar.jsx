@@ -1,12 +1,37 @@
-React = require('react');
-
-SearchBar = require('../home_page/searchbar.jsx');
+var React = require('react');
 
 var TopBar = React.createClass({
+
+  getInitialState: function(){
+    return {
+      searchTerm: ''
+    };
+  },
+
+  handleChange: function(event){
+    this.setState({ searchTerm: event.target.value });
+    
+  },
   
+  enterPressed: function(event){
+    if (event.keyCode === 13) {
+      this.handleSubmit();
+    }
+  },
+
+  handleSubmit: function(){
+    // send this.state.searchTerm in ajax 
+    this.props.queryTerm(this.state.searchTerm);
+  },
+
   render: function(){
     return (
-      <SearchBar />
+      <div>
+        <input type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} />
+        <span>
+          <button type='button' onClick={this.handleSubmit} > Immedia Search Here </button>
+        </span>
+      </div>
       )
   }
 })

@@ -39,11 +39,81 @@ var d3data = {
   ]
 }
 
+var queryResults: {
+    nyt: {
+        '2015-09-29':{
+          source: 'nyt',
+          children: [
+            {
+              title: 'Elon Musk',
+              img: 'https://lh5.googleusercontent.com/-89xTT1Ctbrk/AAAAAAAAAAI/AAAAAAAAAAA/5gt6hkVvJHY/s0-c-k-no-ns/photo.jpg'
+            }, {
+              title: 'Sergie Brin',
+              img: 'http://www.technologytell.com/gadgets/files/2014/05/Sergey-Brin-should-have-stayed-away-from-Google-Plus.jpg'
+            }
+          ]
+        },
+        '2015-09-27':{
+          source: 'nyt',
+          children: [
+            {
+              title: 'Pope Francis',
+              img: 'http://m.snopes.com/wp-content/uploads/2015/07/pope-francis.jpg'
+            }, {
+              title: 'Barack Obama',
+              img: 'https://pbs.twimg.com/profile_images/1645586305/photo.JPG'
+            }
+          ]
+        }
+      },
+    youtube: {
+        '2015-09-29': {
+          source: 'youtube',
+          children: [
+          {
+            title: 'Nickelback',
+            img: 'http://www.blogcdn.com/www.joystiq.com/media/2008/11/nickelback.jpg'
+          }, {
+            title: 'Creed',
+            img: 'http://www.ew.com/sites/default/files/i/daily/629//creed_l.jpg'
+          }
+        ]
+      }
+    },
+    twitter: {
+        '2015-09-29': {
+          source: 'twitter',
+          children: [
+          {
+            title: 'Donald Trump',
+            img: 'http://uziiw38pmyg1ai60732c4011.wpengine.netdna-cdn.com/wp-content/dropzone/2015/08/RTX1GZCO.jpg'
+          }, {
+            title: 'The Donald',
+            img: 'http://www.liberationnews.org/wp-content/uploads/2015/07/donaldtrump61815.jpg'
+          }
+          ]
+        },
+        '2015-09-27': {
+          source: 'twitter',
+          children: [
+          {
+            title: 'Kim Kardashian',
+            img: 'http://media2.popsugar-assets.com/files/2014/11/04/920/n/1922153/961af48ae3ec88c3_thumb_temp_cover_file23876211415134157.xxxlarge/i/Kim-Kardashian-Bleached-Brows.jpg'
+          }, {
+            title: 'Rihanna',
+            img: 'http://i.huffpost.com/gen/2717304/images/o-RIHANNA-DIOR-facebook.jpg'
+          }
+          ]
+        },
+      },
+    wikipedia: {},
+  }
+
 var TreeTimeLine = React.createClass({
 
   render: function() {
     return (
-      <div id="d3container"></div>
+      <div id="d3container"><svg></svg></div>
     )
   },
 
@@ -69,7 +139,7 @@ var TreeTimeLine = React.createClass({
       .tickSize(20)
       .tickPadding(5)
 
-    var svg = d3.select('#d3container').append('svg')
+    var svg = d3.select('svg')
       .attr('class', 'timeLine')
       .attr('width', width)
       .attr('height', height)
@@ -92,6 +162,8 @@ var TreeTimeLine = React.createClass({
     var timeLine = svg.selectAll('.timeLine')
       .data(d3data)
       .attr('y', function(d) { return y(new Date(d.date)); })
+
+    svg.selectAll('g.node').remove();
 
 
     //-----draw tree from each tick on yAxis timeline ------
@@ -116,8 +188,8 @@ var TreeTimeLine = React.createClass({
       }
 
       // Initialize the display to show a few nodes.
-      root.children.forEach(toggleAll);
-      toggle(root.children[0]);
+      // root.children.forEach(toggleAll);
+      // toggle(root.children[0]);
 
       update(root);
 
@@ -305,6 +377,8 @@ var TreeTimeLine = React.createClass({
 
   processData: function(data) {
     //to-do: only process new data
+    console.log(data);
+    console.log(d3data);
     for (var source in data) {
       for (var date in data[source]) {
         var daysAgo = moment(date).fromNow().slice(0,1);
@@ -313,16 +387,24 @@ var TreeTimeLine = React.createClass({
         } else {
           daysAgo = Number(daysAgo);
         }
-        d3data.children[daysAgo].children.push(data[source][date])
+        // if (d3data.children[daysAgo]) {
+        //   if (d3data.children[daysAgo].children) {
+        // d3data.children[daysAgo].children = d3data.children[daysAgo].children || [];
+            d3data.children[daysAgo].children.push(data[source][date]);
+        //   } else if (d3data.children[daysAgo]._children) {
+        //     d3data.children[daysAgo]._children.push(data[source][date]);
+        //   } else {console.log('shit')}
+        // }
       }
     }
   },
 
   componentDidMount: function() {
-    this.processData(this.props.data);
-    var width = 800,
-      height = 800;
+    this.processData(queryResults);
+  },
 
+  componentWillReceiveProps: function() {
+    this.processData(this.props.data);
     this.renderCanvas();
   }
 
