@@ -16,16 +16,43 @@ var ResultsView = React.createClass({
   },
 
   queryResults: {
-    nyt: {},
+    nyt: {
+        // '2015-09-29':{
+        //   source: 'nyt',
+        //   children: [
+        //     {
+        //       title: 'Elon Musk',
+        //       img: 'https://lh5.googleusercontent.com/-89xTT1Ctbrk/AAAAAAAAAAI/AAAAAAAAAAA/5gt6hkVvJHY/s0-c-k-no-ns/photo.jpg'
+        //     }, {
+        //       title: 'Sergie Brin',
+        //       img: 'http://www.technologytell.com/gadgets/files/2014/05/Sergey-Brin-should-have-stayed-away-from-Google-Plus.jpg'
+        //     }
+        //   ]
+        // }
+      },
     youtube: {},
-    twitter: {},
+    twitter: {
+        // '2015-09-29': {
+        //   source: 'twitter',
+        //   children: [
+        //   {
+        //     title: 'Donald Trump',
+        //     img: 'http://uziiw38pmyg1ai60732c4011.wpengine.netdna-cdn.com/wp-content/dropzone/2015/08/RTX1GZCO.jpg'
+        //   }, {
+        //     title: 'The Donald',
+        //     img: 'http://www.liberationnews.org/wp-content/uploads/2015/07/donaldtrump61815.jpg'
+        //   }
+        //   ]
+        // }
+      },
     wikipedia: {},
   },
+  
   componentDidMount: function(){
-    for(key in this.state.data){
+    for(key in this.queryResults){
       this.handleQuery({
         searchTerm: this.props.searchTerm,
-        url: '127.0.0.1/api/' + key
+        url: 'http://127.0.0.1:3000/api/' + key
       })
     }
   },
@@ -34,7 +61,11 @@ var ResultsView = React.createClass({
     $.ajax({
       url: searchQuery.url,
       data: searchQuery,
+      dataType: 'jsonp',
       type: 'POST',
+  //       xhrFields: {
+  //   withCredentials: true
+  // },
       success: function(data){
         //this a supposed hack to leverage react automatic rerendering
         //for when state values are changed.

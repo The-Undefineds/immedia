@@ -3,9 +3,11 @@
   "description": "Our Immedia App Node dependencies",
   "version": "0.0.1",
   "dependencies": {
+    "bluebird": "^2.10.1",
     "body-parser": "^1.14.1",
     "express": "4.13.3",
     "gulp": "3.9.0",
+    "q": "^1.4.1",
     "react": "0.13.3",
     "react-redux": "^3.0.1",
     "react-router": "^0.13.3",
