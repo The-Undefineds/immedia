@@ -34,9 +34,9 @@ function callYoutube(item, callback){
       
       //snippet.thumbnails.(key) | key = default|medium|high | access through key.url
       var date = body.items[0].snippet.publishedAt.slice(0, 10); //Should be user defined
-      
-      var data = {};
-      data[date] = {
+         
+      var obj = {};
+      obj[date] = {
         source : 'youtube',
         children : []
       }
@@ -51,7 +51,7 @@ function callYoutube(item, callback){
         }
       }
       
-      callback(200, data);
+      callback(200, obj);
     }
   })
 }
