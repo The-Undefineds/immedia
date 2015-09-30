@@ -29,7 +29,7 @@ var TopBar = React.createClass({
       <div>
         <input type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} />
         <span>
-          <button type='button' onClick={this.handleSubmit} > Immedia Search </button>
+          <button type='button' onClick={this.handleSubmit} > Immedia Search Here </button>
         </span>
       </div>
       )

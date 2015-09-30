@@ -5,7 +5,7 @@ var TreeTimeLine = require('./results_page/treetimeline.jsx'),
     WikiView = require('./results_page/wikiview.jsx'),
     ImageView = require('./results_page/imageview.jsx'),
     Preview = require('./results_page/preview.jsx'),
-    TopBar = require('./results_page/topbar.jsx');
+    TopBar = require('./results_page/topbar.jsx'),
     HomeButton = require('./results_page/homebutton.jsx');
 
 var ResultsView = React.createClass({
