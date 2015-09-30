@@ -12,14 +12,41 @@ var ResultsView = React.createClass({
 
   getInitialState: function(){
     return {
-      wasSearchedFromTopBar: false,
-      searchTerm: '',
-      nyt: {},
-      youtube: {},
-      wikipedia: {},
-      twitter: {},
+      // wasSearchedFromTopBar: false,
+      // searchTerm: '',
+      // nyt: {},
+      // youtube: {},
+      // wikipedia: {},
+      // twitter: {},
+      
+      //synchronous method
+      rerender: true,
     };
   },
+
+  // handleQuery: function(searchQuery){
+  //   $.post({
+  //     url: searchQuery.url,
+  //     data: searchQuery,
+  //     dataType: 'jsonp',
+  //     // type: 'POST',
+  // //       xhrFields: {
+  // //   withCredentials: true
+  // // },
+  //     success: function(data){
+  //       //this a supposed hack to leverage react automatic rerendering
+  //       //for when state values are changed.
+  //       //will be changed after we learn redux react data flow
+  //       var source = data.source;
+  //       this.queryResults[source] = data;
+  //       this.setState({rerender: !this.state.rerender});
+      
+  //     }.bind(this),
+  //     error: function(xhr, status, err){
+  //       console.error(searchQuery.url, status, err.toString())
+  //     }.bind(this)
+  //   })
+  // },
 
   apis: [
     'nyt',
@@ -27,6 +54,10 @@ var ResultsView = React.createClass({
     // 'twitter',
     'youtube'
   ],
+
+  searchResults: {},
+
+  getCounter: 0,
   
   componentDidMount: function(){
     for(var i = 0; i < this.apis.length; i++){
@@ -43,9 +74,16 @@ var ResultsView = React.createClass({
   handleQuery: function(searchQuery){
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
-        var obj = {};
-        obj[searchQuery.api] = response;
-        this.setState(obj);
+        // var obj = {};
+        // obj[searchQuery.api] = response;
+        // this.setState(obj);
+
+        //synch method
+        this.searchResults[searchQuery.api] = response;
+        this.getCounter++;
+        if (this.getCounter === this.apis.length) {
+          this.setState({rerender: !this.state.rerender});
+        }
      }.bind(this));
   },
 
@@ -70,10 +108,10 @@ var ResultsView = React.createClass({
         <h1>Results</h1>
         <HomeButton />
         <TopBar queryTerm={this.queryTerm}/>
-        <TreeTimeLine data={
-          { nyt: this.state.nyt, twitter: this.state.twitter, youtube: this.state.youtube }
-        }/>
         <WikiView searchTerm={this.props.searchTerm}/>
+        <TreeTimeLine data={
+          this.searchResults
+        }/>
         <ImageView data={this.state.wikipedia} />
         <Preview />
       </div>
@@ -81,4 +119,6 @@ var ResultsView = React.createClass({
   }
 });
 
+        // <WikiView data={this.state.wikipedia}/>
+        // { nyt: this.state.nyt, twitter: this.state.twitter, youtube: this.state.youtube }
 module.exports = ResultsView;

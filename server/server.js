@@ -4,6 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var youtube = require('./youtube');
 var nyt = require('./nyt.js');
+var cors = require('express-cors');
 
 var app = express();
 var server = http.createServer(app);
@@ -11,6 +12,9 @@ var port = 3000;
 var url = '127.0.0.1'; //Change url as necessary
 
 //app.use();
+app.use(cors({
+  allowedOrigins: ['localhost:3000']
+}))
 
 app.use(express.static(('dist')))
 app.use(bodyParser.urlencoded({ extended: true }));

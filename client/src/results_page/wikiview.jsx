@@ -34,6 +34,12 @@ var WikiView = React.createClass({
     return (
       <div id='wikiview'></div>
     );
+  },
+
+  styles: {
+    wikiview: {
+      float: 'right',
+    }
   }
 
 });
