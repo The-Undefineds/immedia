@@ -35,10 +35,14 @@ var WikiView = React.createClass({
 
   processData: function(data){
     for (var i = 0; i < data.length; i++) {
-      if (data[i] === 'h' && data.slice(i, i+4) === 'href') {
-        var string = data.slice(0,i) +  'target="_blank" ' + data.slice(i, i+6) + 'http://wikipedia.org' + data.slice(i+6);
-        data = string;
+      if (data[i] === 'h' && data.slice(i+1, i+4) === 'ref') {
+        var string = data;
+        if (data.slice(i+6, i+11) === '/wiki') {
+          string = string.slice(0, i+6) + 'http://wikipedia.org' + string.slice(i+6);
+        }
+        string = string.slice(0,i) +  'target="_blank" ' + string.slice(i);
         i += 20;
+        data = string; 
       }
     }
     return data;
