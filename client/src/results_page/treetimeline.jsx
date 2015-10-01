@@ -2,7 +2,7 @@ var React = require('react');
 
 var dates = [];
 var generateDates = function(timeSpan) {
-  for (var i = 0; i < timeSpan; i++) {
+  for (var i = -1; i < timeSpan; i++) {
     var date = new Date();
     date.setDate(date.getDate() - i);
     dates.push(date.toJSON().slice(0, 10));
@@ -11,33 +11,7 @@ var generateDates = function(timeSpan) {
 
 generateDates(7);
 
-var d3data = {
-  name: 'd3data',
-  children: [
-    {
-      date: dates[0],
-      children: []
-    }, {
-      date: dates[1],
-      children: []
-    }, {
-      date: dates[2],
-      children: []
-    }, {
-      date: dates[3],
-      children: []
-    }, {
-      date: dates[4],
-      children: []
-    }, {
-      date: dates[5],
-      children: []
-    }, {
-      date: dates[6],
-      children: []
-    }
-  ]
-};
+var i = 0;
 
 var queryResults = {
     nyt: {
@@ -118,9 +92,88 @@ var queryResults = {
 
 var TreeTimeLine = React.createClass({
 
+  getInitialState: function(){
+    return {
+      // wasSearchedFromTopBar: false,
+      // searchTerm: '',
+      apiData: [],
+    };
+  },
+
+  apis: [
+    'nyt',
+    // 'wikipedia',
+    // 'twitter',
+    'youtube'
+  ],
+
+  componentDidMount: function(){
+    for(var i = 0; i < this.apis.length; i++){
+      this.handleQuery({
+        searchTerm: this.props.searchTerm,
+        url: 'http://127.0.0.1:3000/api/' + this.apis[i],
+        api: this.apis[i]
+      });
+    }
+  },
+
+  handleQuery: function(searchQuery){
+    $.post(searchQuery.url, searchQuery)
+     .done(function(response) {
+        // Set State to initiate a re-rendering based on new API call data
+        this.setState(function(previousState, currentProps) {
+          // Make a copy of previous apiData to mutate and use to reset State
+          // Data is structured in an array that corresponds to sorted order by date descending
+          // where each index has the following object:
+          /*
+              {
+                'date': 'YYYY-MM-DD',
+                'children': [
+                  {
+                    'source': 'nyt',
+                    'children': [ {Article 1}, {Article 2}]
+                  }
+                ]
+              }
+          */
+          var previousApiData = previousState['apiData'].slice();
+          // Loop through each day in apiData and add new articles/videos/etc
+          // from returning API appropriately
+          for(var date in response) {
+            var i = 0;
+            for(; i < previousApiData.length; i++) {
+              if(previousApiData[i]['date'] === date) {
+                previousApiData[i]['children'].push(response[date]);
+                break;
+              }
+            }
+            // If loop terminates fully, no content exists for date
+            // so add content to the State array
+            if(i === previousApiData.length) {
+              previousApiData.push(
+                {
+                  'date': date, 
+                  'children': [
+                    response[date]
+                  ]
+                });
+            }
+          }
+          // Sort State array with API data by date descending
+          previousApiData.sort(function(a, b) {
+            var aDate = new Date(a['date']);
+            var bDate = new Date(b['date']);
+            return bDate - aDate;
+          });
+          return {apiData: previousApiData};
+        });
+     }.bind(this));
+  },
+
   render: function() {
+    this.renderCanvas();    // Crucial step that (re-)renders D3 canvas
     return (
-      <div id="d3container"><svg></svg></div>
+      <div id="d3container"></div>
     )
   },
 
@@ -137,6 +190,7 @@ var TreeTimeLine = React.createClass({
 
   renderCanvas: function() {
     var component = this;
+    d3.select('svg').remove();
 
     var margin = {
       top: 40,
@@ -147,8 +201,12 @@ var TreeTimeLine = React.createClass({
     var width = 600,
         height = 800;
 
+    var firstDate = this.state.apiData[this.state.apiData.length - 1] ? 
+                    this.state.apiData[this.state.apiData.length - 1]['date'] :
+                    dates[dates.length - 1];
+
     var y = d3.time.scale()
-      .domain([new Date(dates[dates.length - 1]), new Date('2015-09-30')])
+      .domain([new Date(firstDate), new Date(dates[0])])
       .rangeRound([height - margin.top - margin.bottom, 0])
 
     var yAxis = d3.svg.axis()
@@ -156,10 +214,10 @@ var TreeTimeLine = React.createClass({
       .orient('left')
       .ticks(d3.time.days, 1)
       .tickFormat(d3.time.format('%a %d'))
-      .tickSize(20)
-      .tickPadding(5)
+      .tickSize(0)
+      .tickPadding(20)
 
-    var svg = d3.select('svg')
+    var svg = d3.select('#d3container').append('svg')
       .attr('class', 'timeLine')
       .attr('width', width)
       .attr('height', height)
@@ -180,14 +238,14 @@ var TreeTimeLine = React.createClass({
       .call(yAxis);
 
     var timeLine = svg.selectAll('.timeLine')
-      .data(d3data)
+      .data({ 'name': 'data', 'children': this.state.apiData })
       .attr('y', function(d) { return y(new Date(d.date)); })
 
     svg.selectAll('g.node').remove();
 
 
     //-----draw tree from each tick on yAxis timeline ------
-    var i = 0;
+
     var root;
 
     var tree = d3.layout.tree()
@@ -196,7 +254,7 @@ var TreeTimeLine = React.createClass({
     var diagonal = d3.svg.diagonal()
         .projection(function(d) { return [d.y, d.x]; });
 
-      root = d3data;
+      root = { 'name': 'data', 'children': this.state.apiData };
       root.x0 = height / 1.5;
       root.y0 = 0;
 
@@ -398,29 +456,6 @@ var TreeTimeLine = React.createClass({
       update(root);
     }
   },
-
-  processData: function(data) {
-    //to-do: only process new data
-    //refactor data structure
-    for (var source in data) {
-      for (var date in data[source]) {
-        var daysAgo = moment(date).fromNow().slice(0,1);
-        if (daysAgo === 'a') {
-          daysAgo = 1;
-        } else {
-          daysAgo = Number(daysAgo);
-        }
-        if (d3data.children[daysAgo]) {
-          d3data.children[daysAgo].children.push(data[source][date]);
-        }
-      }
-    }
-  },
-
-  componentWillReceiveProps: function() {
-    this.processData(this.props.data);
-    this.renderCanvas();
-  }
 
 });
 
