@@ -1,31 +1,33 @@
 var React = require('react');
 
+var NytPreview = require('./nytpreview.jsx');
+
 var Preview = React.createClass({
 
   render: function() {
 
-    console.log('preview is rendered with item:', this.props.previewItem)
-    
     var previewItem = this.props.previewItem;
-
-    // $.ajax({
-    //   type: 'GET',
-    //   url: 'http://' + previewItem.url,
-    //   dataType: 'jsonp',
-    //   success: function(data) {
-    //     console.log('success!', data);
-    //   },
-    //   failure: function(data) {
-    //     console.log('whateva');
-    //   }
-    // })
-
-    return (
+    var source = previewItem.source;
+    
+    if (source == 'nyt') {
+      var nyt = true;
+    } else if (source == 'youtube') {
+      var youtube = true;
+    } else if (source == 'twitter') {
+      var twitter = true;
+    }
+    
+    return(
       <div>
-        <h1>{ previewItem.title }</h1>
-      </div>  
-      );
+
+      { nyt ? <NytPreview previewItem={ previewItem } /> : null }
+      { twitter ? <TwitterPreview previewItem={ previewItem } /> : null }
+      { youtube ? <YouTubePreview previewItem={ previewItem } /> : null }
+
+      </div>
+      )
   }
+
 });
 
 module.exports = Preview;
