@@ -10,7 +10,6 @@ var TopBar = React.createClass({
 
   handleChange: function(event){
     this.setState({ searchTerm: event.target.value });
-    
   },
   
   enterPressed: function(event){
@@ -24,12 +23,15 @@ var TopBar = React.createClass({
     this.props.queryTerm(this.state.searchTerm);
   },
 
+  goBackHome: function(){ this.props.goBackHome(); },
+
   render: function(){
     return (
-      <div>
+      <div style={{textAlign:'right', backgroundColor: '#46008B', padding: '10px'}} >
+        <input onClick={this.goBackHome} value='home' type='button'/>
         <input type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} />
         <span>
-          <button type='button' onClick={this.handleSubmit} > Immedia Search Here </button>
+          <input type='button' onClick={this.handleSubmit} value='Immedia search'/>
         </span>
       </div>
       )
