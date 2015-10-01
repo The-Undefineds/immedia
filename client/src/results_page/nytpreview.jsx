@@ -38,10 +38,10 @@ var NytPreview = React.createClass({
 
     return (
       <div>
-        <h1>{ previewData.title }</h1>
+       { preview ? <div><h1>{ previewData.title }</h1>
         <h3>{ previewData.author_name }</h3>
         <img src={ previewData.thumbnail_url } height={ previewData.thumbnail_height } width= { previewData.thumbnail_width }></img>
-        <p>{ previewData.description }</p>
+        <p>{ previewData.description }</p></div> : null }
       </div>
       );
   }

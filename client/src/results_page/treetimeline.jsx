@@ -1,5 +1,5 @@
 var React = require('react');
-
+var i = 0;
 var dates = [];
 var generateDates = function(timeSpan) {
   for (var i = 0; i < timeSpan; i++) {
@@ -42,7 +42,7 @@ var d3data = {
 var queryResults = {
     nyt: {
         '2015-09-29':{
-          source: 'nyt',
+          source: 'twitter',
           children: [
             {
               title: 'Elon Musk',
@@ -56,7 +56,7 @@ var queryResults = {
           ]
         },
         '2015-09-27':{
-          source: 'nyt',
+          source: 'twitter',
           children: [
             {
               title: 'Pope Francis',
@@ -72,7 +72,7 @@ var queryResults = {
       },
     youtube: {
         '2015-09-29': {
-          source: 'youtube',
+          source: 'twitter',
           children: [
           {
             title: 'Nickelback',
@@ -120,7 +120,7 @@ var TreeTimeLine = React.createClass({
 
   render: function() {
     return (
-      <div id="d3container"><svg></svg></div>
+      <div id="d3container"></div>
     )
   },
 
@@ -136,6 +136,9 @@ var TreeTimeLine = React.createClass({
   },
 
   renderCanvas: function() {
+
+    d3.select('svg').remove();
+
     var component = this;
 
     var margin = {
@@ -144,7 +147,7 @@ var TreeTimeLine = React.createClass({
       bottom: 40,
       left: 40
     };
-    var width = 600,
+    var width = 400,
         height = 800;
 
     var y = d3.time.scale()
@@ -159,7 +162,7 @@ var TreeTimeLine = React.createClass({
       .tickSize(20)
       .tickPadding(5)
 
-    var svg = d3.select('svg')
+    var svg = d3.select('#d3container').append('svg')
       .attr('class', 'timeLine')
       .attr('width', width)
       .attr('height', height)
@@ -187,7 +190,7 @@ var TreeTimeLine = React.createClass({
 
 
     //-----draw tree from each tick on yAxis timeline ------
-    var i = 0;
+    
     var root;
 
     var tree = d3.layout.tree()
@@ -246,18 +249,18 @@ var TreeTimeLine = React.createClass({
           if (d.title) {
             component.mouseOver(d);
           }
-          nodeEnter.append("svg:text")
-            .text(function(d) { return d.title; })
-            .attr({
-              'dx': 20,
-              'dy': -10,
-            })
-            .style("fill-opacity", 1)
+        //   nodeEnter.append("svg:text")
+        //     .text(function(d) { return d.title; })
+        //     .attr({
+        //       'dx': 20,
+        //       'dy': -10,
+        //     })
+        //     .style("fill-opacity", 1)
         })
-        .on("mouseout", function(d) {
-            nodeEnter.selectAll('text')
-              .remove()
-        })
+        // .on("mouseout", function(d) {
+        //     nodeEnter.selectAll('text')
+        //       .remove()
+        // })
 
       var defs = svg.append('svg:defs');
         defs.append('svg:pattern')
@@ -411,6 +414,8 @@ var TreeTimeLine = React.createClass({
           daysAgo = Number(daysAgo);
         }
         if (d3data.children[daysAgo]) {
+          console.log(d3data.children[daysAgo]);
+          d3data.children[daysAgo].children = [];
           d3data.children[daysAgo].children.push(data[source][date]);
         }
       }
