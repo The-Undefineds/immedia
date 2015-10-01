@@ -1,8 +1,8 @@
 var React = require('react');
-var i = 0;
+
 var dates = [];
 var generateDates = function(timeSpan) {
-  for (var i = 0; i < timeSpan; i++) {
+  for (var i = -1; i < timeSpan; i++) {
     var date = new Date();
     date.setDate(date.getDate() - i);
     dates.push(date.toJSON().slice(0, 10));
@@ -11,114 +11,90 @@ var generateDates = function(timeSpan) {
 
 generateDates(7);
 
-var d3data = {
-  name: 'd3data',
-  children: [
-    {
-      date: dates[0],
-      children: []
-    }, {
-      date: dates[1],
-      children: []
-    }, {
-      date: dates[2],
-      children: []
-    }, {
-      date: dates[3],
-      children: []
-    }, {
-      date: dates[4],
-      children: []
-    }, {
-      date: dates[5],
-      children: []
-    }, {
-      date: dates[6],
-      children: []
-    }
-  ]
-};
-
-var queryResults = {
-    nyt: {
-        '2015-09-29':{
-          source: 'twitter',
-          children: [
-            {
-              title: 'Elon Musk',
-              url: 'www.tesla.com',
-              img: 'https://lh5.googleusercontent.com/-89xTT1Ctbrk/AAAAAAAAAAI/AAAAAAAAAAA/5gt6hkVvJHY/s0-c-k-no-ns/photo.jpg'
-            }, {
-              title: 'Sergie Brin',
-              url: 'www.google.com',
-              img: 'http://www.technologytell.com/gadgets/files/2014/05/Sergey-Brin-should-have-stayed-away-from-Google-Plus.jpg'
-            }
-          ]
-        },
-        '2015-09-27':{
-          source: 'twitter',
-          children: [
-            {
-              title: 'Pope Francis',
-              url: 'www.thepope.com',
-              img: 'http://m.snopes.com/wp-content/uploads/2015/07/pope-francis.jpg'
-            }, {
-              title: 'Barack Obama',
-              url: 'www.whitehouse.gov',
-              img: 'https://pbs.twimg.com/profile_images/1645586305/photo.JPG'
-            }
-          ]
-        }
-      },
-    youtube: {
-        '2015-09-29': {
-          source: 'twitter',
-          children: [
-          {
-            title: 'Nickelback',
-            url: 'www.reddit.com',
-            img: 'http://www.blogcdn.com/www.joystiq.com/media/2008/11/nickelback.jpg'
-          }, {
-            title: 'Creed',
-            url: 'www.youtube.com',
-            img: 'http://www.ew.com/sites/default/files/i/daily/629//creed_l.jpg'
-          }
-        ]
-      }
-    },
-    twitter: {
-        '2015-09-29': {
-          source: 'twitter',
-          children: [
-          {
-            title: 'Donald Trump',
-            url: 'www.trump.com',
-            img: 'http://uziiw38pmyg1ai60732c4011.wpengine.netdna-cdn.com/wp-content/dropzone/2015/08/RTX1GZCO.jpg'
-          }, {
-            title: 'The Donald',
-            img: 'http://www.liberationnews.org/wp-content/uploads/2015/07/donaldtrump61815.jpg'
-          }
-          ]
-        },
-        '2015-09-27': {
-          source: 'twitter',
-          children: [
-          {
-            title: 'Kim Kardashian',
-            img: 'http://media2.popsugar-assets.com/files/2014/11/04/920/n/1922153/961af48ae3ec88c3_thumb_temp_cover_file23876211415134157.xxxlarge/i/Kim-Kardashian-Bleached-Brows.jpg'
-          }, {
-            title: 'Rihanna',
-            img: 'http://i.huffpost.com/gen/2717304/images/o-RIHANNA-DIOR-facebook.jpg'
-          }
-          ]
-        },
-      },
-    wikipedia: {},
-  }
+var i = 0;
 
 var TreeTimeLine = React.createClass({
 
+  getInitialState: function(){
+    return {
+      // wasSearchedFromTopBar: false,
+      // searchTerm: '',
+      apiData: [],
+    };
+  },
+
+  apis: [
+    'nyt',
+    // 'wikipedia',
+    // 'twitter',
+    'youtube'
+  ],
+
+  componentDidMount: function(){
+    for(var i = 0; i < this.apis.length; i++){
+      this.handleQuery({
+        searchTerm: this.props.searchTerm,
+        url: 'http://127.0.0.1:3000/api/' + this.apis[i],
+        api: this.apis[i]
+      });
+    }
+  },
+
+  handleQuery: function(searchQuery){
+    $.post(searchQuery.url, searchQuery)
+     .done(function(response) {
+        // Set State to initiate a re-rendering based on new API call data
+        this.setState(function(previousState, currentProps) {
+          // Make a copy of previous apiData to mutate and use to reset State
+          // Data is structured in an array that corresponds to sorted order by date descending
+          // where each index has the following object:
+          /*
+              {
+                'date': 'YYYY-MM-DD',
+                'children': [
+                  {
+                    'source': 'nyt',
+                    'children': [ {Article 1}, {Article 2}]
+                  }
+                ]
+              }
+          */
+          var previousApiData = previousState['apiData'].slice();
+          // Loop through each day in apiData and add new articles/videos/etc
+          // from returning API appropriately
+          for(var date in response) {
+            var i = 0;
+            for(; i < previousApiData.length; i++) {
+              if(previousApiData[i]['date'] === date) {
+                previousApiData[i]['children'].push(response[date]);
+                break;
+              }
+            }
+            // If loop terminates fully, no content exists for date
+            // so add content to the State array
+            if(i === previousApiData.length) {
+              previousApiData.push(
+                {
+                  'date': date, 
+                  'children': [
+                    response[date]
+                  ]
+                });
+            }
+          }
+          // Sort State array with API data by date descending
+          previousApiData.sort(function(a, b) {
+            var aDate = new Date(a['date']);
+            var bDate = new Date(b['date']);
+            return bDate - aDate;
+          });
+          return {apiData: previousApiData};
+        });
+     }.bind(this));
+  },
+
   render: function() {
+    this.renderCanvas();    // Crucial step that (re-)renders D3 canvas
     return (
       <div id="d3container"></div>
     )
@@ -137,9 +113,8 @@ var TreeTimeLine = React.createClass({
 
   renderCanvas: function() {
 
-    d3.select('svg').remove();
-
     var component = this;
+    d3.select('svg').remove();
 
     var margin = {
       top: 40,
@@ -150,8 +125,12 @@ var TreeTimeLine = React.createClass({
     var width = 400,
         height = 800;
 
+    var firstDate = this.state.apiData[this.state.apiData.length - 1] ? 
+                    this.state.apiData[this.state.apiData.length - 1]['date'] :
+                    dates[dates.length - 1];
+
     var y = d3.time.scale()
-      .domain([new Date(dates[dates.length - 1]), new Date('2015-09-30')])
+      .domain([new Date(firstDate), new Date(dates[0])])
       .rangeRound([height - margin.top - margin.bottom, 0])
 
     var yAxis = d3.svg.axis()
@@ -159,8 +138,8 @@ var TreeTimeLine = React.createClass({
       .orient('left')
       .ticks(d3.time.days, 1)
       .tickFormat(d3.time.format('%a %d'))
-      .tickSize(20)
-      .tickPadding(5)
+      .tickSize(0)
+      .tickPadding(20)
 
     var svg = d3.select('#d3container').append('svg')
       .attr('class', 'timeLine')
@@ -183,14 +162,14 @@ var TreeTimeLine = React.createClass({
       .call(yAxis);
 
     var timeLine = svg.selectAll('.timeLine')
-      .data(d3data)
+      .data({ 'name': 'data', 'children': this.state.apiData })
       .attr('y', function(d) { return y(new Date(d.date)); })
 
     svg.selectAll('g.node').remove();
 
 
     //-----draw tree from each tick on yAxis timeline ------
-    
+
     var root;
 
     var tree = d3.layout.tree()
@@ -199,7 +178,7 @@ var TreeTimeLine = React.createClass({
     var diagonal = d3.svg.diagonal()
         .projection(function(d) { return [d.y, d.x]; });
 
-      root = d3data;
+      root = { 'name': 'data', 'children': this.state.apiData };
       root.x0 = height / 1.5;
       root.y0 = 0;
 
@@ -249,18 +228,7 @@ var TreeTimeLine = React.createClass({
           if (d.title) {
             component.mouseOver(d);
           }
-        //   nodeEnter.append("svg:text")
-        //     .text(function(d) { return d.title; })
-        //     .attr({
-        //       'dx': 20,
-        //       'dy': -10,
-        //     })
-        //     .style("fill-opacity", 1)
         })
-        // .on("mouseout", function(d) {
-        //     nodeEnter.selectAll('text')
-        //       .remove()
-        // })
 
       var defs = svg.append('svg:defs');
         defs.append('svg:pattern')
@@ -401,31 +369,6 @@ var TreeTimeLine = React.createClass({
       update(root);
     }
   },
-
-  processData: function(data) {
-    //to-do: only process new data
-    //refactor data structure
-    for (var source in data) {
-      for (var date in data[source]) {
-        var daysAgo = moment(date).fromNow().slice(0,1);
-        if (daysAgo === 'a') {
-          daysAgo = 1;
-        } else {
-          daysAgo = Number(daysAgo);
-        }
-        if (d3data.children[daysAgo]) {
-          console.log(d3data.children[daysAgo]);
-          d3data.children[daysAgo].children = [];
-          d3data.children[daysAgo].children.push(data[source][date]);
-        }
-      }
-    }
-  },
-
-  componentWillReceiveProps: function() {
-    this.processData(this.props.data);
-    this.renderCanvas();
-  }
 
 });
 
