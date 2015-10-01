@@ -3,9 +3,10 @@ var React = require('react');
 var WikiView = React.createClass({
   
   componentDidMount : function(){
-    var img;
-    var searchTerm = this.props.searchTerm;
-    var searchRequest = "http://en.wikipedia.org/w/api.php?action=cirrus-suggest&text="+searchTerm+"&callback=?&format=json";
+    var img,
+        searchTerm = this.props.searchTerm,
+        context = this,
+        searchRequest = "http://en.wikipedia.org/w/api.php?action=cirrus-suggest&text="+searchTerm+"&callback=?&format=json";
     
     $.getJSON(searchRequest)
     .done(function(data){
@@ -23,11 +24,24 @@ var WikiView = React.createClass({
         wikiHTML = data.parse.text["*"];
         $wikiDOM = $("<document>"+wikiHTML+"</document>");
         var x = $wikiDOM.find(".infobox");
+        console.log(x);
         img = x[0].getElementsByTagName("IMG")[0] || "";
         if (img) img.parentNode.removeChild(img);
-        $('#wikiview').append(img).append(x.html());
+        var info = context.processData(x.html());
+        $('#wikiview').append(img).append(info);
       })
     });
+  },
+
+  processData: function(data){
+    for (var i = 0; i < data.length; i++) {
+      if (data[i] === 'h' && data.slice(i, i+4) === 'href') {
+        var string = data.slice(0,i) +  'target="_blank" ' + data.slice(i, i+6) + 'http://wikipedia.org' + data.slice(i+6);
+        data = string;
+        i += 20;
+      }
+    }
+    return data;
   },
   
   render: function(){
