@@ -74,18 +74,6 @@ var data = {
   ]
 };
 
-// function sortByDate (chunk) {
-//   var source = chunk.source;
-//   for (var key in chunk.data) {
-//     if (key !== 'source') {
-//       data.children.push({
-//       source: source,
-//       children: chunk.data[key],
-//       });
-//     }
-//   }
-// }
-
 var dateToday = new Date().toJSON().slice(0,10);
 var d = new Date();
 d.setDate(d.getDate() - 6);
@@ -146,7 +134,7 @@ var ForceTimeLine = React.createClass({
     var force = d3.layout.force()
       .on("tick", tick)
       .gravity(0)
-      .linkDistance(80)
+      .linkDistance(30)
       .size([width, height - 160]);
 
       root = data;
