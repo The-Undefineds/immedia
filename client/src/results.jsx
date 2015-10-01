@@ -5,8 +5,7 @@ var TreeTimeLine = require('./results_page/treetimeline.jsx'),
     WikiView = require('./results_page/wikiview.jsx'),
     ImageView = require('./results_page/imageview.jsx'),
     Preview = require('./results_page/preview.jsx'),
-    TopBar = require('./results_page/topbar.jsx'),
-    HomeButton = require('./results_page/homebutton.jsx');
+    TopBar = require('./results_page/topbar.jsx');
 
 var ResultsView = React.createClass({
 
@@ -114,9 +113,7 @@ var ResultsView = React.createClass({
   render: function(){
     return (
       <div>
-        <h1>Results</h1>
-        <HomeButton />
-        <TopBar queryTerm={this.queryTerm}/>
+        <TopBar queryTerm={this.queryTerm} goBackHome={this.props.goBackHome} />
         <WikiView searchTerm={this.props.searchTerm}/>
         <TreeTimeLine data={this.searchResults} mouseOver={this.mouseOver}/>
         <div id="preview"></div>
