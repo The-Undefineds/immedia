@@ -93,32 +93,39 @@ var ResultsView = React.createClass({
       wasSearchedFromTopBar: true,
     });
   },
-  // mouseOver: function(){
-  //   this.setState({hasMouseOver: true});
-  // },
+  
+  mouseOver: function(item){
+    this.hasMouseOver = true;
+    this.previewItem = item;
+    React.render(
+      <Preview previewItem={this.previewItem}/>,
+      document.getElementById('preview')
+      )
+  },
 
-  // mouseOut: function(){
-  //   this.setState({hasMouseOver: false});
-  // },
+  mouseOut: function(item){
+    this.setState({hasMouseOver: false});
+  },
+
+  handleClick: function(item) {
+    this.setState({clicked: true})
+  },
 
   render: function(){
-    console.log('rendering results');
     return (
       <div>
         <h1>Results</h1>
         <HomeButton />
         <TopBar queryTerm={this.queryTerm}/>
         <WikiView searchTerm={this.props.searchTerm}/>
-        <TreeTimeLine data={
-          this.searchResults
-        }/>
-        <ImageView data={this.state.wikipedia} />
-        <Preview />
+        <TreeTimeLine data={this.searchResults} mouseOver={this.mouseOver}/>
+        <div id="preview"></div>
+        <ImageView data={this.state.wikipedia} />      
       </div>
     );
   }
 });
 
-        // <WikiView data={this.state.wikipedia}/>
-        // { nyt: this.state.nyt, twitter: this.state.twitter, youtube: this.state.youtube }
+
+// { nyt: this.state.nyt, twitter: this.state.twitter, youtube: this.state.youtube }
 module.exports = ResultsView;

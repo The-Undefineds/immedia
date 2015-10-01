@@ -134,7 +134,7 @@ var ForceTimeLine = React.createClass({
     var force = d3.layout.force()
       .on("tick", tick)
       .gravity(0)
-      .linkDistance(80)
+      .linkDistance(30)
       .size([width, height - 160]);
 
       root = data;
