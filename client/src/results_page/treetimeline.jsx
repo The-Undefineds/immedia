@@ -130,6 +130,8 @@ var TreeTimeLine = React.createClass({
         date: item.date,
         url: item.url,
         img: item.img,
+        source: item.parent.source,
+        id: item.id
       });
   },
 
