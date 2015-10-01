@@ -4,6 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var youtube = require('./youtube');
 var nyt = require('./nyt.js');
+var twitter = require('./twitter');
 
 var app = express();
 var server = http.createServer(app);
@@ -25,6 +26,8 @@ Explanation:
 app.post('/api/youtube', youtube.search);
 
 app.post('/api/nyt', nyt.getArticles);
+
+app.post('/api/twitter', twitter.getTweetsPerson);
 
 ///////////////////////////
 
