@@ -27,12 +27,13 @@ var MainView = React.createClass({
 
   render: function(){
     return (
-      <div>
+      <div style={{textAlign:'center'}} >
         { this.state.atHome ? <HomePage searchInit={this.searchInit} atHome={this.state.atHome}/> : null }
         { !this.state.atHome ? <ResultsView searchTerm={this.state.searchTerm} /> : null }
       </div>
       )
-  }
+  },
+
 });
 
 React.render(<MainView />, document.getElementById('container'));

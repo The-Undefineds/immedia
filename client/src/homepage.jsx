@@ -9,11 +9,9 @@ var HomePage = React.createClass({
 
   render: function(){
     return (
-      <div>
-        <h1>Immedia</h1>
-        <p>{this.tagline}</p>
+      <div style={{marginTop:'150px'}}>
+        <h1 style={{color:'#46008B', fontSize:'60px', marginBottom:'0px'}}>Immedia</h1>
         <SearchBar searchInit={this.props.searchInit} atHome={this.props.atHome} />
-        <TopSearches />
       </div>
       )
   }
