@@ -26,13 +26,14 @@ var WikiView = React.createClass({
         var x = $wikiDOM.find(".infobox");
         console.log(x);
         img = x[0].getElementsByTagName("IMG")[0] || "";
-        if (img) img.parentNode.removeChild(img);
+        // if (img) { img.parentNode.removeChild(img) }; // this line removes the image from the info-box
         var info = context.processData(x.html());
-        $('#wikiview').append(img).append(info);
+        $('#wikiview').append(info);
       })
     });
   },
 
+  // alters html so that hyperlinks, when clicked, open in new tab
   processData: function(data){
     for (var i = 0; i < data.length; i++) {
       if (data[i] === 'h' && data.slice(i+1, i+4) === 'ref') {
