@@ -23,9 +23,7 @@ module.exports = {
     var mostPopular = {};
 
     // Response results
-    var results = {
-      'source': 'nyt'
-    };
+    var results = {};
 
     /*
       Create promise chain to search Most Popular articles and whether any
@@ -82,25 +80,26 @@ module.exports = {
       .then(function() {
         for(var article in mostPopular) {
           if(article in articleSearch) {
-            if(results[mostPopular[article]['published_date']] === undefined) {
-              results[mostPopular[article]['published_date']] = {
+            var publishedDate = utils.correctDateInFuture(mostPopular[article]['published_date'], '-');
+            if(results[publishedDate] === undefined) {
+              results[publishedDate] = {
                 'source': 'nyt',
                 'children': [
                   {
                     'title': mostPopular[article]['title'],
                     'url': mostPopular[article]['url'],
                     'img': (mostPopular[article]['media']['0']['media-metadata']['url'] || ''),
-                    'date': mostPopular[article]['published_date']
+                    'date': publishedDate
                   }
                 ]
               };
             } else {
-              results[mostPopular[article]['published_date']]['children'].push(
+              results[publishedDate]['children'].push(
                 {
                   'title': mostPopular[article]['title'],
                   'url': mostPopular[article]['url'],
                   'img': (mostPopular[article]['media']['0']['media-metadata']['url'] || ''),
-                  'date': mostPopular[article]['published_date']
+                  'date': publishedDate
                 }
               );
             }
@@ -108,36 +107,39 @@ module.exports = {
         }
         if(Object.keys(articleSearchDate).length !== 0) {
           var dates = Object.keys(articleSearchDate).sort(function(a, b) {
-            return Number(b.substring(b.length - 2)) - Number(a.substring(a.length - 2));
+            var aDate = new Date(a);
+            var bDate = new Date(b);
+            return bDate - aDate;
           });
-          var articles = articleSearchDate[dates[0]];
+          var articles = articleSearchDate[dates[0]].concat(articleSearchDate[dates[1]]);
           for(var i = 0; i < articles.length; i++) {
-            if(results[dates[0]] === undefined) {
-              results[dates[0]] = {
+            var date = utils.correctDateInFuture(articles[i]['pub_date'].substring(0, 10), '-');
+            if(results[date] === undefined) {
+              results[date] = {
                 'source': 'nyt',
                 'children': [
                   {
                     'title': articles[i]['headline']['main'],
                     'url': articles[i]['web_url'],
                     'img': '',
-                    'date': dates[0]
+                    'date': date
                   }
                 ]
               };
             } else {
-              var existingArticles = results[dates[0]]['children'];
+              var existingArticles = results[date]['children'];
               for(var j = 0; j < existingArticles.length; j++) {
                 if(articles[i]['web_url'] === existingArticles[j]['url']) {
                   break;
                 }
               }
               if(j === existingArticles.length) {
-                results[dates[0]]['children'].push(
+                results[date]['children'].push(
                   {
                     'title': articles[i]['headline']['main'],
                     'url': articles[i]['web_url'],
                     'img': '',
-                    'date': dates[0]
+                    'date': date
                   }
                 );
               }
