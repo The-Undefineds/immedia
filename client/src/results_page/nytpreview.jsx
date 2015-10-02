@@ -22,7 +22,6 @@ var NytPreview = React.createClass({
     if (!frameCache[previewItem.url]) {
       var queryUrl = 'http://api.embed.ly/1/oembed?key=7fd3eb5aa6f34be7be07cb9015f01e23&url=' + previewItem.url;
       $.get(queryUrl, function(data) {
-          console.log('success!', data);
           frameCache[previewItem.url] = data;
           this.resultsData = data;
           this.resultsData.thumbnail_height = 0.45*this.resultsData.thumbnail_height;
@@ -30,7 +29,6 @@ var NytPreview = React.createClass({
           component.setState({ rerender: !component.state.rerender })
       })
     } else {
-      console.log('cached data:', frameCache[previewItem.url]);
       this.resultsData = frameCache[previewItem.url];
       preview = true;
     }
