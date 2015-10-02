@@ -40,6 +40,16 @@ var TreeTimeLine = React.createClass({
     }
   },
 
+  componentWillReceiveProps: function(){
+    for(var i = 0; i < this.apis.length; i++){
+      this.handleQuery({
+        searchTerm: this.props.searchTerm,
+        url: 'http://127.0.0.1:3000/api/' + this.apis[i],
+        api: this.apis[i]
+      });
+    }
+  },
+
   handleQuery: function(searchQuery){
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {

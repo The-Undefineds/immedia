@@ -11,8 +11,7 @@ var ResultsView = React.createClass({
 
   queryTerm: function(searchTerm){
     this.setState({
-      searchTerm: searchTerm,
-      wasSearchedFromTopBar: true,
+      searchTerm: searchTerm
     });
   },
 
@@ -22,9 +21,9 @@ var ResultsView = React.createClass({
     $preview = $('#preview');
     if ($preview[0].localName === 'iframe') {
       $preview.remove();
-      $('#results').append('<div id="preview"></div')
+      $('#results').append('<div id="preview"></div>')
     } else if (!$preview) {
-      $('#results').append('<div id="preview"></div')
+      $('#results').append('<div id="preview"></div>')
     }
     React.render(
       <Preview previewItem={this.previewItem}/>,
