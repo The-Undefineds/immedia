@@ -150,7 +150,7 @@ module.exports = {
                     'width': (img === undefined ? '' : img['width']),
                     'date': date,
                     'byline': articles[i]['byline']['original'],
-                    'abstract': articles[i]['abstract']
+                    'abstract': (articles[i]['abstract'] === null ? articles[i]['snippet'] : articles[i]['abstract'])
                   }
                 ]
               };
@@ -171,7 +171,7 @@ module.exports = {
                     'width': (img === undefined ? '' : img['width']),
                     'date': date,
                     'byline': articles[i]['byline']['original'],
-                    'abstract': articles[i]['abstract']
+                    'abstract': (articles[i]['abstract'] === null ? articles[i]['snippet'] : articles[i]['abstract'])
                   }
                 );
               }
