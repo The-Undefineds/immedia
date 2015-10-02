@@ -4,27 +4,26 @@
     <meta charset="utf-8">
     <title>immedia</title>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-
     <style>
-    #preview {
-      width: 500px;
-      height: 600px;
-      border-style: solid;
-      border-color: gray;
-      border-width: 1px;
-      border-radius: 10px;
-      float: right;
-      margin-right: 40px;
-    }
+      #preview {
+        width: 500px;
+        height: 550px;
+        border-style: solid;
+        border-color: gray;
+        border-width: 10px;
+        border-radius: 20px;
+        margin-right: 40px;
+        position: fixed;
+        left: 400px;
+        margin-top: 100px;
+      }
     
-    .ui-autocomplete-loading {
-      background: white url("images/ui-anim_basic_16x16.gif") right center no-repeat;
-    }
-    #city { width: 25em; }
-  
+      .ui-autocomplete-loading {
+        background: white url("images/ui-anim_basic_16x16.gif") right center no-repeat;
+      }
+      #city { width: 25em; }
     </style>
   </head>
-
   <body>
     <div id='container'></div>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js'></script>

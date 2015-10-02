@@ -28,7 +28,7 @@ var SearchBar = React.createClass({
   render: function(){
     return (
       <div>
-        <div className='ui-widget' style={{marginTop:'2em'}}>
+        <div className='ui-widget'>
           <input id='searchbox' type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} />
         </div>
         <span>
