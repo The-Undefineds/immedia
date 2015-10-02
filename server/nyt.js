@@ -4,6 +4,21 @@ var Q = require('Q');
 var Promise = require('bluebird');
 var request = Promise.promisify(require('request'));
 
+var getPictureArticleSearch = function(article) {
+  var baseURL = 'http://www.nytimes.com/';
+  var pictures = article['multimedia'];
+
+  for(var picture in pictures) {
+    if(pictures[picture]['subtype'] !== 'thumbnail' && pictures[picture]['subtype'] !== 'wide') {
+      return {
+        'url': baseURL + pictures[picture]['url'],
+        'height': pictures[picture]['height'],
+        'width': pictures[picture]['width']
+      };
+    }
+  }
+  return;
+};
 
 module.exports = {
 
@@ -88,8 +103,12 @@ module.exports = {
                   {
                     'title': mostPopular[article]['title'],
                     'url': mostPopular[article]['url'],
-                    'img': (mostPopular[article]['media']['0']['media-metadata']['0']['url'] || ''),
-                    'date': publishedDate
+                    'img': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['url']),
+                    'height': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['height']),
+                    'width': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['width']),
+                    'date': publishedDate,
+                    'byline': mostPopular[article]['byline'],
+                    'abstract': mostPopular[article]['abstract']
                   }
                 ]
               };
@@ -98,8 +117,12 @@ module.exports = {
                 {
                   'title': mostPopular[article]['title'],
                   'url': mostPopular[article]['url'],
-                  'img': (mostPopular[article]['media']['0']['media-metadata']['0']['url'] || ''),
-                  'date': publishedDate
+                  'img': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['url']),
+                  'height': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['height']),
+                  'width': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['width']),
+                  'date': publishedDate,
+                  'byline': mostPopular[article]['byline'],
+                  'abstract': mostPopular[article]['abstract']
                 }
               );
             }
@@ -111,9 +134,10 @@ module.exports = {
             var bDate = new Date(b);
             return bDate - aDate;
           });
-          var articles = articleSearchDate[dates[0]].concat(articleSearchDate[dates[1]]);
+          var articles = articleSearchDate[dates[0]].concat((articleSearchDate[dates[1]] || []));
           for(var i = 0; i < articles.length; i++) {
             var date = utils.correctDateInFuture(articles[i]['pub_date'].substring(0, 10), '-');
+            var img = getPictureArticleSearch(articles[i]);
             if(results[date] === undefined) {
               results[date] = {
                 'source': 'nyt',
@@ -121,8 +145,12 @@ module.exports = {
                   {
                     'title': articles[i]['headline']['main'],
                     'url': articles[i]['web_url'],
-                    'img': '',
-                    'date': date
+                    'img': (img === undefined ? '' : img['url']),
+                    'height': (img === undefined ? '' : img['height']),
+                    'width': (img === undefined ? '' : img['width']),
+                    'date': date,
+                    'byline': articles[i]['byline']['original'],
+                    'abstract': articles[i]['abstract']
                   }
                 ]
               };
@@ -138,8 +166,12 @@ module.exports = {
                   {
                     'title': articles[i]['headline']['main'],
                     'url': articles[i]['web_url'],
-                    'img': '',
-                    'date': date
+                    'img': (img === undefined ? '' : img['url']),
+                    'height': (img === undefined ? '' : img['height']),
+                    'width': (img === undefined ? '' : img['width']),
+                    'date': date,
+                    'byline': articles[i]['byline']['original'],
+                    'abstract': articles[i]['abstract']
                   }
                 );
               }
