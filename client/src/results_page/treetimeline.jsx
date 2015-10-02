@@ -96,8 +96,14 @@ var TreeTimeLine = React.createClass({
   render: function() {
     this.renderCanvas();    // Crucial step that (re-)renders D3 canvas
     return (
-      <div id="d3container" style={{float: 'left'}}></div>
+      <div id="d3container" style={this.style}></div>
     )
+  },
+
+  style: {
+    position: 'fixed',
+    marginTop: '50px',
+    left: '50px'
   },
 
   mouseOver: function(item) {
