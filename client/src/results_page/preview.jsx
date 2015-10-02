@@ -28,8 +28,6 @@ var Preview = React.createClass({
     var stopVideo = function() {
       player.stopVideo();
     }
-    //To destroy the video
-    //You have to destroy the video after using it
   },
 
   render: function() {
@@ -45,14 +43,13 @@ var Preview = React.createClass({
       var twitter = true;
     }
 
-    return(
-      <div style={{float:'right'}}>
+    return (
+      <div >
         { nyt ? <NytPreview previewItem={ previewItem } /> : null }
         { twitter ? <TwitterPreview previewItem={ previewItem } /> : null }
       </div>
       )
   }
-
 });
 
 module.exports = Preview;

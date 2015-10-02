@@ -46,10 +46,16 @@ var ResultsView = React.createClass({
         <TopBar queryTerm={this.queryTerm} goBackHome={this.props.goBackHome} />
         <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver}/>
         <WikiView searchTerm={this.props.searchTerm}/>
-        <div id="preview"></div>
+        <div id="preview" style={this.style}></div>
         <ImageView />
       </div>
     );
+  },
+
+  style: {
+    position: 'fixed',
+    left: '400px',
+    marginTop: '100px'
   }
 });
 
