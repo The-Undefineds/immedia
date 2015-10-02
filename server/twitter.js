@@ -16,7 +16,7 @@ var search = {
 
 module.exports = {
   getTweetsPerson : function(request, response){
-    var queryString = 'Donald Trump'; //request.body.searchTerm
+    var queryString = request.body.searchTerm;
     
     findUser(baseUrl, queryString, function(status, data){
       response.status(status).send(data);
@@ -47,33 +47,56 @@ function findUser(baseUrl, queryString, callback){
 
 function grabTimeline(newUrl, id, callback){
   search.url = newUrl;
-  search.qs = {user_id : id};
-  search.headers.Authorization = OAuth(newUrl, 'user_id=' + id);
+  search.qs = {user_id : id, include_rts : 'false'};
+  search.headers.Authorization = OAuth(newUrl, 'user_id=' + id, 'include_rts=false');
   request(search, function(error, response, body){
     if(error) {
       callback(404, error);
     } else {
       body = JSON.parse(body);
-      if (body[0]) {
-        embedTweet(url, body[0]["id_str"], callback);
-      }
-      else 
-        callback(200, body);
+       if (body[0]) {
+         var arr = [];
+         var date = body[0].created_at;
+         var month = date.slice(4, 7);
+         var year = date.slice(26);
+         var day = date.slice(8,10);
+         date = year + '-' + month + '-' + day
+         
+         for (var i = 0; i < 3; i++){
+          arr.push(body[i]["id_str"]);
+         }
+         embedTweet(url, arr, callback, date);
+       }
+       else callback(200, body);
     }
   })
 }
 
-function embedTweet(url, id, callback){
-  console.log(id);
+function embedTweet(url, arr, callback, date){
+  var obj = {};
+  var manualPromise = 0;
+  obj[date] = {
+    source : 'twitter',
+    children : []
+  }
+  
   search.url = url;
-  search.qs = {id : id};
   search.headers.Authorization = null;
-  request(search, function(error, response, body){
-    if(error) {
-      callback(404, error);
-    } else {
-      body = JSON.parse(body);
-      callback(200, body.html);
-    }
-  })
+  
+  for (var i = 0; i < arr.length; i++){
+    search.qs = {id : arr[i]};
+    request(search, function(error, response, body){
+      if(error) {
+        callback(404, error);
+      } else {
+        body = JSON.parse(body);
+        obj[date].children.push({
+          url : body.url,
+          tweet : body.html
+        })
+        manualPromise++;
+        if (manualPromise === 3) callback(200, obj);
+      }
+    })
+  }
 }
