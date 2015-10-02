@@ -13,83 +13,6 @@ generateDates(7);
 
 var i = 0;
 
-var queryResults = {
-    nyt: {
-        '2015-09-29':{
-          source: 'nyt',
-          children: [
-            {
-              title: 'Elon Musk',
-              url: 'www.tesla.com',
-              img: 'https://lh5.googleusercontent.com/-89xTT1Ctbrk/AAAAAAAAAAI/AAAAAAAAAAA/5gt6hkVvJHY/s0-c-k-no-ns/photo.jpg'
-            }, {
-              title: 'Sergie Brin',
-              url: 'www.google.com',
-              img: 'http://www.technologytell.com/gadgets/files/2014/05/Sergey-Brin-should-have-stayed-away-from-Google-Plus.jpg'
-            }
-          ]
-        },
-        '2015-09-27':{
-          source: 'nyt',
-          children: [
-            {
-              title: 'Pope Francis',
-              url: 'www.thepope.com',
-              img: 'http://m.snopes.com/wp-content/uploads/2015/07/pope-francis.jpg'
-            }, {
-              title: 'Barack Obama',
-              url: 'www.whitehouse.gov',
-              img: 'https://pbs.twimg.com/profile_images/1645586305/photo.JPG'
-            }
-          ]
-        }
-      },
-    youtube: {
-        '2015-09-29': {
-          source: 'youtube',
-          children: [
-          {
-            title: 'Nickelback',
-            url: 'www.reddit.com',
-            img: 'http://www.blogcdn.com/www.joystiq.com/media/2008/11/nickelback.jpg'
-          }, {
-            title: 'Creed',
-            url: 'www.youtube.com',
-            img: 'http://www.ew.com/sites/default/files/i/daily/629//creed_l.jpg'
-          }
-        ]
-      }
-    },
-    twitter: {
-        '2015-09-29': {
-          source: 'twitter',
-          children: [
-          {
-            title: 'Donald Trump',
-            url: 'www.trump.com',
-            img: 'http://uziiw38pmyg1ai60732c4011.wpengine.netdna-cdn.com/wp-content/dropzone/2015/08/RTX1GZCO.jpg'
-          }, {
-            title: 'The Donald',
-            img: 'http://www.liberationnews.org/wp-content/uploads/2015/07/donaldtrump61815.jpg'
-          }
-          ]
-        },
-        '2015-09-27': {
-          source: 'twitter',
-          children: [
-          {
-            title: 'Kim Kardashian',
-            img: 'http://media2.popsugar-assets.com/files/2014/11/04/920/n/1922153/961af48ae3ec88c3_thumb_temp_cover_file23876211415134157.xxxlarge/i/Kim-Kardashian-Bleached-Brows.jpg'
-          }, {
-            title: 'Rihanna',
-            img: 'http://i.huffpost.com/gen/2717304/images/o-RIHANNA-DIOR-facebook.jpg'
-          }
-          ]
-        },
-      },
-    wikipedia: {},
-  }
-
 var TreeTimeLine = React.createClass({
 
   getInitialState: function(){
@@ -189,6 +112,7 @@ var TreeTimeLine = React.createClass({
   },
 
   renderCanvas: function() {
+
     var component = this;
     d3.select('svg').remove();
 
@@ -198,6 +122,7 @@ var TreeTimeLine = React.createClass({
       bottom: 20,
       left: 40
     };
+
     var width = 320,
         height = 680;
 
@@ -279,12 +204,12 @@ var TreeTimeLine = React.createClass({
 
       nodes.forEach(function(d) { 
         if (d.depth === 1) {
-          d.x = y(new Date(d.date)) - 35;
+          d.x = y(new Date(d.date)) - 10;
           d.y = 0;
           d.fixed = true;
         }
         else {
-          d.y = d.depth * 80; 
+          d.y = d.depth * 60; 
           }
         });
 
@@ -296,6 +221,11 @@ var TreeTimeLine = React.createClass({
       var nodeEnter = node.enter().append("svg:g")
         .attr("class", "node")
         .on("click", function(d) {
+          if (d.title) {
+            console.log(d);
+            // d3.select(d).html('<a href=' + d.url + ' target+_blank></a>');
+            return;
+          }
           console.log(d);
           toggle(d); 
           update(d); 
@@ -303,18 +233,17 @@ var TreeTimeLine = React.createClass({
         .on("mouseenter", function(d) {
           if (d.title) {
             component.mouseOver(d);
+            d3.select(this)
+              .attr('r', 35)
           }
-          nodeEnter.append("svg:text")
-            .text(function(d) { return d.title; })
-            .attr({
-              'dx': 20,
-              'dy': -10,
-            })
-            .style("fill-opacity", 1)
         })
-        .on("mouseout", function(d) {
-            nodeEnter.selectAll('text')
-              .remove()
+
+      d3.selectAll('g.node')
+        .append('a')
+        .attr('xlink:href', function(d) {
+          if (d.title) {
+            return d.url;
+          }
         })
 
       var defs = svg.append('svg:defs');
@@ -370,12 +299,14 @@ var TreeTimeLine = React.createClass({
 
       nodeUpdate.select("circle")
           .attr("r", function(d) {
-            if (d._children && d !== root) {
+            if (d.depth === 1 && d._children) {
               return d._children.length * 6;
-            } else if (d.title) {
-              return 20;
-            }
-            return 10;
+            } else if (d.depth === 1 && d.children) {
+              return d.children.length * 6;
+            } else if (d.source) {
+              return 12;
+            } else if (d.title)
+              return 25;
           })
           .style("fill", function(d) { 
             var dat = d;
