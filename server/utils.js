@@ -19,6 +19,7 @@ module.exports = {
   },
 
   'getSimpleDate': function(date) {
+    var date = new Date(date);
     return {
       year: date.getFullYear().toString(),
       month: (((date.getMonth()+1).toString()[1]) ? date.getMonth()+1 : "0" + (date.getMonth()+1)).toString(),
