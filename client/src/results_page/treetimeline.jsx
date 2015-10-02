@@ -96,8 +96,14 @@ var TreeTimeLine = React.createClass({
   render: function() {
     this.renderCanvas();    // Crucial step that (re-)renders D3 canvas
     return (
-      <div id="d3container" style={{float: 'left'}}></div>
+      <div id="d3container" style={this.style}></div>
     )
+  },
+
+  style: {
+    position: 'fixed',
+    marginTop: '50px',
+    left: '50px'
   },
 
   mouseOver: function(item) {
@@ -115,6 +121,8 @@ var TreeTimeLine = React.createClass({
 
     var component = this;
     d3.select('svg').remove();
+
+    var colors = d3.scale.category20c();
 
     var margin = {
       top: 10,
@@ -309,7 +317,7 @@ var TreeTimeLine = React.createClass({
             } else if (d.source == 'youtube') {
               return 'url(/#tile-youtube)';
             } else if (d.img === '') {
-              return 'lightsteelblue';
+              return colors(d.id);
             } else if (d.depth === 3) {
               defs.append('svg:pattern')
                 .attr('id', 'tile-img' + d.id)

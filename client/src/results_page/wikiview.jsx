@@ -50,17 +50,16 @@ var WikiView = React.createClass({
   
   render: function(){
     return (
-      <div id='wikiview' style={this.styles.wikiview}></div>
+      <div id='wikiview' style={this.style}></div>
     );
   },
 
-  styles: {
-    wikiview: {
-      float: 'right',
-      overflow: 'scroll',
-      width: '500px',
-      maxHeight: '680px',
-    }
+  style: {
+    position: 'fixed',
+    left: '950px',
+    overflow: 'scroll',
+    marginTop: '50px',
+    maxHeight: '680px'
   }
 
 });

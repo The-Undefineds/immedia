@@ -24,11 +24,12 @@ var SearchBar = React.createClass({
     this.props.searchInit(this.state.searchTerm);
   },
 
+
   render: function(){
     return (
       <div>
-        <div className='ui-widget'>
-          <input id='tags' type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} />
+        <div className='ui-widget' style={{marginTop:'2em'}}>
+          <input id='searchbox' type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} />
         </div>
         <span>
           <button type='button' onClick={this.handleSubmit} > Immedia Search </button>

@@ -4,12 +4,11 @@
     <meta charset="utf-8">
     <title>immedia</title>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
     <style>
-
-
     #preview {
       width: 500px;
-      height: 550px;
+      height: 600px;
       border-style: solid;
       border-color: gray;
       border-width: 1px;
@@ -18,28 +17,60 @@
       margin-right: 40px;
     }
     
+    .ui-autocomplete-loading {
+      background: white url("images/ui-anim_basic_16x16.gif") right center no-repeat;
+    }
+    #city { width: 25em; }
+  
     </style>
-    
   </head>
+
   <body>
-    <div id='container' style={{backgroundColor: '#46008B'}}></div>
+    <div id='container'></div>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js'></script>
+    <script src='https://www.youtube.com/iframe_api'></script> 
     <script src='./src/build.js'></script>
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-
+      <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script>
       $(function() {
-        var availableTags = [
-          'trump', 'trumpa', 'trumpy', 'big daddy trump', 'dj trump', 'just trump it'
-        ];
-        $( "#tags" ).autocomplete({
-          source: availableTags
+        function log( message ) {
+          $( "<div>" ).text( message ).prependTo( "#log" );
+          $( "#log" ).scrollTop( 0 );
+        }
+     
+        $( "#searchbox" ).autocomplete({
+          source: function( request, response ) {
+            $.ajax({
+              url: "http://en.wikipedia.org/w/api.php",
+              dataType: "jsonp",
+              data: {
+                'action': "opensearch",
+                'format': "json",
+                'search': request.term
+              },
+              success: function( data ) {
+                response( data[1] );
+              }
+            });
+          },
+          minLength: 3,
+          select: function( event, ui ) {
+            log( ui.item ?
+              "Selected: " + ui.item.label :
+              "Nothing selected, input was " + this.value);
+          },
+          open: function() {
+            $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+          },
+          close: function() {
+            $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+          }
         });
       });
-    </script>
-
+      </script>
+      
   </body>
 </html>

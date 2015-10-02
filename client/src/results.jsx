@@ -19,6 +19,13 @@ var ResultsView = React.createClass({
   mouseOver: function(item){
     this.hasMouseOver = true;
     this.previewItem = item;
+    $preview = $('#preview');
+    if ($preview[0].localName === 'iframe') {
+      $preview.remove();
+      $('#results').append('<div id="preview"></div')
+    } else if (!$preview) {
+      $('#results').append('<div id="preview"></div')
+    }
     React.render(
       <Preview previewItem={this.previewItem}/>,
       document.getElementById('preview')
@@ -35,15 +42,15 @@ var ResultsView = React.createClass({
 
   render: function(){
     return (
-      <div>
+      <div id="results">
         <TopBar queryTerm={this.queryTerm} goBackHome={this.props.goBackHome} />
         <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver}/>
-        <WikiView searchTerm={this.props.searchTerm} getWikiImage={ this.getWikiImage }/>
+        <WikiView searchTerm={this.props.searchTerm}/>
         <div id="preview"></div>
         <ImageView />
       </div>
     );
-  }
+  },
 });
 
 module.exports = ResultsView;
