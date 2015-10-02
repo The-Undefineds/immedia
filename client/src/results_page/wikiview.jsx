@@ -56,7 +56,7 @@ var WikiView = React.createClass({
 
   style: {
     position: 'fixed',
-    left: '950px',
+    left: '900px',
     overflow: 'scroll',
     marginTop: '50px',
     maxHeight: '680px'

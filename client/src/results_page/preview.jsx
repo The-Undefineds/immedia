@@ -1,6 +1,7 @@
 var React = require('react');
 
 var NytPreview = require('./nytpreview.jsx');
+var TwitterPreview = require('./twitterpreview.jsx');
 
 var player;
 
@@ -34,8 +35,11 @@ var Preview = React.createClass({
 
     var previewItem = this.props.previewItem;
     var source = previewItem.source;
+    console.log(previewItem);
 
-    if (source == 'nyt') {
+    if (previewItem.tweet) {
+      var twitter = true;
+    } else if (source == 'nyt') {
       var nyt = true;
     } else if (source == 'youtube') {
       this.mountYouTubeVideo(previewItem.id);

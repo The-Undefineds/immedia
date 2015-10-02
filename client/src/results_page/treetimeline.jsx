@@ -15,6 +15,8 @@ var i = 0;
 
 var TreeTimeLine = React.createClass({
 
+  renderCount: 0,
+
   getInitialState: function(){
     return {
       // wasSearchedFromTopBar: false,
@@ -25,8 +27,7 @@ var TreeTimeLine = React.createClass({
 
   apis: [
     'nyt',
-    // 'wikipedia',
-    // 'twitter',
+    'twitter',
     'youtube'
   ],
 
@@ -123,7 +124,8 @@ var TreeTimeLine = React.createClass({
         url: item.url,
         img: item.img,
         source: item.parent.source,
-        id: item.id
+        id: item.id,
+        tweet: item.tweet
       });
   },
 
@@ -144,17 +146,8 @@ var TreeTimeLine = React.createClass({
     var width = 350,
         height = 700;
 
-
-    // var oldestDate;
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
                       this.state.apiData[this.state.apiData.length - 1] : null;
-
-    // if (Number(moment(oldestItem['date']).fromNow().slice(0, 2)) > 10) {
-    //   oldestItem.outOfScope = true;
-    //   oldestDate = dates[dates.length - 1];
-    // } else {
-    //   oldestDate = oldestItem['date']
-    // }
 
     var y = d3.time.scale()
       .domain([new Date(dates[dates.length - 1]), new Date(dates[0])])
@@ -224,6 +217,7 @@ var TreeTimeLine = React.createClass({
       update(root);
 
     function update(source) {
+
       var duration = 500;
 
       var nodes = tree.nodes(root).reverse();
@@ -253,6 +247,7 @@ var TreeTimeLine = React.createClass({
       var nodeEnter = node.enter().append("svg:g")
         .attr("class", "node")
         .on("click", function(d) {
+          console.log(d);
           if (d.url) { 
             window.open(d.url,'_blank');
             return;
@@ -260,12 +255,11 @@ var TreeTimeLine = React.createClass({
             window.open('https://www.youtube.com/watch?v=' + d.id, '_blank');
             return;
           }
-          console.log(d);
           toggle(d); 
           update(d); 
         })
         .on("mouseenter", function(d) {
-          if (d.title) {
+          if (d.depth === 3) {
             component.mouseOver(d);
             d3.select(this)
               .attr('r', 35)
@@ -326,7 +320,7 @@ var TreeTimeLine = React.createClass({
       nodeUpdate.select("circle")
           .attr("r", function(d) {
             if (d.depth === 1 && d._children) {
-              return d._children.length * 10;
+              return 12;
             } else if (d.depth === 1 && d.children) {
               return d.children.length * 10;
             } else if (d.source) {

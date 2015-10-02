@@ -16,8 +16,10 @@ var ResultsView = React.createClass({
   },
 
   mouseOver: function(item){
+    
     this.hasMouseOver = true;
     this.previewItem = item;
+
     $preview = $('#preview');
     if ($preview[0].localName === 'iframe') {
       $preview.remove();
