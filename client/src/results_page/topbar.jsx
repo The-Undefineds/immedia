@@ -20,6 +20,7 @@ var TopBar = React.createClass({
 
   handleSubmit: function(){
     this.props.searchInit(this.state.searchTerm);
+    this.setState({ searchTerm: '' });
   },
 
   goBackHome: function(){ this.props.goBackHome(); },
