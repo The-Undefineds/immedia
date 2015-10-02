@@ -32,7 +32,6 @@ var TreeTimeLine = React.createClass({
   apiCounter: 0,
 
   query: function(searchTerm){
-    console.log('searchTerm * * * * * * * * * * * * * * * * : ', searchTerm);
     this.apiCounter = 0;
     for(var i = 0; i < this.apis.length; i++){
       this.handleQuery({
@@ -80,7 +79,6 @@ var TreeTimeLine = React.createClass({
             var previousApiData = previousState['apiData'].slice();
           }
           this.apiCounter++;
-          console.log('apiCounter * * * * * * * * * * * * * * * * * * * : ', this.apiCounter);
 
           // Loop through each day in apiData and add new articles/videos/etc
           // from returning API appropriately
