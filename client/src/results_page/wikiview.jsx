@@ -1,13 +1,15 @@
 var React = require('react');
 
 var WikiView = React.createClass({
-  
-  componentDidMount : function(){
+
+  query: function(searchTerm){
     var img,
-        searchTerm = this.props.searchTerm,
+        searchTerm = searchTerm,
         context = this,
         searchRequest = "http://en.wikipedia.org/w/api.php?action=cirrus-suggest&text="+searchTerm+"&callback=?&format=json";
     
+    $('#wikiview').empty();
+
     $.getJSON(searchRequest)
     .done(function(data){
       var highestScore = 0;
@@ -30,6 +32,16 @@ var WikiView = React.createClass({
         $('#wikiview').append(info);
       })
     });
+  },
+  
+  componentDidMount : function(){
+    this.query(this.props.searchTerm);
+  },
+
+  componentWillReceiveProps: function(newProps){
+    if (this.props.searchTerm !== newProps.searchTerm) {
+      this.query(newProps.searchTerm);
+    }
   },
 
   // alters html so that hyperlinks, when clicked, open in new tab
