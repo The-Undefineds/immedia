@@ -204,12 +204,12 @@ var TreeTimeLine = React.createClass({
 
       nodes.forEach(function(d) { 
         if (d.depth === 1) {
-          d.x = y(new Date(d.date)) - 35;
+          d.x = y(new Date(d.date)) - 10;
           d.y = 0;
           d.fixed = true;
         }
         else {
-          d.y = d.depth * 80; 
+          d.y = d.depth * 60; 
           }
         });
 
@@ -221,6 +221,11 @@ var TreeTimeLine = React.createClass({
       var nodeEnter = node.enter().append("svg:g")
         .attr("class", "node")
         .on("click", function(d) {
+          if (d.title) {
+            console.log(d);
+            // d3.select(d).html('<a href=' + d.url + ' target+_blank></a>');
+            return;
+          }
           console.log(d);
           toggle(d); 
           update(d); 
@@ -228,6 +233,16 @@ var TreeTimeLine = React.createClass({
         .on("mouseenter", function(d) {
           if (d.title) {
             component.mouseOver(d);
+            d3.select(this)
+              .attr('r', 35)
+          }
+        })
+
+      d3.selectAll('g.node')
+        .append('a')
+        .attr('xlink:href', function(d) {
+          if (d.title) {
+            return d.url;
           }
         })
 
@@ -284,12 +299,14 @@ var TreeTimeLine = React.createClass({
 
       nodeUpdate.select("circle")
           .attr("r", function(d) {
-            if (d._children && d !== root) {
+            if (d.depth === 1 && d._children) {
               return d._children.length * 6;
-            } else if (d.title) {
-              return 20;
-            }
-            return 10;
+            } else if (d.depth === 1 && d.children) {
+              return d.children.length * 6;
+            } else if (d.source) {
+              return 12;
+            } else if (d.title)
+              return 25;
           })
           .style("fill", function(d) { 
             var dat = d;
