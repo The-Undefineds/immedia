@@ -7,7 +7,8 @@ var youtube = 'https://www.googleapis.com/youtube/v3';
 module.exports = {
   search : function(request, response) {
     var itemToSearch = request.body.searchTerm;
-    callYoutube(utils.getDateFromToday(-7,'-') + 'T00:00:00Z', itemToSearch, function(status, data){
+    var date = request.body.date || 'this week'
+    callYoutube(date, itemToSearch, function(status, data){
       response.status(status).send(data);
     });
   }
@@ -22,33 +23,59 @@ function callYoutube(date, item, callback){
     method : 'GET'
   }
   
+  if (date === 'this week'){
+    date = utils.getDateFromToday(-7,'-') + 'T00:00:00Z'
+    search.qs.publishedAfter = date;
+  }
+  else if (date === 'this month'){
+    date = utils.getDateFromToday(-30,'-') + 'T00:00:00Z'
+    search.qs.publishedAfter = date;
+  }  
+  else if (date === 'this year'){
+    date = utils.getDateFromToday(-365,'-') + 'T00:00:00Z'
+    search.qs.publishedAfter = date;
+  }
+  
   request(search, function(error, response, body){
     if(error) {
       console.log(error);
       callback(404, error);
     } else {
       body = JSON.parse(body);
-      
-      //snippet.thumbnails.(key) | key = default|medium|high | access through key.url
-      var date = body.items[0].snippet.publishedAt.slice(0, 10); //Should be user defined
-         
       var obj = {};
-      obj[date] = {
-        source : 'youtube',
-        children : []
-      }
-      
-      for (var i = 0; i < body.items.length && obj[date].children.length <= 5; i++){
-        if (body.items[i].snippet.publishedAt.slice(0, 10) === date){
-          obj[date].children.push({
-            title : body.items[i].snippet.title,
-            id : body.items[i].id.videoId,
-            thumbnail : body.items[i].snippet.thumbnails
-          })
+      //snippet.thumbnails.(key) | key = default|medium|high | access through key.url
+      for (var i = 0; i < 3; i++){
+        var date = body.items[i].snippet.publishedAt.slice(0, 10); //Should be user defined
+        obj[date] = obj[date] || {
+          source : 'youtube',
+          children : []
         }
+        obj[date].children.push({
+          title : body.items[i].snippet.title,
+          id : body.items[i].id.videoId,
+          thumbnail : body.items[i].snippet.thumbnails
+        })        
       }
-      
-      callback(200, obj);
     }
+    delete search.qs.publishedAfter;
+    request(search, function(error, response, body){
+      if(error) {
+        console.log(error);
+        callback(404, error);
+      } else {
+        body = JSON.parse(body);
+        var date = body.items[0].snippet.publishedAt.slice(0, 10);
+        obj[date] = obj[date] || {
+          source : 'youtube',
+          children : []
+        }
+        obj[date].children.push({
+          title : body.items[i].snippet.title,
+          id : body.items[i].id.videoId,
+          thumbnail : body.items[i].snippet.thumbnails
+        })
+        callback(200, obj);
+      }
+    })
   })
 }
