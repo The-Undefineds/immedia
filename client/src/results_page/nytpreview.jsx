@@ -35,7 +35,10 @@ var NytPreview = React.createClass({
         <div>
           <h1>{ this.props.previewItem.title }</h1>
           <h3>{ this.props.previewItem.byline }</h3>
-          <img src={ this.props.previewItem.img } height={ this.props.previewItem.height * ratio } width= { this.props.previewItem.width * ratio }></img>
+          { this.props.previewItem.img !== '' ? 
+            <img src={ this.props.previewItem.img } height={ this.props.previewItem.height * ratio } width= { this.props.previewItem.width * ratio }></img> :
+            null
+          }
           <p>{ this.props.previewItem.abstract }</p>
         </div>
       </a>
