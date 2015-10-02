@@ -36,7 +36,8 @@ function findUser(baseUrl, queryString, callback){
       body = JSON.parse(body);
       var id,
           img;
-      if (!('error' in body)) { 
+
+      if (!('errors' in body)) { 
         id = body[0].id;
         img = body[0].profile_image_url;
 
@@ -58,7 +59,7 @@ function grabTimeline(newUrl, params, callback){
       callback(404, error);
     } else {
       body = Array.prototype.slice.call(JSON.parse(body));
-      if (!('error' in body)) {
+      if (body[0]) {
         var tweetIdsToSend = [];
         var tweetsBySocialCount = {};
         var date = utils.getSimpleDate(body[0].created_at);
