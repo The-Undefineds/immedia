@@ -1,7 +1,10 @@
 var crypto = require('crypto');
 var key = require('./keys');
 
-module.exports = function(baseURL, param){
+module.exports = function(baseURL, param, aParam){
+  if (aParam !== undefined) aParam += '&';
+  else aParam = "";
+  
   var nonceDomain = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
       signingKey = percentEncoding(key.twitterConsumerSecret) + '&' + percentEncoding(key.twitterAccessTokenSecret)
   
@@ -10,8 +13,8 @@ module.exports = function(baseURL, param){
   var oauthSignatureMethod = 'HMAC-SHA1',
       oauthNonce = '',
       oauthTimestamp = Math.floor(Date.now() / 1000),
-      oauthSignature = getOAuthSignature('GET', baseURL, 'oauth_consumer_key=' + key.twitterConsumer + '&oauth_nonce=' + getOAuthNonce(32) + '&oauth_signature_method=' + oauthSignatureMethod + '&oauth_timestamp=' + oauthTimestamp + '&oauth_token=' + key.twitterAccessToken + '&oauth_version=1.0&' + param);
-      
+      oauthSignature = getOAuthSignature('GET', baseURL, aParam + 'oauth_consumer_key=' + key.twitterConsumer + '&oauth_nonce=' + getOAuthNonce(32) + '&oauth_signature_method=' + oauthSignatureMethod + '&oauth_timestamp=' + oauthTimestamp + '&oauth_token=' + key.twitterAccessToken + '&oauth_version=1.0&' + param);
+  
   var authHeader = 'OAuth oauth_consumer_key=\"' + percentEncoding(key.twitterConsumer) + '\", oauth_nonce=\"' + percentEncoding(oauthNonce) + '\", oauth_signature=\"' + percentEncoding(oauthSignature) + '\", oauth_signature_method=\"' + oauthSignatureMethod + '\", oauth_timestamp=\"' + oauthTimestamp + '\", oauth_token=\"' + percentEncoding(key.twitterAccessToken) + '\", oauth_version=\"1.0\"';
       
   return authHeader;
