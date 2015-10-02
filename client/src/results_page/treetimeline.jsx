@@ -25,8 +25,7 @@ var TreeTimeLine = React.createClass({
 
   apis: [
     'nyt',
-    // 'wikipedia',
-    // 'twitter',
+    'twitter',
     'youtube'
   ],
 
@@ -328,8 +327,8 @@ var TreeTimeLine = React.createClass({
               return d.children.length * 6;
             } else if (d.source) {
               return 12;
-            } else if (d.title)
-              return 25;
+            } else if (d.depth === 3)
+              return 20;
           })
           .style("fill", function(d) { 
             var dat = d;
