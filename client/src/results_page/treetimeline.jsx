@@ -135,7 +135,11 @@ var TreeTimeLine = React.createClass({
         url: item.url,
         img: item.img,
         source: item.parent.source,
-        id: item.id
+        id: item.id,
+        byline: (item.hasOwnProperty('byline') ? item.byline : ''),
+        abstract: (item.hasOwnProperty('abstract') ? item.abstract : ''),
+        height: (item.hasOwnProperty('height') ? item.height : ''),
+        width: (item.hasOwnProperty('width') ? item.width : ''),
       });
   },
 
