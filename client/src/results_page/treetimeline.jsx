@@ -25,8 +25,7 @@ var TreeTimeLine = React.createClass({
 
   apis: [
     'nyt',
-    // 'wikipedia',
-    // 'twitter',
+    'twitter',
     'youtube'
   ],
 
