@@ -50,7 +50,7 @@ var Preview = React.createClass({
     }
 
     return(
-      <div>
+      <div style={{float:'right'}}>
         { nyt ? <NytPreview previewItem={ previewItem } /> : null }
         { twitter ? <TwitterPreview previewItem={ previewItem } /> : null }
       </div>

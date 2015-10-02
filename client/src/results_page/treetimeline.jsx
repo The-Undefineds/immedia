@@ -173,7 +173,7 @@ var TreeTimeLine = React.createClass({
   render: function() {
     this.renderCanvas();    // Crucial step that (re-)renders D3 canvas
     return (
-      <div id="d3container"></div>
+      <div id="d3container" style={{float: 'left'}}></div>
     )
   },
 
@@ -193,13 +193,13 @@ var TreeTimeLine = React.createClass({
     d3.select('svg').remove();
 
     var margin = {
-      top: 40,
+      top: 10,
       right: 40,
-      bottom: 40,
+      bottom: 20,
       left: 40
     };
-    var width = 600,
-        height = 800;
+    var width = 320,
+        height = 680;
 
     var firstDate = this.state.apiData[this.state.apiData.length - 1] ? 
                     this.state.apiData[this.state.apiData.length - 1]['date'] :
