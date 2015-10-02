@@ -36,10 +36,6 @@ var Preview = React.createClass({
 
     var previewItem = this.props.previewItem;
     var source = previewItem.source;
-      
-    if (player) {
-      player.destroy();
-    }
 
     if (source == 'nyt') {
       var nyt = true;
