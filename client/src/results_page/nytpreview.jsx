@@ -3,34 +3,35 @@ var React = require('react');
 var frameCache = {};
 
 var NytPreview = React.createClass({
+
+  getInitialState: function () {
+    return {
+      rerender: false,
+    }
+  },
   
+  resultsData: {},
+
   render: function() {
+
+    component = this;
     
     var previewItem = this.props.previewItem;
     var preview = false;
 
-    var previewData;
-
     if (!frameCache[previewItem.url]) {
-      $.ajax({
-        type: 'GET',
-        url: 'http://api.embed.ly/1/oembed?key=7fd3eb5aa6f34be7be07cb9015f01e23&url=' + previewItem.url,
-        dataType: 'jsonp',
-        success: function(data) {
+      var queryUrl = 'http://api.embed.ly/1/oembed?key=7fd3eb5aa6f34be7be07cb9015f01e23&url=' + previewItem.url;
+      $.get(queryUrl, function(data) {
           console.log('success!', data);
           frameCache[previewItem.url] = data;
-          previewData = data;
-          previewData.thumbnail_height = 0.45*previewData.thumbnail_height;
-          previewData.thumbnail_width = 0.45*previewData.thumbnail_width;
-          preview = true;
-        },
-        failure: function(data) {
-          console.log('whateva');
-        }
+          this.resultsData = data;
+          this.resultsData.thumbnail_height = 0.45*this.resultsData.thumbnail_height;
+          this.resultsData.thumbnail_width = 0.45*this.resultsData.thumbnail_width;
+          component.setState({ rerender: !component.state.rerender })
       })
     } else {
       console.log('cached data:', frameCache[previewItem.url]);
-      previewData = frameCache[previewItem.url];
+      this.resultsData = frameCache[previewItem.url];
       preview = true;
     }
 
@@ -38,10 +39,10 @@ var NytPreview = React.createClass({
 
     return (
       <div>
-        <h1>{ previewData.title }</h1>
-        <h3>{ previewData.author_name }</h3>
-        <img src={ previewData.thumbnail_url } height={ previewData.thumbnail_height } width= { previewData.thumbnail_width }></img>
-        <p>{ previewData.description }</p>
+        <h1>{ this.resultsData.title }</h1>
+        <h3>{ this.resultsData.author_name }</h3>
+        <img src={ this.resultsData.thumbnail_url } height={ this.resultsData.thumbnail_height } width= { this.resultsData.thumbnail_width }></img>
+        <p>{ this.resultsData.description }</p>
       </div>
       );
   }
