@@ -15,7 +15,7 @@ var ResultsView = React.createClass({
       wasSearchedFromTopBar: true,
     });
   },
-  
+
   mouseOver: function(item){
     this.hasMouseOver = true;
     this.previewItem = item;
@@ -38,7 +38,7 @@ var ResultsView = React.createClass({
       <div>
         <TopBar queryTerm={this.queryTerm} goBackHome={this.props.goBackHome} />
         <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver}/>
-        <WikiView searchTerm={this.props.searchTerm}/>
+        <WikiView searchTerm={this.props.searchTerm} getWikiImage={ this.getWikiImage }/>
         <div id="preview"></div>
         <ImageView />
       </div>

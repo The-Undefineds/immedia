@@ -123,7 +123,7 @@ var TreeTimeLine = React.createClass({
       left: 40
     };
 
-    var width = 320,
+    var width = 350,
         height = 680;
 
     var firstDate = this.state.apiData[this.state.apiData.length - 1] ? 
@@ -209,7 +209,7 @@ var TreeTimeLine = React.createClass({
           d.fixed = true;
         }
         else {
-          d.y = d.depth * 60; 
+          d.y = d.depth * 80; 
           }
         });
 
@@ -223,7 +223,6 @@ var TreeTimeLine = React.createClass({
         .on("click", function(d) {
           if (d.title) {
             console.log(d);
-            // d3.select(d).html('<a href=' + d.url + ' target+_blank></a>');
             return;
           }
           console.log(d);
@@ -237,18 +236,11 @@ var TreeTimeLine = React.createClass({
               .attr('r', 35)
           }
         })
-
-      d3.selectAll('g.node')
-        .append('a')
-        .attr('xlink:href', function(d) {
-          if (d.title) {
-            return d.url;
-          }
-        })
+      
 
       var defs = svg.append('svg:defs');
         defs.append('svg:pattern')
-          .attr('id', 'tile-twit')
+          .attr('id', 'tile-twitter')
           .attr('width', '20')
           .attr('height', '20')
           .append('svg:image')
@@ -300,29 +292,39 @@ var TreeTimeLine = React.createClass({
       nodeUpdate.select("circle")
           .attr("r", function(d) {
             if (d.depth === 1 && d._children) {
-              return d._children.length * 6;
+              return d._children.length * 10;
             } else if (d.depth === 1 && d.children) {
-              return d.children.length * 6;
+              return d.children.length * 10;
             } else if (d.source) {
               return 12;
-            } else if (d.title)
+            } else if (d.depth === 3)
               return 25;
           })
           .style("fill", function(d) { 
             var dat = d;
             if (d.source == 'twitter') {
-              return 'url(/#tile-twit)';
+              return 'url(/#tile-twitter)';
             } else if (d.source == 'nyt') {
               return 'url(/#tile-nyt)';
             } else if (d.source == 'youtube') {
               return 'url(/#tile-youtube)';
-            } else if (d.img) {
+            } else if (d.img === '') {
+              return 'lightsteelblue';
+            } else if (d.depth === 3) {
               defs.append('svg:pattern')
                 .attr('id', 'tile-img' + d.id)
-                .attr('width', '20')
-                .attr('height', '20')
+                .attr({
+                  'width': '40',
+                  'height': '40',
+                })
                 .append('svg:image')
-                .attr('xlink:href', d.img)
+                .attr('xlink:href', function() {
+                  if (d.thumbnail) {
+                    return d.thumbnail.medium.url;
+                  } else if (d.img) {
+                    return d.img;
+                  }
+                })
                 .attr('x', 0)
                 .attr('y', 0)
                 .attr('width', 40)

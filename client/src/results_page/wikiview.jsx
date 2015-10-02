@@ -24,7 +24,6 @@ var WikiView = React.createClass({
         wikiHTML = data.parse.text["*"];
         $wikiDOM = $("<document>"+wikiHTML+"</document>");
         var x = $wikiDOM.find(".infobox");
-        console.log(x);
         img = x[0].getElementsByTagName("IMG")[0] || "";
         // if (img) { img.parentNode.removeChild(img) }; // this line removes the image from the info-box
         var info = context.processData(x.html());
