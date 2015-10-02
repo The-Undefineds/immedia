@@ -29,29 +29,34 @@ var TreeTimeLine = React.createClass({
     'youtube'
   ],
 
-  componentDidMount: function(){
+  apiCounter: 0,
+
+  query: function(searchTerm){
+    console.log('searchTerm * * * * * * * * * * * * * * * * : ', searchTerm);
+    this.apiCounter = 0;
     for(var i = 0; i < this.apis.length; i++){
       this.handleQuery({
-        searchTerm: this.props.searchTerm,
+        searchTerm: searchTerm,
         url: 'http://127.0.0.1:3000/api/' + this.apis[i],
         api: this.apis[i]
       });
     }
   },
 
-  componentWillReceiveProps: function(){
-    for(var i = 0; i < this.apis.length; i++){
-      this.handleQuery({
-        searchTerm: this.props.searchTerm,
-        url: 'http://127.0.0.1:3000/api/' + this.apis[i],
-        api: this.apis[i]
-      });
+  componentDidMount: function(){
+    this.query(this.props.searchTerm);
+  },
+
+  componentWillReceiveProps: function(newProps){
+    if (this.props.searchTerm !== newProps.searchTerm) {
+      this.query(newProps.searchTerm);
     }
   },
 
   handleQuery: function(searchQuery){
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
+
         // Set State to initiate a re-rendering based on new API call data
         this.setState(function(previousState, currentProps) {
           // Make a copy of previous apiData to mutate and use to reset State
@@ -68,7 +73,15 @@ var TreeTimeLine = React.createClass({
                 ]
               }
           */
-          var previousApiData = previousState['apiData'].slice();
+      
+          if (this.apiCounter === 0) {
+            var previousApiData = [];
+          } else {
+            var previousApiData = previousState['apiData'].slice();
+          }
+          this.apiCounter++;
+          console.log('apiCounter * * * * * * * * * * * * * * * * * * * : ', this.apiCounter);
+
           // Loop through each day in apiData and add new articles/videos/etc
           // from returning API appropriately
           for(var date in response) {

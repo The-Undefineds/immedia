@@ -19,20 +19,17 @@ var TopBar = React.createClass({
   },
 
   handleSubmit: function(){
-    // send this.state.searchTerm in ajax 
-    this.props.queryTerm(this.state.searchTerm);
+    this.props.searchInit(this.state.searchTerm);
   },
 
   goBackHome: function(){ this.props.goBackHome(); },
 
   render: function(){
     return (
-      <div style={{textAlign:'right', backgroundColor: '#46008B', padding: '10px'}} >
-        <input onClick={this.goBackHome} value='home' type='button'/>
+      <div style={{textAlign:'center', backgroundColor: '#46008B', padding: '10px'}} >
         <input type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} />
-        <span>
-          <input type='button' onClick={this.handleSubmit} value='Immedia search'/>
-        </span>
+        <input type='button' onClick={this.handleSubmit} value='Immedia search'/>
+        <input onClick={this.goBackHome} value='home' type='button'/>
       </div>
       )
   }

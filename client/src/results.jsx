@@ -8,12 +8,6 @@ var TreeTimeLine = require('./results_page/treetimeline.jsx'),
     TopBar = require('./results_page/topbar.jsx');
 
 var ResultsView = React.createClass({
-
-  queryTerm: function(searchTerm){
-    this.setState({
-      searchTerm: searchTerm
-    });
-  },
   
   mouseOver: function(item){
     this.hasMouseOver = true;
@@ -42,7 +36,7 @@ var ResultsView = React.createClass({
   render: function(){
     return (
       <div id="results">
-        <TopBar queryTerm={this.queryTerm} goBackHome={this.props.goBackHome} />
+        <TopBar searchInit={this.props.searchInit} goBackHome={this.props.goBackHome} />
         <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver}/>
         <WikiView searchTerm={this.props.searchTerm}/>
         <div id="preview" ></div>
