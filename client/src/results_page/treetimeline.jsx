@@ -253,6 +253,13 @@ var TreeTimeLine = React.createClass({
               .attr('r', 35)
           }
         })
+        .on("click", function(d) {
+          if (d.url) { 
+            window.open(d.url,'_blank');
+          } else if (d.parent.source === 'youtube') {
+            window.open('https://www.youtube.com/watch?v=' + d.id, '_blank');
+          }
+        })
 
       d3.selectAll('g.node')
         .append('a')
