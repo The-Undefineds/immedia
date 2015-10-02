@@ -88,7 +88,7 @@ module.exports = {
                   {
                     'title': mostPopular[article]['title'],
                     'url': mostPopular[article]['url'],
-                    'img': (mostPopular[article]['media']['0']['media-metadata']['url'] || ''),
+                    'img': (mostPopular[article]['media']['0']['media-metadata']['0']['url'] || ''),
                     'date': publishedDate
                   }
                 ]
@@ -98,7 +98,7 @@ module.exports = {
                 {
                   'title': mostPopular[article]['title'],
                   'url': mostPopular[article]['url'],
-                  'img': (mostPopular[article]['media']['0']['media-metadata']['url'] || ''),
+                  'img': (mostPopular[article]['media']['0']['media-metadata']['0']['url'] || ''),
                   'date': publishedDate
                 }
               );
