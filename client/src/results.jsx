@@ -31,14 +31,6 @@ var ResultsView = React.createClass({
       )
   },
 
-  mouseOut: function(item){
-    this.setState({hasMouseOver: false});
-  },
-
-  handleClick: function(item) {
-    this.setState({clicked: true})
-  },
-
   render: function(){
     return (
       <div id="results">

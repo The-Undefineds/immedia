@@ -142,15 +142,24 @@ var TreeTimeLine = React.createClass({
     };
 
     var width = 350,
-        height = 680;
+        height = 700;
 
-    var firstDate = this.state.apiData[this.state.apiData.length - 1] ? 
-                    this.state.apiData[this.state.apiData.length - 1]['date'] :
-                    dates[dates.length - 1];
+
+    // var oldestDate;
+    var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
+                      this.state.apiData[this.state.apiData.length - 1] : null;
+
+    // if (Number(moment(oldestItem['date']).fromNow().slice(0, 2)) > 10) {
+    //   oldestItem.outOfScope = true;
+    //   oldestDate = dates[dates.length - 1];
+    // } else {
+    //   oldestDate = oldestItem['date']
+    // }
 
     var y = d3.time.scale()
-      .domain([new Date(firstDate), new Date(dates[0])])
-      .rangeRound([height - margin.top - margin.bottom, 0])
+      .domain([new Date(dates[dates.length - 1]), new Date(dates[0])])
+      .rangeRound([height - 4*(margin.top) - margin.bottom, 0])
+      // .clamp(true)
 
     var yAxis = d3.svg.axis()
       .scale(y)
@@ -222,7 +231,12 @@ var TreeTimeLine = React.createClass({
 
       nodes.forEach(function(d) { 
         if (d.depth === 1) {
-          d.x = y(new Date(d.date)) - 10;
+          if (d === oldestItem) {
+            d.x = height - 2*(margin.top);
+            d.y = 0;
+            return;
+          }
+          d.x = y(new Date(d.date)) - 20;
           d.y = 0;
           d.fixed = true;
         }
@@ -239,8 +253,11 @@ var TreeTimeLine = React.createClass({
       var nodeEnter = node.enter().append("svg:g")
         .attr("class", "node")
         .on("click", function(d) {
-          if (d.title) {
-            console.log(d);
+          if (d.url) { 
+            window.open(d.url,'_blank');
+            return;
+          } else if (d.parent.source === 'youtube') {
+            window.open('https://www.youtube.com/watch?v=' + d.id, '_blank');
             return;
           }
           console.log(d);
@@ -254,7 +271,6 @@ var TreeTimeLine = React.createClass({
               .attr('r', 35)
           }
         })
-      
 
       var defs = svg.append('svg:defs');
         defs.append('svg:pattern')
@@ -350,7 +366,7 @@ var TreeTimeLine = React.createClass({
               return 'url(/#tile-img' + d.id + ')'
             }
             return d._children ? "lightsteelblue" : "#fff"; 
-          });
+          })
 
       var nodeExit = node.exit().transition()
           .duration(duration)
