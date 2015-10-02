@@ -36,14 +36,14 @@ function findUser(baseUrl, queryString, callback){
       body = JSON.parse(body);
       var id,
           img;
-      if (body instanceof Array) { 
+      if (!('error' in body)) { 
         id = body[0].id;
         img = body[0].profile_image_url;
 
         grabTimeline(newUrl, {'id': id, 'img': img}, callback);
       }
       else {
-        callback(200, body);
+        findUser(baseUrl, queryString, callback);
       }
     }
   })
@@ -58,7 +58,7 @@ function grabTimeline(newUrl, params, callback){
       callback(404, error);
     } else {
       body = Array.prototype.slice.call(JSON.parse(body));
-      if (body[0]) {
+      if (!('error' in body)) {
         var tweetIdsToSend = [];
         var tweetsBySocialCount = {};
         var date = utils.getSimpleDate(body[0].created_at);
@@ -79,7 +79,7 @@ function grabTimeline(newUrl, params, callback){
 
         embedTweet(url, tweetIdsToSend, callback, {'date': date, 'img': params.img});
       } else {
-        callback(200, body);
+        grabTimeline(newUrl, params, callback);
       }
     }
   })
