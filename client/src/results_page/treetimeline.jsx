@@ -31,29 +31,33 @@ var TreeTimeLine = React.createClass({
     'youtube'
   ],
 
-  componentDidMount: function(){
+  apiCounter: 0,
+
+  query: function(searchTerm){
+    this.apiCounter = 0;
     for(var i = 0; i < this.apis.length; i++){
       this.handleQuery({
-        searchTerm: this.props.searchTerm,
+        searchTerm: searchTerm,
         url: 'http://127.0.0.1:3000/api/' + this.apis[i],
         api: this.apis[i]
       });
     }
   },
 
-  componentWillReceiveProps: function(){
-    for(var i = 0; i < this.apis.length; i++){
-      this.handleQuery({
-        searchTerm: this.props.searchTerm,
-        url: 'http://127.0.0.1:3000/api/' + this.apis[i],
-        api: this.apis[i]
-      });
+  componentDidMount: function(){
+    this.query(this.props.searchTerm);
+  },
+
+  componentWillReceiveProps: function(newProps){
+    if (this.props.searchTerm !== newProps.searchTerm) {
+      this.query(newProps.searchTerm);
     }
   },
 
   handleQuery: function(searchQuery){
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
+
         // Set State to initiate a re-rendering based on new API call data
         this.setState(function(previousState, currentProps) {
           // Make a copy of previous apiData to mutate and use to reset State
@@ -70,7 +74,14 @@ var TreeTimeLine = React.createClass({
                 ]
               }
           */
-          var previousApiData = previousState['apiData'].slice();
+      
+          if (this.apiCounter === 0) {
+            var previousApiData = [];
+          } else {
+            var previousApiData = previousState['apiData'].slice();
+          }
+          this.apiCounter++;
+
           // Loop through each day in apiData and add new articles/videos/etc
           // from returning API appropriately
           for(var date in response) {
@@ -125,7 +136,11 @@ var TreeTimeLine = React.createClass({
         img: item.img,
         source: item.parent.source,
         id: item.id,
-        tweet: item.tweet
+        tweet: item.tweet,
+        byline: (item.hasOwnProperty('byline') ? item.byline : ''),
+        abstract: (item.hasOwnProperty('abstract') ? item.abstract : ''),
+        height: (item.hasOwnProperty('height') ? item.height : ''),
+        width: (item.hasOwnProperty('width') ? item.width : ''),
       });
   },
 
@@ -261,10 +276,28 @@ var TreeTimeLine = React.createClass({
         .on("mouseenter", function(d) {
           if (d.depth === 3) {
             component.mouseOver(d);
-            d3.select(this)
-              .attr('r', 35)
           }
         })
+        // .on('mouseover', function(d) {
+        //   if (d.depth === 3) {
+        //     d3.select(this).select('circle')
+        //       .attr({
+        //         r: 30,
+        //         stroke: '#46008B',
+        //         strokeWidth: '2.5px'
+        //       })
+        //     }
+        // })
+        // .on('mouseout', function(d) {
+        //   if (d.depth === 3) {
+        //     d3.select(this).select('circle')
+        //       .attr({
+        //         r: 25,
+        //         stroke: 'steelblue',
+        //         strokeWidth: '1.5px'
+        //       })
+        //   }
+        // })
 
       var defs = svg.append('svg:defs');
         defs.append('svg:pattern')
@@ -322,7 +355,7 @@ var TreeTimeLine = React.createClass({
             if (d.depth === 1 && d._children) {
               return 12;
             } else if (d.depth === 1 && d.children) {
-              return d.children.length * 10;
+              return Math.max(d.children.length * 6, 9);
             } else if (d.source) {
               return 12;
             } else if (d.depth === 3)
@@ -355,8 +388,8 @@ var TreeTimeLine = React.createClass({
                 })
                 .attr('x', 0)
                 .attr('y', 0)
-                .attr('width', 40)
-                .attr('height', 40)
+                .attr('width', 50)
+                .attr('height', 50)
               return 'url(/#tile-img' + d.id + ')'
             }
             return d._children ? "lightsteelblue" : "#fff"; 
