@@ -11,8 +11,7 @@ var ResultsView = React.createClass({
 
   queryTerm: function(searchTerm){
     this.setState({
-      searchTerm: searchTerm,
-      wasSearchedFromTopBar: true,
+      searchTerm: searchTerm
     });
   },
   
@@ -22,9 +21,9 @@ var ResultsView = React.createClass({
     $preview = $('#preview');
     if ($preview[0].localName === 'iframe') {
       $preview.remove();
-      $('#results').append('<div id="preview"></div')
+      $('#results').append('<div id="preview"></div>')
     } else if (!$preview) {
-      $('#results').append('<div id="preview"></div')
+      $('#results').append('<div id="preview"></div>')
     }
     React.render(
       <Preview previewItem={this.previewItem}/>,
@@ -46,22 +45,10 @@ var ResultsView = React.createClass({
         <TopBar queryTerm={this.queryTerm} goBackHome={this.props.goBackHome} />
         <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver}/>
         <WikiView searchTerm={this.props.searchTerm}/>
-        <div id="preview" style={this.previewStyle}></div>
+        <div id="preview" ></div>
         <ImageView />
       </div>
     );
-  },
-
-  previewStyle: {
-    position: 'fixed',
-    left: '400px',
-    marginTop: '100px',
-    width: '500px',
-    height: '550px',
-    borderStyle: 'solid',
-    borderColor: 'gray',
-    borderWidth: '10px',
-    borderRadius: '10px'
   }
 });
 
