@@ -83,11 +83,13 @@ var WikiView = React.createClass({
   },
 
   style: {
-    position: 'fixed',
-    left: '900px',
+    position: 'relative',
+    // left: '900px',
     overflow: 'scroll',
     marginTop: '50px',
-    maxHeight: '680px'
+    maxHeight: '680px',
+    float: 'left',
+    width: '35%'
   }
 
 });

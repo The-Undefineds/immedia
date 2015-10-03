@@ -28,7 +28,8 @@ var TreeTimeLine = React.createClass({
   apis: [
     'nyt',
     'twitter',
-    'youtube'
+    'youtube',
+    // 'news'
   ],
 
   apiCounter: 0,
@@ -125,9 +126,12 @@ var TreeTimeLine = React.createClass({
   },
 
   style: {
-    position: 'fixed',
+    position: 'relative',
+    width: '20%',
+    height: 700,
     marginTop: '50px',
-    left: '50px'
+    // left: '50px',
+    float:'left',
   },
 
   mouseOver: function(item) {

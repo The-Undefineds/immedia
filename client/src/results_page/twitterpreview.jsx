@@ -23,22 +23,22 @@ var TwitterPreview = React.createClass({
 
   componentDidMount: function() {
 
-    $('<div id="tweet">' + this.props.previewItem.tweet + '</div>').prependTo($('#twitterPreview')).fadeIn(400);  
-    
-    twttr.widgets.load(
-      document.getElementById('twitterPreview')
-    );
-  },
+    $('<div id="tweet"></div>').hide().prependTo('#twitterPreview').fadeIn(800);
+    twttr.widgets.createTweet(
+      '650003054201339904',
+      document.getElementById('tweet')
+      )
+},
 
   componentDidUpdate: function() {
     
     $('#twitterPreview').empty();
 
-    $('<div id="tweet">' + this.props.previewItem.tweet + '</div>').prependTo($('#twitterPreview')).fadeIn(400);  
-    
-    twttr.widgets.load(
-      document.getElementById('twitterPreview')
-    );
+    $('<div id="tweet"></div>').hide().prependTo('#twitterPreview').fadeIn(800);
+    twttr.widgets.createTweet(
+      '650003054201339904',
+      document.getElementById('tweet')
+      )
   },
 
   render: function() {
