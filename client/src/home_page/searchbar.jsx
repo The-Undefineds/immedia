@@ -4,7 +4,8 @@ var SearchBar = React.createClass({
 
   getInitialState: function(){
     return {
-      searchTerm: ''
+      searchTerm: '',
+      errorHandle: ''
     };
   },
 
@@ -20,8 +21,12 @@ var SearchBar = React.createClass({
   },
 
   handleSubmit: function(){
-    // send this.state.searchTerm in ajax 
-    this.props.searchInit(this.state.searchTerm);
+    // send this.state.searchTerm in ajax
+    if(this.state.searchTerm.search(/\w/g) === -1)
+      //alert('Please input something');
+      this.setState({errorHandle: 'Input a search term'});
+    else
+      this.props.searchInit(this.state.searchTerm);
   },
   
   componentDidMount : function(){
@@ -68,6 +73,7 @@ var SearchBar = React.createClass({
         </div>
         <span>
           <button type='button' onClick={this.handleSubmit} > Immedia Search </button>
+          <div style={{color: '#FF0000', marginTop:'10px'}}>{this.state.errorHandle ? this.state.errorHandle: null} </div>
         </span>
       </div>
       )
