@@ -34,6 +34,8 @@ var TreeTimeLine = React.createClass({
   apiCounter: 0,
 
   query: function(searchTerm){
+    var index = searchTerm.indexOf('(');
+    if (index !== -1) searchTerm = searchTerm.slice(0, index);
     this.apiCounter = 0;
     for(var i = 0; i < this.apis.length; i++){
       this.handleQuery({
