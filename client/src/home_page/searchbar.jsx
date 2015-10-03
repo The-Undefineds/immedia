@@ -15,11 +15,11 @@ var SearchBar = React.createClass({
 
   enterPressed: function(event){
     if (event.keyCode === 13 && this.props.atHome) {
-      this.handleSubmit();
+     this.handleSubmit();
     }
   },
 
-  handleSubmit: function(){
+  handleSubmit: function(event){
     // send this.state.searchTerm in ajax 
     this.props.searchInit(this.state.searchTerm);
   },
@@ -29,7 +29,7 @@ var SearchBar = React.createClass({
     return (
       <div>
         <div className='ui-widget'>
-          <input id='searchbox' type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} />
+          <input id='searchbox' type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
         </div>
         <span>
           <button type='button' onClick={this.handleSubmit} > Immedia Search </button>
