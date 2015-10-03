@@ -31,7 +31,7 @@ var NytPreview = React.createClass({
       }
     }
     return (
-      <a style={styles.anchor} href={ this.props.previewItem.url }>
+      <a style={styles.anchor} href={ this.props.previewItem.url } target="_blank">
         <div>
           <h1>{ this.props.previewItem.title }</h1>
           <h3>{ this.props.previewItem.byline }</h3>
