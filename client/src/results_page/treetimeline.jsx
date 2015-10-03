@@ -15,6 +15,8 @@ var i = 0;
 
 var TreeTimeLine = React.createClass({
 
+  renderCount: 0,
+
   getInitialState: function(){
     return {
       // wasSearchedFromTopBar: false,
@@ -134,6 +136,7 @@ var TreeTimeLine = React.createClass({
         img: item.img,
         source: item.parent.source,
         id: item.id,
+        tweet: item.tweet,
         byline: (item.hasOwnProperty('byline') ? item.byline : ''),
         abstract: (item.hasOwnProperty('abstract') ? item.abstract : ''),
         height: (item.hasOwnProperty('height') ? item.height : ''),
@@ -146,6 +149,8 @@ var TreeTimeLine = React.createClass({
     var component = this;
     d3.select('svg').remove();
 
+    var colors = d3.scale.category20c();
+
     var margin = {
       top: 10,
       right: 40,
@@ -153,16 +158,16 @@ var TreeTimeLine = React.createClass({
       left: 40
     };
 
-    var width = 320,
-        height = 680;
+    var width = 350,
+        height = 700;
 
-    var firstDate = this.state.apiData[this.state.apiData.length - 1] ? 
-                    this.state.apiData[this.state.apiData.length - 1]['date'] :
-                    dates[dates.length - 1];
+    var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
+                      this.state.apiData[this.state.apiData.length - 1] : null;
 
     var y = d3.time.scale()
-      .domain([new Date(firstDate), new Date(dates[0])])
-      .rangeRound([height - margin.top - margin.bottom, 0])
+      .domain([new Date(dates[dates.length - 1]), new Date(dates[0])])
+      .rangeRound([height - 4*(margin.top) - margin.bottom, 0])
+      // .clamp(true)
 
     var yAxis = d3.svg.axis()
       .scale(y)
@@ -227,6 +232,7 @@ var TreeTimeLine = React.createClass({
       update(root);
 
     function update(source) {
+
       var duration = 500;
 
       var nodes = tree.nodes(root).reverse();
@@ -234,12 +240,17 @@ var TreeTimeLine = React.createClass({
 
       nodes.forEach(function(d) { 
         if (d.depth === 1) {
-          d.x = y(new Date(d.date)) - 10;
+          if (d === oldestItem) {
+            d.x = height - 2*(margin.top);
+            d.y = 0;
+            return;
+          }
+          d.x = y(new Date(d.date)) - 20;
           d.y = 0;
           d.fixed = true;
         }
         else {
-          d.y = d.depth * 60; 
+          d.y = d.depth * 80; 
           }
         });
 
@@ -251,41 +262,46 @@ var TreeTimeLine = React.createClass({
       var nodeEnter = node.enter().append("svg:g")
         .attr("class", "node")
         .on("click", function(d) {
-          if (d.title) {
-            console.log(d);
-            // d3.select(d).html('<a href=' + d.url + ' target+_blank></a>');
+          console.log(d);
+          if (d.url) { 
+            window.open(d.url,'_blank');
+            return;
+          } else if (d.parent.source === 'youtube') {
+            window.open('https://www.youtube.com/watch?v=' + d.id, '_blank');
             return;
           }
-          console.log(d);
           toggle(d); 
           update(d); 
         })
         .on("mouseenter", function(d) {
-          if (d.title) {
+          if (d.depth === 3) {
             component.mouseOver(d);
-            d3.select(this)
-              .attr('r', 35)
           }
         })
-        .on("click", function(d) {
-          if (d.url) { 
-            window.open(d.url,'_blank');
-          } else if (d.parent.source === 'youtube') {
-            window.open('https://www.youtube.com/watch?v=' + d.id, '_blank');
-          }
-        })
-
-      d3.selectAll('g.node')
-        .append('a')
-        .attr('xlink:href', function(d) {
-          if (d.title) {
-            return d.url;
-          }
-        })
+        // .on('mouseover', function(d) {
+        //   if (d.depth === 3) {
+        //     d3.select(this).select('circle')
+        //       .attr({
+        //         r: 30,
+        //         stroke: '#46008B',
+        //         strokeWidth: '2.5px'
+        //       })
+        //     }
+        // })
+        // .on('mouseout', function(d) {
+        //   if (d.depth === 3) {
+        //     d3.select(this).select('circle')
+        //       .attr({
+        //         r: 25,
+        //         stroke: 'steelblue',
+        //         strokeWidth: '1.5px'
+        //       })
+        //   }
+        // })
 
       var defs = svg.append('svg:defs');
         defs.append('svg:pattern')
-          .attr('id', 'tile-twit')
+          .attr('id', 'tile-twitter')
           .attr('width', '20')
           .attr('height', '20')
           .append('svg:image')
@@ -337,37 +353,47 @@ var TreeTimeLine = React.createClass({
       nodeUpdate.select("circle")
           .attr("r", function(d) {
             if (d.depth === 1 && d._children) {
-              return d._children.length * 6;
+              return 12;
             } else if (d.depth === 1 && d.children) {
-              return d.children.length * 6;
+              return Math.max(d.children.length * 6, 9);
             } else if (d.source) {
               return 12;
             } else if (d.depth === 3)
-              return 20;
+              return 25;
           })
           .style("fill", function(d) { 
             var dat = d;
             if (d.source == 'twitter') {
-              return 'url(/#tile-twit)';
+              return 'url(/#tile-twitter)';
             } else if (d.source == 'nyt') {
               return 'url(/#tile-nyt)';
             } else if (d.source == 'youtube') {
               return 'url(/#tile-youtube)';
-            } else if (d.img) {
+            } else if (d.img === '') {
+              return colors(d.id);
+            } else if (d.depth === 3) {
               defs.append('svg:pattern')
                 .attr('id', 'tile-img' + d.id)
-                .attr('width', '20')
-                .attr('height', '20')
+                .attr({
+                  'width': '40',
+                  'height': '40',
+                })
                 .append('svg:image')
-                .attr('xlink:href', d.img)
+                .attr('xlink:href', function() {
+                  if (d.thumbnail) {
+                    return d.thumbnail.medium.url;
+                  } else if (d.img) {
+                    return d.img;
+                  }
+                })
                 .attr('x', 0)
                 .attr('y', 0)
-                .attr('width', 40)
-                .attr('height', 40)
+                .attr('width', 50)
+                .attr('height', 50)
               return 'url(/#tile-img' + d.id + ')'
             }
             return d._children ? "lightsteelblue" : "#fff"; 
-          });
+          })
 
       var nodeExit = node.exit().transition()
           .duration(duration)
