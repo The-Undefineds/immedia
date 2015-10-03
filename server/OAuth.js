@@ -1,5 +1,5 @@
 var crypto = require('crypto');
-var key = require('./keys');
+var key = process.env.PORT ? require('../../keys.js') : require('./keys.js');
 
 module.exports = function(baseURL, param, aParam){
   if (aParam !== undefined) aParam += '&';
