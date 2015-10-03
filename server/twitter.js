@@ -6,6 +6,8 @@ var baseUrl = 'https://api.twitter.com/1.1/users/search.json';
 var newUrl = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
 var url = 'https://api.twitter.com/1/statuses/oembed.json';
 
+var tweets = {};
+
 var search = {
   url : '',
   qs : {},
@@ -18,7 +20,6 @@ var search = {
 module.exports = {
   getTweetsPerson : function(request, response){
     var queryString = request.body.searchTerm;
-
     findUser(baseUrl, queryString, function(status, data){
       response.status(status).send(data);
     });
@@ -104,10 +105,13 @@ function embedTweet(url, tweetIds, callback, params){
         callback(404, error);
       } else {
         body = JSON.parse(body);
+        console.log(body)
         obj[params.date].children.push({
           url : body.url,
           tweet : body.html,
-          img: params.img
+          img: params.img,
+          tweetid: tweetIds[i],
+          type: 'user'
         })
         manualPromise++;
         if (manualPromise === 3) callback(200, obj);
