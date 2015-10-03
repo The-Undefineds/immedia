@@ -105,12 +105,11 @@ function embedTweet(url, tweetIds, callback, params){
         callback(404, error);
       } else {
         body = JSON.parse(body);
-        console.log(body)
         obj[params.date].children.push({
           url : body.url,
           tweet : body.html,
           img: params.img,
-          tweetid: tweetIds[i],
+          // tweetid: tweetId,
           type: 'user'
         })
         manualPromise++;

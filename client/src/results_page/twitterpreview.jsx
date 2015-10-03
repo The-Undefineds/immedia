@@ -22,10 +22,11 @@ window.twttr = (function(d, s, id) {
 var TwitterPreview = React.createClass({
 
   componentDidMount: function() {
+    var tweetId = this.props.previewItem.url.slice(this.props.previewItem.url.length - 18, this.props.previewItem.url.length);
 
     $('<div id="tweet"></div>').hide().prependTo('#twitterPreview').fadeIn(800);
     twttr.widgets.createTweet(
-      '650003054201339904',
+      tweetId,
       document.getElementById('tweet')
       )
 },
@@ -34,9 +35,11 @@ var TwitterPreview = React.createClass({
     
     $('#twitterPreview').empty();
 
+    var tweetId = this.props.previewItem.url.slice(this.props.previewItem.url.length - 18, this.props.previewItem.url.length);
+
     $('<div id="tweet"></div>').hide().prependTo('#twitterPreview').fadeIn(800);
     twttr.widgets.createTweet(
-      '650003054201339904',
+      tweetId,
       document.getElementById('tweet')
       )
   },
@@ -52,4 +55,3 @@ var TwitterPreview = React.createClass({
 });
 
 module.exports = TwitterPreview;
-// 650003054201339904

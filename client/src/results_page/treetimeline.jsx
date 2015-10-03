@@ -126,12 +126,9 @@ var TreeTimeLine = React.createClass({
   },
 
   style: {
-    position: 'relative',
-    width: '20%',
-    height: 700,
+    position: 'fixed',
     marginTop: '50px',
-    // left: '50px',
-    float:'left',
+    left: '50px'
   },
 
   mouseOver: function(item) {
