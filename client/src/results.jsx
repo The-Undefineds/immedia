@@ -37,8 +37,8 @@ var ResultsView = React.createClass({
       <div id="results">
         <TopBar searchInit={this.props.searchInit} goBackHome={this.props.goBackHome} />
         <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver}/>
-        <WikiView searchTerm={this.props.searchTerm}/>
         <div id="preview"></div>
+        <WikiView searchTerm={this.props.searchTerm}/>
       </div>
     );
   },
