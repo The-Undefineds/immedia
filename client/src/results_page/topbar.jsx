@@ -19,8 +19,12 @@ var TopBar = React.createClass({
   },
 
   handleSubmit: function(){
-    this.props.searchInit(this.state.searchTerm);
-    this.setState({ searchTerm: '' });
+    if(this.state.searchTerm.search(/\w/g) === -1)
+      alert('Please input something');
+    else {
+      this.props.searchInit(this.state.searchTerm);
+      this.setState({ searchTerm: '' });
+    }
   },
 
   goBackHome: function(){ this.props.goBackHome(); },
