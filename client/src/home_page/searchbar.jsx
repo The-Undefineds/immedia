@@ -19,7 +19,7 @@ var SearchBar = React.createClass({
     }
   },
 
-  handleSubmit: function(event){
+  handleSubmit: function(){
     // send this.state.searchTerm in ajax 
     this.props.searchInit(this.state.searchTerm);
   },
