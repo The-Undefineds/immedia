@@ -24,12 +24,15 @@ var WikiView = React.createClass({
       $.getJSON(parseRequest)
       .done(function(data){
         wikiHTML = data.parse.text["*"];
-        $wikiDOM = $("<document>"+wikiHTML+"</document>");
+        $wikiDOM = $("<document>" + wikiHTML + "</document>");
         var x = $wikiDOM.find(".infobox");
+        var y = $wikiDOM.find("p:first-of-type:not(.infobox>p)");
         img = x[0].getElementsByTagName("IMG")[0] || "";
         // if (img) { img.parentNode.removeChild(img) }; // this line removes the image from the info-box
         var info = context.processData(x.html());
+        var summary = context.processData(y.html());
         $('#wikiview').append(info);
+        $('#wikiview').append(summary);
       })
     });
   },

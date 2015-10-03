@@ -9,7 +9,7 @@ var generateDates = function(timeSpan) {
   }
 }
 
-generateDates(7);
+generateDates(8);
 
 var i = 0;
 
@@ -234,6 +234,15 @@ var TreeTimeLine = React.createClass({
     function update(source) {
 
       var duration = 500;
+      // var duration = function(d) {
+      //   if (d.rendered < component.apis.length) {
+      //     d.rendered++;
+      //     return 5;
+      //   } else if (!d.rendered) {
+      //     d.rendered = 1;
+      //   }
+      //   return 500;
+      // }
 
       var nodes = tree.nodes(root).reverse();
       var links = d3.layout.tree().links(nodes);
@@ -250,7 +259,12 @@ var TreeTimeLine = React.createClass({
           d.fixed = true;
         }
         else {
-          d.y = d.depth * 80; 
+          if (d.depth === 2) {
+            d.y = 120;
+          };
+          if (d.depth === 3) {
+            d.y = 240;
+            }
           }
         });
 
@@ -278,26 +292,28 @@ var TreeTimeLine = React.createClass({
             component.mouseOver(d);
           }
         })
-        // .on('mouseover', function(d) {
-        //   if (d.depth === 3) {
-        //     d3.select(this).select('circle')
-        //       .attr({
-        //         r: 30,
-        //         stroke: '#46008B',
-        //         strokeWidth: '2.5px'
-        //       })
-        //     }
-        // })
-        // .on('mouseout', function(d) {
-        //   if (d.depth === 3) {
-        //     d3.select(this).select('circle')
-        //       .attr({
-        //         r: 25,
-        //         stroke: 'steelblue',
-        //         strokeWidth: '1.5px'
-        //       })
-        //   }
-        // })
+        .on('mouseover', function(d) {
+          if (d.depth === 3) {
+            d3.select(this).select('circle')
+              .transition()
+              .attr({
+                r: 28,
+                stroke: '#46008B',
+                strokeWidth: '2.5px'
+              })
+            }
+        })
+        .on('mouseout', function(d) {
+          if (d.depth === 3) {
+            d3.select(this).select('circle')
+              .transition()
+              .attr({
+                r: 25,
+                // stroke: 'steelblue',
+                // strokeWidth: '1.5px'
+              })
+          }
+        })
 
       var defs = svg.append('svg:defs');
         defs.append('svg:pattern')
@@ -343,6 +359,7 @@ var TreeTimeLine = React.createClass({
 
       var nodeUpdate = node.transition()
           .duration(duration)
+          .ease('linear')
           .attr("transform", function(d) { 
             if (d == root) {
               d.y = -1000;
@@ -388,8 +405,8 @@ var TreeTimeLine = React.createClass({
                 })
                 .attr('x', 0)
                 .attr('y', 0)
-                .attr('width', 50)
-                .attr('height', 50)
+                .attr('width', 55)
+                .attr('height', 55)
               return 'url(/#tile-img' + d.id + ')'
             }
             return d._children ? "lightsteelblue" : "#fff"; 

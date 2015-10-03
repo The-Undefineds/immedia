@@ -98,7 +98,7 @@ function embedTweet(url, tweetIds, callback, params){
   search.headers.Authorization = null;
   
   for (var i = 0; i < tweetIds.length; i++){
-    search.qs = {id : tweetIds[i]};
+    search.qs = {id : tweetIds[i], omit_script: 'true'};
     request(search, function(error, response, body){
       if(error) {
         callback(404, error);
