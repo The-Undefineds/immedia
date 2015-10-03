@@ -20,8 +20,11 @@ var SearchBar = React.createClass({
   },
 
   handleSubmit: function(){
-    // send this.state.searchTerm in ajax 
-    this.props.searchInit(this.state.searchTerm);
+    // send this.state.searchTerm in ajax
+    if(this.state.searchTerm.search(/\w/g) === -1)
+      alert('Please input something');
+    else
+      this.props.searchInit(this.state.searchTerm);
   },
   
   componentDidMount : function(){
