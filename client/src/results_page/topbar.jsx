@@ -4,7 +4,8 @@ var TopBar = React.createClass({
 
   getInitialState: function(){
     return {
-      searchTerm: ''
+      searchTerm: '',
+      errorHandle: ''
     };
   },
 
@@ -19,8 +20,13 @@ var TopBar = React.createClass({
   },
 
   handleSubmit: function(){
-    this.props.searchInit(this.state.searchTerm);
-    this.setState({ searchTerm: '' });
+    if(this.state.searchTerm.search(/\w/g) === -1)
+      // alert('Please input something');
+      this.setState({errorHandle: 'Input a search term'});
+    else {
+      this.props.searchInit(this.state.searchTerm);
+      this.setState({ searchTerm: '' });
+    }
   },
 
   goBackHome: function(){ this.props.goBackHome(); },
