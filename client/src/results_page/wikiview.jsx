@@ -13,7 +13,6 @@ var WikiView = React.createClass({
 
     $.getJSON(searchRequest)
     .done(function(data){
-      console.log(data);
       if ('-1' in data.query.pages) {
         $.getJSON(cirrusRequest)
         .done(function(data){
