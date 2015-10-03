@@ -6,18 +6,32 @@ var WikiView = React.createClass({
     var img,
         searchTerm = this.props.searchTerm,
         context = this,
-        searchRequest = "http://en.wikipedia.org/w/api.php?action=cirrus-suggest&text="+searchTerm+"&callback=?&format=json";
+        cirrusRequest = "http://en.wikipedia.org/w/api.php?action=cirrus-suggest&text="+searchTerm+"&callback=?&format=json"
+        searchRequest = "https://en.wikipedia.org/w/api.php?action=query&prop=pageprops|info&titles="+searchTerm+"&callback=?&format=json";
     
     $.getJSON(searchRequest)
     .done(function(data){
-      var highestScore = 0;
-      var searchArea = data.suggest;
-      for (var i = 0; i < searchArea.length; i++){
-        if (searchArea[i].score > highestScore){
-          searchTerm = searchArea[i].title;
-          highestScore = searchArea[i].score;
-        }
+      console.log(data);
+      if ('-1' in data.query.pages) {
+        $.getJSON(cirrusRequest)
+        .done(function(data){
+          var highestScore = 0;
+          var searchArea = data.suggest;
+          for (var i = 0; i < searchArea.length; i++){
+            if (searchArea[i].score > highestScore){
+              searchTerm = searchArea[i].title;
+              highestScore = searchArea[i].score;
+            }
+          }
+          parse(searchTerm);
+        });
+      } 
+      else {
+        parse(searchTerm);
       }
+    });
+    
+    function parse(searchTerm){
       var parseRequest = "http://en.wikipedia.org/w/api.php?action=parse&format=json&page="+searchTerm+"&redirects&prop=text&callback=?";
       $.getJSON(parseRequest)
       .done(function(data){
@@ -29,7 +43,7 @@ var WikiView = React.createClass({
         var info = context.processData(x.html());
         $('#wikiview').append(info);
       })
-    });
+    }
   },
 
   // alters html so that hyperlinks, when clicked, open in new tab
