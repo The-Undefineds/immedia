@@ -44,7 +44,7 @@ module.exports = {
       Create promise chain to search Most Popular articles and whether any
       articles for the given query match by the unique NYT website url
     */
-    Q(articleSearchURI + 'q=' + searchTerm + '&' + 'begin_date=' + beginDate + '&' + 'page=' + 0 + '&' + 'api-key=' + keys.nytArticleSearch)
+    Q(articleSearchURI + 'q=' + searchTerm + '&fq=body:("' + searchTerm + '")&' + 'begin_date=' + beginDate + '&' + 'page=' + 0 + '&' + 'api-key=' + keys.nytArticleSearch)
       .then(request)                                                                                // GET request for FIRST PAGE of Article Search results
       .then(function(response) {
         var body = JSON.parse(response[1]).response;
@@ -65,10 +65,9 @@ module.exports = {
             );
           }
         }
-
         for(var i = 1; i < numRequests ; i++) {
           getRequestURIs.push(                                                                      // Create an array to carry-out parallel async requests
-            request(articleSearchURI + 'q=' + searchTerm + '&' + 'begin_date=' + beginDate + '&' + 'page=' + i + '&' + 'api-key=' + keys.nytArticleSearch)
+            request(articleSearchURI + 'q=' + searchTerm + '&fq=body:("' + searchTerm + '")&' + 'begin_date=' + beginDate + '&' + 'page=' + i + '&' + 'api-key=' + keys.nytArticleSearch)
           );
         }
         return getRequestURIs;
@@ -101,7 +100,7 @@ module.exports = {
                 'source': 'nyt',
                 'children': [
                   {
-                    'title': mostPopular[article]['title'],
+                    'title': mostPopular[article]['title'].replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
                     'url': mostPopular[article]['url'],
                     'img': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['url']),
                     'height': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['height']),
@@ -115,7 +114,7 @@ module.exports = {
             } else {
               results[publishedDate]['children'].push(
                 {
-                  'title': mostPopular[article]['title'],
+                  'title': mostPopular[article]['title'].replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
                   'url': mostPopular[article]['url'],
                   'img': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['url']),
                   'height': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['height']),
@@ -143,7 +142,7 @@ module.exports = {
                 'source': 'nyt',
                 'children': [
                   {
-                    'title': articles[i]['headline']['main'],
+                    'title': articles[i]['headline']['main'].replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
                     'url': articles[i]['web_url'],
                     'img': (img === undefined ? '' : img['url']),
                     'height': (img === undefined ? '' : img['height']),
@@ -164,7 +163,7 @@ module.exports = {
               if(j === existingArticles.length) {
                 results[date]['children'].push(
                   {
-                    'title': articles[i]['headline']['main'],
+                    'title': articles[i]['headline']['main'].replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
                     'url': articles[i]['web_url'],
                     'img': (img === undefined ? '' : img['url']),
                     'height': (img === undefined ? '' : img['height']),
