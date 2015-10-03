@@ -100,7 +100,7 @@ module.exports = {
                 'source': 'nyt',
                 'children': [
                   {
-                    'title': mostPopular[article]['title'],
+                    'title': mostPopular[article]['title'].replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
                     'url': mostPopular[article]['url'],
                     'img': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['url']),
                     'height': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['height']),
@@ -114,7 +114,7 @@ module.exports = {
             } else {
               results[publishedDate]['children'].push(
                 {
-                  'title': mostPopular[article]['title'],
+                  'title': mostPopular[article]['title'].replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
                   'url': mostPopular[article]['url'],
                   'img': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['url']),
                   'height': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['height']),
@@ -142,7 +142,7 @@ module.exports = {
                 'source': 'nyt',
                 'children': [
                   {
-                    'title': articles[i]['headline']['main'],
+                    'title': articles[i]['headline']['main'].replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
                     'url': articles[i]['web_url'],
                     'img': (img === undefined ? '' : img['url']),
                     'height': (img === undefined ? '' : img['height']),
@@ -163,7 +163,7 @@ module.exports = {
               if(j === existingArticles.length) {
                 results[date]['children'].push(
                   {
-                    'title': articles[i]['headline']['main'],
+                    'title': articles[i]['headline']['main'].replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
                     'url': articles[i]['web_url'],
                     'img': (img === undefined ? '' : img['url']),
                     'height': (img === undefined ? '' : img['height']),
