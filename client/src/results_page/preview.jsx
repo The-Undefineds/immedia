@@ -35,7 +35,6 @@ var Preview = React.createClass({
 
     var previewItem = this.props.previewItem;
     var source = previewItem.source;
-    console.log(previewItem);
 
     if (previewItem.tweet) {
       var twitter = true;

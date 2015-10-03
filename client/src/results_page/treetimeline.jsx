@@ -34,6 +34,8 @@ var TreeTimeLine = React.createClass({
   apiCounter: 0,
 
   query: function(searchTerm){
+    var index = searchTerm.indexOf('(');
+    if (index !== -1) searchTerm = searchTerm.slice(0, index);
     this.apiCounter = 0;
     for(var i = 0; i < this.apis.length; i++){
       this.handleQuery({
@@ -233,16 +235,16 @@ var TreeTimeLine = React.createClass({
 
     function update(source) {
 
-      var duration = 500;
-      // var duration = function(d) {
-      //   if (d.rendered < component.apis.length) {
-      //     d.rendered++;
-      //     return 5;
-      //   } else if (!d.rendered) {
-      //     d.rendered = 1;
-      //   }
-      //   return 500;
-      // }
+      // var duration = 500;
+      var duration = function(d) {
+        if (d.rendered < component.apis.length) {
+          d.rendered++;
+          return 5;
+        } else if (!d.rendered) {
+          d.rendered = 1;
+        }
+        return 500;
+      }
 
       var nodes = tree.nodes(root).reverse();
       var links = d3.layout.tree().links(nodes);
@@ -359,7 +361,7 @@ var TreeTimeLine = React.createClass({
 
       var nodeUpdate = node.transition()
           .duration(duration)
-          .ease('linear')
+          // .ease('linear')
           .attr("transform", function(d) { 
             if (d == root) {
               d.y = -1000;
@@ -435,15 +437,15 @@ var TreeTimeLine = React.createClass({
             strokeWidth: '1.5px',
           })
         .transition()
-          .duration(duration)
+          .duration(500)
           .attr("d", diagonal)
 
       link.transition()
-          .duration(duration)
+          .duration(500)
           .attr("d", diagonal);
 
       link.exit().transition()
-          .duration(duration)
+          .duration(500)
           .attr("d", function(d) {
             var o = {x: source.x, y: source.y};
             return diagonal({source: o, target: o});
