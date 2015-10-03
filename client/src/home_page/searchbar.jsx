@@ -23,7 +23,42 @@ var SearchBar = React.createClass({
     // send this.state.searchTerm in ajax 
     this.props.searchInit(this.state.searchTerm);
   },
-
+  
+  componentDidMount : function(){
+    $(function() {
+      function log( message ) {
+        $( "<div>" ).text( message ).prependTo( "#log" );
+        $( "#log" ).scrollTop( 0 );
+      }
+    
+      $( "#searchbox" ).autocomplete({
+        source: function( request, response ) {
+          $.ajax({
+            url: "http://en.wikipedia.org/w/api.php",
+            dataType: "jsonp",
+            data: {
+              'action': "opensearch",
+              'format': "json",
+              'search': request.term
+            },
+            success: function( data ) {
+              response(data[1]);
+            }
+          });
+        },
+        minLength: 3,
+        select: function( event, ui ) {
+          console.log( ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
+        },
+        open: function() {
+          $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+        },
+        close: function() {
+          $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+        }
+      });
+    });
+  },
 
   render: function(){
     return (

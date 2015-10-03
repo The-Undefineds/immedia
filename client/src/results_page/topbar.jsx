@@ -27,9 +27,8 @@ var TopBar = React.createClass({
   
   componentDidMount : function() {
       $(function() {
-        $( "#searchbox" ).autocomplete({
+        $( "#topbar" ).autocomplete({
           source: function( request, response ) {
-            console.log('here');
             $.ajax({
               url: "http://en.wikipedia.org/w/api.php",
               dataType: "jsonp",
@@ -57,7 +56,7 @@ var TopBar = React.createClass({
   render: function(){
     return (
       <div style={{textAlign:'center', backgroundColor: '#46008B', padding: '10px'}} >
-        <input id='searchbox' type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
+        <input id='topbar' type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
         <input type='button' onClick={this.handleSubmit} value='Immedia search'/>
         <input onClick={this.goBackHome} value='home' type='button'/>
       </div>
