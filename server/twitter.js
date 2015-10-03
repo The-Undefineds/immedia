@@ -1,10 +1,14 @@
 var OAuth = require('./OAuth');
 var request = require('request');
 var utils = require('./utils.js');
+var newsOrgs = require('./assets/assets.js').newsOrgs;
 
 var baseUrl = 'https://api.twitter.com/1.1/users/search.json';
 var newUrl = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
 var url = 'https://api.twitter.com/1/statuses/oembed.json';
+var searchNewsUrl = 'https://api.twitter.com/1.1/search/tweets.json';
+
+var queryString;
 
 var search = {
   url : '',
@@ -17,8 +21,7 @@ var search = {
 
 module.exports = {
   getTweetsPerson : function(request, response){
-    var queryString = request.body.searchTerm;
-
+    queryString = request.body.searchTerm;
     findUser(baseUrl, queryString, function(status, data){
       response.status(status).send(data);
     });
@@ -110,8 +113,34 @@ function embedTweet(url, tweetIds, callback, params){
           img: params.img
         })
         manualPromise++;
-        if (manualPromise === 3) callback(200, obj);
+        // if (manualPromise === 3) callback(200, obj);
+        if (manualPromise === 3) {
+          searchNews(searchNewsUrl, callback);
+        }
       }
     })
   }
 }
+
+//queries for top tweets then filters by verifiable news organization
+function searchNews(url, callback){
+  search.url = url;
+  search.qs = { q: queryString, result_type: 'popular' };
+  search.headers.Authorization = OAuth(url, 'q=' + queryString + '&result_type=popular');
+  request(search, function(error, response, body){
+    if(error) {
+      callback(404, error);
+    } else {
+      body = JSON.parse(body);
+      callback(200, body);
+    }
+  })
+}
+
+
+
+
+
+
+
+
