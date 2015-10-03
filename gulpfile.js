@@ -45,13 +45,14 @@ gulp.task('watch', function(){
 
   return watcher.on('update', function(){
     watcher.bundle()
-      .pipe(source(path.OUT))
-      .pipe(gulp.dest(path.DEST_SRC))
-      console.log('Updated');
+      .pipe(source(path.MINIFIED_OUT))
+      .pipe(gulp.dest(path.DEST_BUILD))
+      console.log('Updated Minified Source Build');
   })
     .bundle()
-    .pipe(source(path.OUT))
-    .pipe(gulp.dest(path.DEST_SRC))
+    .pipe(source(path.MINIFIED_OUT))
+    .pipe(streamify(uglify(path.MINIFIED_OUT)))
+    .pipe(gulp.dest(path.DEST_BUILD))
 })
 
 //Concatenates and Minifies our JS files
@@ -66,6 +67,17 @@ gulp.task('build', function(){
   .pipe(source(path.MINIFIED_OUT))
   .pipe(streamify(uglify(path.MINIFIED_OUT)))
   .pipe(gulp.dest(path.DEST_BUILD))
+  console.log('One moment creating minified source build');
+
+  browserify({
+    entries: [path.ENTRY_POINT],
+    transform: [reactify]
+  })
+  .bundle()
+  .pipe(source(path.OUT))
+  .pipe(gulp.dest(path.DEST_SRC))
+  console.log('One moment creating source build');
+
 });
 
 //restarts the server whenever there is any change on server/server.js
@@ -85,8 +97,12 @@ gulp.task('nodemon', function(){
   })
 });
 
+gulp.task('finished', function(){
+  console.log('Your production code was successfully built')
+})
+
 //Default Gulp tasks
 gulp.task('default', ['copy', 'watch', 'nodemon']);
 
 //Run Production tasks
-gulp.task('production', ['copy', 'build']);
+gulp.task('production', ['copy', 'build', 'finished']);

@@ -9,12 +9,12 @@ var cors = require('express-cors');
 
 var app = express();
 var server = http.createServer(app);
-var port = 3000;
-var url = '127.0.0.1'; //Change url as necessary
+var port = process.env.PORT || 3000;
+var url = process.env.PORT ? 'http://immedia.com':'127.0.0.1'; //Change url as necessary
 
 //app.use();
 app.use(cors({
-  allowedOrigins: ['localhost:3000']
+  allowedOrigins: ['localhost:3000', 'http://www.immedia.com', 'http://immedia.com']
 }))
 
 app.use(express.static(('dist')))
