@@ -1,4 +1,4 @@
-var key = require('./keys');
+var key = process.env.PORT ? require('../../keys.js') : require('./keys.js');
 var utils = require('./utils.js');
 var request = require('request');
 
