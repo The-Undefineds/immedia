@@ -1,4 +1,17 @@
 var React = require('react');
+var StyleSheet = require('react-style');
+
+var styles = StyleSheet.create({
+  container: {
+    position: 'fixed',
+    left: '900px',
+    overflow: 'scroll',
+    marginTop: '50px',
+    maxHeight: '700px',
+    borderLeft: 'solid 1px gray',
+    paddingLeft: '10px',
+  }
+});
 
 var SearchHistory = require('./searchhistory.jsx');
 
@@ -117,17 +130,9 @@ var WikiView = React.createClass({
   render: function(){
 
     return (
-      <div id='wikiview' style={this.style}></div>
+      <div id='wikiview' style={styles.container}></div>
     );
   },
-
-  style: {
-    // position: 'fixed',
-    left: '900px',
-    overflow: 'scroll',
-    marginTop: '50px',
-    maxHeight: '680px'
-  }
 
 });
 
