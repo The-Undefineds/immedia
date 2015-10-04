@@ -8,6 +8,28 @@ var TreeTimeLine = require('./results_page/treetimeline.jsx'),
 
 var ResultsView = React.createClass({
 
+  getInitialState: function() {
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
+  },
+
+  componentDidMount: function() {
+    window.addEventListener('resize', this.handleResize);
+  },
+
+  componentWillUnmount: function() {
+    window.removeEventListener('resize', this.handleResize);
+  },
+  
+  handleResize: function(e) {
+    this.setState({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  },
+
   queryTerm: function(searchTerm){
     this.setState({
       searchTerm: searchTerm
@@ -29,7 +51,7 @@ var ResultsView = React.createClass({
     React.render(
       <Preview previewItem={this.previewItem}/>,
       document.getElementById('preview')
-      )
+    );
   },
 
   componentDidMount: function() {
@@ -47,8 +69,8 @@ var ResultsView = React.createClass({
     return (
       <div id="results">
         <TopBar searchInit={this.props.searchInit} goBackHome={this.props.goBackHome} />
-        <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver} />
         <WikiView searchTerm={this.props.searchTerm} searchInit={this.props.searchInit} />
+        <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver} window={this.state} />
         <div id="preview"></div>
         <p id="pastSearches_header">Recently Viewed</p>
         <div id="pastSearches" style={{textAlign:'center'}}>

@@ -1,8 +1,17 @@
 var React = require('react');
+var StyleSheet = require('react-style');
 
 var TimeSpanSlider = require('./timespanslider.jsx');
 
 var i = 0;
+
+var styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: '55px',
+    borderRight: 'solid 1px gray',
+  },
+});
 
 var TreeTimeLine = React.createClass({
 
@@ -14,6 +23,8 @@ var TreeTimeLine = React.createClass({
       // searchTerm: '',
       timeSpan: 7,
       apiData: [],
+      width: this.props.window.width,
+      height: this.props.window.height,
     };
   },
 
@@ -57,6 +68,11 @@ var TreeTimeLine = React.createClass({
     if (this.props.searchTerm !== newProps.searchTerm) {
       this.query(newProps.searchTerm);
     }
+
+    this.setState({
+      width: newProps.window.width,
+      height: newProps.window.height,
+    });
   },
 
   handleQuery: function(searchQuery){
@@ -142,18 +158,21 @@ var TreeTimeLine = React.createClass({
     generateDates(this.state.timeSpan);
 
     this.renderCanvas();    // Crucial step that (re-)renders D3 canvas
-    return (
-      <div>
-        <div id="d3container" style={this.style}></div>
-      </div>
-    )
-  // <TimeSpanSlider setTimeSpan={ this.setTimeSpan } timeSpan={ this.state.timeSpan } />
-  },
 
-  style: {
-    // position: 'fixed',
-    marginTop: '50px',
-    left: '50px'
+    var styles = StyleSheet.create({
+      container: {
+        position: 'absolute',
+        top: '55px',
+        left: (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 5) + 'px',
+        width: (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350) + 'px',
+        height: (this.state.height - 55) + 'px',
+        borderRight: 'solid 1px gray',
+      },
+    });
+
+    return (
+      <div id="d3container" style={styles.container}></div>
+    );
   },
 
   mouseOver: function(item) {
@@ -191,8 +210,8 @@ var TreeTimeLine = React.createClass({
       left: 40
     };
 
-    var width = 350,
-        height = component.state.timeSpan * 100;
+    var width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350),
+        height = this.state.height - 55;
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
                       this.state.apiData[this.state.apiData.length - 1] : null;
@@ -213,7 +232,7 @@ var TreeTimeLine = React.createClass({
     var svg = d3.select('#d3container').append('svg')
       .attr('class', 'timeLine')
       .attr('width', width)
-      .attr('height', height)
+      .attr('height', this.state.height - 55)
       .append('g')
       .attr('transform', 'translate(60, ' + margin.top + ')')
 
@@ -221,7 +240,7 @@ var TreeTimeLine = React.createClass({
       .attr('class', 'yAxis')
       .attr({
         'font-family': 'Arial, sans-serif',
-        'font-size': '10px',
+        'font-size': 10 * (this.state.width / 1350) + 'px',
       })
       .attr({
         fill: 'none',
