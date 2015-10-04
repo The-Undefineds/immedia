@@ -36,9 +36,12 @@ var ResultsView = React.createClass({
     return (
       <div id="results">
         <TopBar searchInit={this.props.searchInit} goBackHome={this.props.goBackHome} />
-        <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver}/>
-        <WikiView searchTerm={this.props.searchTerm}/>
+        <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver} />
+        <WikiView searchTerm={this.props.searchTerm} searchInit={this.props.searchInit} />
         <div id="preview"></div>
+        <p id="pastSearches_header">Recently Viewed</p>
+        <div id="pastSearches" style={{textAlign:'center'}}>
+        </div>
       </div>
     );
   },

@@ -1,5 +1,7 @@
 var React = require('react');
 
+var SearchHistory = require('./searchhistory.jsx');
+
 var WikiView = React.createClass({
 
   query: function(searchTerm){
@@ -31,6 +33,19 @@ var WikiView = React.createClass({
         parse(searchTerm);
       }
     });
+
+    function loadHistoryView(img){
+      //Add image for the search-history view (rendered below)
+      var history = JSON.parse(localStorage['immedia']);
+      history[0].img = img.src;
+      localStorage['immedia'] = JSON.stringify(history);
+
+      // Rendering the search-history view
+      React.render(
+        <SearchHistory history={history} searchInit={context.props.searchInit} />,
+        document.getElementById('pastSearches')
+      );
+    };
     
     function parse(searchTerm){
       var parseRequest = "http://en.wikipedia.org/w/api.php?action=parse&format=json&page="+searchTerm+"&redirects&prop=text&callback=?";
@@ -40,6 +55,7 @@ var WikiView = React.createClass({
         $wikiDOM = $("<document>"+wikiHTML+"</document>");
         var x = $wikiDOM.find(".infobox");
         img = x[0].getElementsByTagName("IMG")[0] || "";
+        loadHistoryView(img);
         // if (img) { img.parentNode.removeChild(img) }; // this line removes the image from the info-box
         var info = context.processData(x.html());
         $('#wikiview').append(info);
