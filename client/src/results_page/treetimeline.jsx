@@ -132,6 +132,11 @@ var TreeTimeLine = React.createClass({
   },
 
   mouseOver: function(item) {
+    if (this.mousedOver === item) {
+      return;
+    } else {
+      this.mousedOver = item;
+    }
     this.props.mouseOver({
         title: item.title,
         date: item.date,
@@ -381,6 +386,7 @@ var TreeTimeLine = React.createClass({
             } else if (d.depth === 3)
               return 25;
           })
+          .style('fill', 'white')
           .style("fill", function(d) { 
             var dat = d;
             if (d.source == 'twitter') {

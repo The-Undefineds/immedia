@@ -20,7 +20,6 @@ var MainView = React.createClass({
   },
 
   goBackHome: function(){ this.setState({atHome : true }); },
-
   //may not need to break up searchInit logic to call this stand
   //alone function
   returnHome: function(){
