@@ -1,4 +1,4 @@
-var keys = require('./keys.js');
+var keys = (process.env.NODE_ENV === 'production') ? require('../../keys.js') : require('./keys.js');
 var utils = require('./utils.js');
 var Q = require('q');
 var Promise = require('bluebird');
