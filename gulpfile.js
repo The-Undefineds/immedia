@@ -6,7 +6,7 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var reactify = require('reactify');
 var streamify = require('gulp-streamify');
-var sftp = require('gulp-stfp');
+var sftp = require('gulp-sftp');
 
 //used for restarting the server upon change in our server file
 var nodemon = require('gulp-nodemon');

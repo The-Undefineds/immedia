@@ -10,7 +10,7 @@ var cors = require('express-cors');
 var app = express();
 var server = http.createServer(app);
 var port = process.env.PORT || 3000;
-var url = process.env.PORT ? 'http://immedia.xyz':'127.0.0.1'; //Change url as necessary
+var url = process.env.PORT ? '192.241.209.214':'127.0.0.1'; //Change url as necessary
 
 //app.use();
 app.use(cors({
