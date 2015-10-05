@@ -32,13 +32,24 @@ var ResultsView = React.createClass({
       )
   },
 
+  componentDidMount: function() {
+    // $(window).scroll(function() {
+    //    if($(window).height() === $(document).height()) {
+    //        console.log("bottom!");
+    //    }
+    // });
+    // console.log('scroll top:', $(window).height());
+    // console.log('doc height:', $(document).height());
+  },
+
   render: function(){
+
     return (
       <div id="results">
         <TopBar searchInit={this.props.searchInit} goBackHome={this.props.goBackHome} />
         <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver}/>
         <div id="preview"></div>
-        <WikiView searchTerm={this.props.searchTerm}/>
+        <WikiView searchTerm={this.props.searchTerm} queryTerm={this.queryTerm}/>
       </div>
     );
   },

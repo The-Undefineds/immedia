@@ -67,12 +67,21 @@ var WikiView = React.createClass({
         var string = data;
         if (data.slice(i+6, i+11) === '/wiki') {
           string = string.slice(0, i+6) + 'http://wikipedia.org' + string.slice(i+6);
+          // for (var j = 0; j < 40; j++) {
+          //   if (string[i + 12 + j] !== '"') {
+          //     continue;
+          //   } else {
+          //     break;
+          //   }
+          // }
+          // string = string.slice(0, i) + 'onClick={this.props.queryTerm(' + string.slice(i + 12, i + 12 + j) + '?)' + string.slice(i);
         }
         string = string.slice(0,i) +  'target="_blank" ' + string.slice(i);
         i += 20;
-        data = string; 
+        data = string;
       }
     }
+    // console.log(data);
     return data;
   },
   
@@ -83,7 +92,7 @@ var WikiView = React.createClass({
   },
 
   style: {
-    position: 'fixed',
+    // position: 'fixed',
     left: '900px',
     overflow: 'scroll',
     marginTop: '50px',

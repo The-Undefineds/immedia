@@ -1,15 +1,6 @@
 var React = require('react');
 
-var dates = [];
-var generateDates = function(timeSpan) {
-  for (var i = -1; i < timeSpan; i++) {
-    var date = new Date();
-    date.setDate(date.getDate() - i);
-    dates.push(date.toJSON().slice(0, 10));
-  }
-}
-
-generateDates(8);
+var TimeSpanSlider = require('./timespanslider.jsx');
 
 var i = 0;
 
@@ -21,6 +12,7 @@ var TreeTimeLine = React.createClass({
     return {
       // wasSearchedFromTopBar: false,
       // searchTerm: '',
+      timeSpan: 7,
       apiData: [],
     };
   },
@@ -48,7 +40,14 @@ var TreeTimeLine = React.createClass({
   },
 
   componentDidMount: function(){
+    var component = this;
     this.query(this.props.searchTerm);
+    // $(window).scroll(function() {
+    //    if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
+    //        console.log("bottom!");
+    //        component.setTimeSpan(component.dates.length + 7);
+    //    }
+    // });
   },
 
   componentWillReceiveProps: function(newProps){
@@ -118,15 +117,38 @@ var TreeTimeLine = React.createClass({
      }.bind(this));
   },
 
+  dates: [],
+
+  setTimeSpan: function(timeSpan) {
+    this.setState({ timeSpan: timeSpan });
+  },
+
   render: function() {
+
+    var component = this;
+
+    var generateDates = function(timeSpan) {
+        component.dates = [];
+        for (var i = -1; i < timeSpan; i++) {
+        var date = new Date();
+        date.setDate(date.getDate() - i);
+        component.dates.push(date.toJSON().slice(0, 10));
+      }
+    }
+
+    generateDates(this.state.timeSpan);
+
     this.renderCanvas();    // Crucial step that (re-)renders D3 canvas
     return (
-      <div id="d3container" style={this.style}></div>
+      <div>
+        <div id="d3container" style={this.style}></div>
+      </div>
     )
+  // <TimeSpanSlider setTimeSpan={ this.setTimeSpan } timeSpan={ this.state.timeSpan } />
   },
 
   style: {
-    position: 'fixed',
+    // position: 'fixed',
     marginTop: '50px',
     left: '50px'
   },
@@ -167,13 +189,13 @@ var TreeTimeLine = React.createClass({
     };
 
     var width = 350,
-        height = 700;
+        height = component.state.timeSpan * 100;
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
                       this.state.apiData[this.state.apiData.length - 1] : null;
 
     var y = d3.time.scale()
-      .domain([new Date(dates[dates.length - 1]), new Date(dates[0])])
+      .domain([new Date(this.dates[this.dates.length - 1]), new Date(this.dates[0])])
       .rangeRound([height - 4*(margin.top) - margin.bottom, 0])
       // .clamp(true)
 
@@ -306,8 +328,6 @@ var TreeTimeLine = React.createClass({
               .transition()
               .attr({
                 r: 28,
-                stroke: '#46008B',
-                strokeWidth: '2.5px'
               })
             }
         })
@@ -317,8 +337,6 @@ var TreeTimeLine = React.createClass({
               .transition()
               .attr({
                 r: 25,
-                // stroke: 'steelblue',
-                // strokeWidth: '1.5px'
               })
           }
         })
