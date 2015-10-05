@@ -1,4 +1,4 @@
-var key = (process.env.NODE_ENV === 'production') ? require('../../keys.js') : require('./keys.js');
+var key = require('./keys.js');
 var utils = require('./utils.js');
 var request = require('request');
 

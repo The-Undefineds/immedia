@@ -7,6 +7,7 @@ var watchify = require('watchify');
 var reactify = require('reactify');
 var streamify = require('gulp-streamify');
 var sftp = require('gulp-sftp');
+var replace = require('gulp-replace');
 
 //used for restarting the server upon change in our server file
 var nodemon = require('gulp-nodemon');
@@ -98,6 +99,13 @@ gulp.task('nodemon', function(){
   })
 });
 
+gulp.task('replace', function(){
+  gulp.src(__dirname + '/server/server.js')
+    .pipe(replace('127.0.0.1', '192.241.209.214'))
+    .pipe(replace('3000', '80'))
+    .pipe(gulp.dest(__dirname + '/server'))
+})
+
 gulp.task('deploy', function(){
   function send(path, remotePath){
     return gulp.src(path)
@@ -126,4 +134,4 @@ gulp.task('finished', function(){
 gulp.task('default', ['copy', 'watch', 'nodemon']);
 
 //Run Production tasks
-gulp.task('production', ['copy', 'build', 'finished']);
+gulp.task('production', ['copy', 'build', 'replace', 'deploy', 'finished']);
