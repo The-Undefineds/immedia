@@ -6,6 +6,7 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var reactify = require('reactify');
 var streamify = require('gulp-streamify');
+var sftp = require('gulp-stfp');
 
 //used for restarting the server upon change in our server file
 var nodemon = require('gulp-nodemon');
@@ -96,6 +97,25 @@ gulp.task('nodemon', function(){
     console.log('Server Restarted!!!');
   })
 });
+
+gulp.task('deploy', function(){
+  function send(path, remotePath){
+    return gulp.src(path)
+      .pipe(sftp({
+        host: '192.241.209.214',
+        user: 'immedia',
+        pass: 'workhardplayhard',
+        remotePath: remotePath
+      }))
+      .on('error', function(error){
+        console.log(error)
+      })
+  };
+  send(__dirname + 'package.json', '/home/immedia/immedia');
+  send(__dirname + '/server', '/home/immedia/immedia/server');
+  send(__dirname + '/client', '/home/immedia/immedia/client');
+  send(__dirname + '/dist', '/home/immedia/immedia/dist');
+})
 
 gulp.task('finished', function(){
   console.log('Your production code was successfully built')
