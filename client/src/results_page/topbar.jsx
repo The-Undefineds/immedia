@@ -1,4 +1,28 @@
 var React = require('react');
+var StyleSheet = require('react-style');
+
+var styles = StyleSheet.create({
+  topBar: {
+    width: window.innerWidth,
+    height: '50px',
+    backgroundColor: 'rgba(128,128,128,0.1)',
+  },
+  logo: {
+    position: 'absolute',
+    left: '15px',
+    marginTop: '5px',
+  },
+  title: {
+    position: 'absolute',
+    left: '70px',
+    marginTop: '5px',
+    marginLeft: '2px',
+    paddingTop: '2px',
+    fontSize: '22px',
+    fontFamily: 'Avenir',
+    color: '#00BFFF',
+  },
+});
 
 var TopBar = React.createClass({
 
@@ -61,12 +85,14 @@ var TopBar = React.createClass({
 
   render: function(){
     return (
-      <div style={{textAlign:'center', backgroundColor: '#46008B', padding: '10px'}} >
+      <div style={styles.topBar}>
+        <img src={'./immedia_logo.png'} height={40} width={40 * (167/137)} style={styles.logo} onClick={this.goBackHome} />
+        <span style={styles.title} onClick={this.goBackHome}>immedia</span>
         <input id='topbar' type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
         <input type='button' onClick={this.handleSubmit} value='Immedia search'/>
         <input onClick={this.goBackHome} value='home' type='button'/>
       </div>
-      )
+    );
   }
 })
 
