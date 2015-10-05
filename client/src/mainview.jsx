@@ -74,12 +74,19 @@ var MainView = React.createClass({
     localStorage['immedia'] = JSON.stringify(history);
   },
 
-  goBackHome: function(){ this.setState({atHome : true }); },
+  // Does the reverse of searchInit (routes to home-page by hiding results-page components).
+  goBackHome: function(){
+    this.setState({atHome : true });
 
-  //may not need to break up searchInit logic to call this stand
-  //alone function
-  returnHome: function(){
-    this.setState({atHome: true});
+    // This block stores the home-page as the last visited location, so that if the user reloads the page
+    // when they are at the home-page, they get redirected to the home-page 
+    var history = JSON.parse(localStorage['immedia']);
+    // 'If' statement keeps the home-page from being added multiple times to the user's history
+    if (history[0].searchTerm !== 0) {
+      // Again, a value of 0 for 'searchTerm' indicates being at the home-page
+      history.unshift({ searchTerm: 0 });
+    }
+    localStorage['immedia'] = JSON.stringify(history);
   },
 
   render: function(){
