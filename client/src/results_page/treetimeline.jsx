@@ -35,12 +35,9 @@ var TreeTimeLine = React.createClass({
     // 'news'
   ],
 
-  apiCounter: 0,
-
   query: function(searchTerm){
     var index = searchTerm.indexOf('(');
     if (index !== -1) searchTerm = searchTerm.slice(0, index);
-    this.apiCounter = 0;
     for(var i = 0; i < this.apis.length; i++){
       this.handleQuery({
         searchTerm: searchTerm,
@@ -67,6 +64,7 @@ var TreeTimeLine = React.createClass({
   componentWillReceiveProps: function(newProps){
     if (this.props.searchTerm !== newProps.searchTerm) {
       this.query(newProps.searchTerm);
+      this.setState({apiData: []});
     }
 
     this.setState({
@@ -82,6 +80,7 @@ var TreeTimeLine = React.createClass({
         // Set State to initiate a re-rendering based on new API call data
         this.setState(function(previousState, currentProps) {
           // Make a copy of previous apiData to mutate and use to reset State
+          var previousApiData = previousState['apiData'].slice();
           // Data is structured in an array that corresponds to sorted order by date descending
           // where each index has the following object:
           /*
@@ -95,13 +94,6 @@ var TreeTimeLine = React.createClass({
                 ]
               }
           */
-      
-          if (this.apiCounter === 0) {
-            var previousApiData = [];
-          } else {
-            var previousApiData = previousState['apiData'].slice();
-          }
-          this.apiCounter++;
 
           // Loop through each day in apiData and add new articles/videos/etc
           // from returning API appropriately
