@@ -1,4 +1,33 @@
 var React = require('react');
+var StyleSheet = require('react-style');
+
+var styles = StyleSheet.create({
+  searchBar: {
+    width: '425px',
+    height: '38px',
+    paddingLeft: '10px',
+  },
+
+  searchButton: {
+    position: 'relative',
+    verticalAlign: 'top',
+    marginTop: '10px',
+    width: '200px',
+    height: '24px',
+    fontFamily: 'Avenir',
+    fontSize: '14px',
+    color: 'white',
+    textAlign: 'center',
+    background: '#3498db',
+    cursor: 'pointer',
+  },
+
+  errorMsg: {
+    color: '#FF0000', 
+    marginTop:'10px',
+    fontFamily: 'Avenir',
+  }
+});
 
 var SearchBar = React.createClass({
 
@@ -22,11 +51,15 @@ var SearchBar = React.createClass({
 
   handleSubmit: function(){
     // send this.state.searchTerm in ajax
-    if(this.state.searchTerm.search(/\w/g) === -1)
+    if(this.state.searchTerm.search(/\w/g) === -1) {
       //alert('Please input something');
-      this.setState({errorHandle: 'Input a search term'});
-    else
+      this.setState({errorHandle: 'Please input a search term'});
+      setTimeout(function() {
+        this.setState({errorHandle: ''});
+      }.bind(this), 5000);
+    } else {
       this.props.searchInit(this.state.searchTerm);
+    }
   },
   
   componentDidMount : function(){
@@ -69,14 +102,14 @@ var SearchBar = React.createClass({
     return (
       <div>
         <div className='ui-widget'>
-          <input id='searchbox' type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
+          <input id='searchbox' type='text' style={styles.searchBar} value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
         </div>
         <span>
-          <button type='button' onClick={this.handleSubmit} > Immedia Search </button>
-          <div style={{color: '#FF0000', marginTop:'10px'}}>{this.state.errorHandle ? this.state.errorHandle: null} </div>
+          <button type='button' style={styles.searchButton} onClick={this.handleSubmit} > immedia Search </button>
+          <div style={styles.errorMsg}>{this.state.errorHandle ? this.state.errorHandle: null} </div>
         </span>
       </div>
-      )
+    );
   }
 });
 
