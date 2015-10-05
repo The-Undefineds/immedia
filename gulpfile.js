@@ -115,6 +115,7 @@ gulp.task('deploy', function(){
   send(__dirname + '/server', '/home/immedia/immedia/server');
   send(__dirname + '/client', '/home/immedia/immedia/client');
   send(__dirname + '/dist', '/home/immedia/immedia/dist');
+  send(__dirname + '/node_modules', '/home/immedia/immedia/node_modules')
 })
 
 gulp.task('finished', function(){
