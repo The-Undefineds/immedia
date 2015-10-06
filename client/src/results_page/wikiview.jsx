@@ -38,10 +38,14 @@ var WikiView = React.createClass({
     function loadHistoryView(img){
       //Add image for the search-history view (rendered below)
       var history = JSON.parse(localStorage['immedia']);
-      history[0].img = img.src;
+      if (img) {
+        history[0].img = img.src;
+      } else { // No argument passed is the signal that no image was found
+        history[0].img = 'https://upload.wikimedia.org/wikipedia/commons/f/fc/No_picture_available.png';
+      }
       localStorage['immedia'] = JSON.stringify(history);
 
-      // Rendering the search-history view
+      // Rendering the search-history view with the history pulled from localStorage
       React.render(
         <SearchHistory history={history} searchInit={context.props.searchInit} />,
         document.getElementById('pastSearches')
@@ -56,8 +60,13 @@ var WikiView = React.createClass({
         $wikiDOM = $("<document>" + wikiHTML + "</document>");
         var x = $wikiDOM.find(".infobox");
         var y = $wikiDOM.find("p:first-of-type:not(.infobox>p)");
-        img = x[0].getElementsByTagName("IMG")[0] || "";
-        loadHistoryView(img);
+        // 'if/else', here, ensures that a wikipedia page deficient of a '.infobox' does not cause any errors
+        if (x[0]) {
+          img = x[0].getElementsByTagName("IMG")[0] || "";
+          loadHistoryView(img);
+        } else {
+          loadHistoryView();
+        }
         // if (img) { img.parentNode.removeChild(img) }; // this line removes the image from the info-box
         var info = context.processData(x.html());
         var summary = context.processData(y.html());
