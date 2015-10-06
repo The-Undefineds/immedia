@@ -42,12 +42,15 @@ var TreeTimeLine = React.createClass({
   componentDidMount: function(){
     var component = this;
     this.query(this.props.searchTerm);
-    // $(window).scroll(function() {
-    //    if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
-    //        console.log("bottom!");
-    //        component.setTimeSpan(component.dates.length + 7);
-    //    }
-    // });
+    $(window).scroll(function() {
+       if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
+           console.log("bottom!");
+           if (component.dates.length > 30) {
+            return;
+           }
+           component.setTimeSpan(component.dates.length + 7);
+       }
+    });
   },
 
   componentWillReceiveProps: function(newProps){
