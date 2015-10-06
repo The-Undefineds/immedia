@@ -17,6 +17,7 @@ var styles = StyleSheet.create({
     marginTop: '5px',
     marginBottom: '1px',
     textAlign: 'left',
+    paddingLeft: '5px',
   },
   d3: {
     position: 'absolute',
@@ -174,7 +175,7 @@ var TreeTimeLine = React.createClass({
 
   getDynamicStyles: function() {
     styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 5) + 'px';
-    styles.container.width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350) + 'px';
+    styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
     styles.container.height = (this.state.height - 100) + 'px';
     return;
   },
