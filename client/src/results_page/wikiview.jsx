@@ -64,17 +64,17 @@ var WikiView = React.createClass({
         if (x[0]) {
           img = x[0].getElementsByTagName("IMG")[0] || "";
           loadHistoryView(img);
+          var info = context.processData(x.html());
+          var summary = context.processData(y.html());
+          context.checkIfPerson(x.html(), x);
+          $('#wikiview').append(info);
+          $('#wikiview').append(summary);
+          $('.wikiLink').on('click', function() {
+            component.props.searchInit($(this).text());
+          })
         } else {
           loadHistoryView();
         }
-        // if (img) { img.parentNode.removeChild(img) }; // this line removes the image from the info-box
-        var info = context.processData(x.html());
-        var summary = context.processData(y.html());
-        $('#wikiview').append(info);
-        $('#wikiview').append(summary);
-        $('.wikiLink').on('click', function() {
-          component.props.searchInit($(this).text());
-        })
       })
     }
   },
@@ -89,7 +89,7 @@ var WikiView = React.createClass({
     }
   },
 
-  // alters html so that hyperlinks, when clicked, open in new tab
+  // Alters html so that hyperlinks, when clicked, make a new immedia-search
   processData: function(data){
     for (var i = 0; i < data.length; i++) {
       if (data[i] === 'h' && data.slice(i+1, i+4) === 'ref') {
