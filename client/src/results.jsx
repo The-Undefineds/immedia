@@ -32,7 +32,18 @@ var ResultsView = React.createClass({
       )
   },
 
+  componentDidMount: function() {
+    // $(window).scroll(function() {
+    //    if($(window).height() === $(document).height()) {
+    //        console.log("bottom!");
+    //    }
+    // });
+    // console.log('scroll top:', $(window).height());
+    // console.log('doc height:', $(document).height());
+  },
+
   render: function(){
+
     return (
       <div id="results">
         <TopBar searchInit={this.props.searchInit} goBackHome={this.props.goBackHome} />

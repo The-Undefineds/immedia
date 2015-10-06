@@ -16,12 +16,12 @@ window.twttr = (function(d, s, id) {
   };
  
   return t;
-}(document, "script", "twitter-wjs"))
+}(document, "script", "twitter-wjs"));
 
 
 var TwitterPreview = React.createClass({
 
-  componentDidMount: function() {
+  embedTweet: function() {
     var tweetId = this.props.previewItem.url.slice(this.props.previewItem.url.length - 18, this.props.previewItem.url.length);
 
     $('<div id="tweet"></div>').hide().prependTo('#twitterPreview').fadeIn(800);
@@ -29,19 +29,15 @@ var TwitterPreview = React.createClass({
       tweetId,
       document.getElementById('tweet')
       )
+  },
+
+  componentDidMount: function() {
+    this.embedTweet();
 },
 
   componentDidUpdate: function() {
-    
     $('#twitterPreview').empty();
-
-    var tweetId = this.props.previewItem.url.slice(this.props.previewItem.url.length - 18, this.props.previewItem.url.length);
-
-    $('<div id="tweet"></div>').hide().prependTo('#twitterPreview').fadeIn(800);
-    twttr.widgets.createTweet(
-      tweetId,
-      document.getElementById('tweet')
-      )
+    this.embedTweet();
   },
 
   render: function() {

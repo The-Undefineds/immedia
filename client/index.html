@@ -15,6 +15,7 @@
         border-radius: 20px;
         /*margin-right: 40px;*/
         position: fixed;
+        float: left;
         left: 400px;
         margin-top: 50px;
       }
@@ -40,20 +41,34 @@
 
       #wikiview {
         width: 500px;
-        height: 700px;
+        height: 500px;
         border-style: solid;
         border-color: gray;
         border-width: 1px;
         border-radius: 20px;
-        left: 650px;
+        /*left: 650px;*/
+        float: right;
+      }
+
+      .wikiLink {
+        color: blue;
+        cursor: pointer;
       }
 
       #twitterPreview {
         width: 480px;
       }
 
+      #d3container {
+        float: left;
+      }
+
       #tweet {
         margin-left: 20px;
+      }
+
+      #slider {
+        width: 350px;
       }
     
       .ui-autocomplete-loading {
@@ -68,9 +83,9 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js'></script>
     <script src='https://www.youtube.com/iframe_api'></script> 
-    <script src='./src/build.js'></script>
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script src='./build/build.min.js'></script>
+    <!-- // <script src="//code.jquery.com/jquery-1.10.2.js"></script> -->
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script>
       $(function() {
         function log( message ) {

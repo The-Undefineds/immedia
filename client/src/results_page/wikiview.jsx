@@ -12,6 +12,7 @@ var WikiView = React.createClass({
         searchRequest = "https://en.wikipedia.org/w/api.php?action=query&prop=pageprops|info&titles="+searchTerm+"&callback=?&format=json";
     
     $('#wikiview').empty();
+    var component = this;
 
     $.getJSON(searchRequest)
     .done(function(data){
@@ -62,6 +63,9 @@ var WikiView = React.createClass({
         var summary = context.processData(y.html());
         $('#wikiview').append(info);
         $('#wikiview').append(summary);
+        $('.wikiLink').on('click', function() {
+          component.props.searchInit($(this).text());
+        })
       })
     }
   },
@@ -83,23 +87,33 @@ var WikiView = React.createClass({
         var string = data;
         if (data.slice(i+6, i+11) === '/wiki') {
           string = string.slice(0, i+6) + 'http://wikipedia.org' + string.slice(i+6);
-        }
-        string = string.slice(0,i) +  'target="_blank" ' + string.slice(i);
-        i += 20;
-        data = string; 
+          for (var j = 0; j < 300; j++) {
+            if (string[i + j] !== '>') {
+              continue;
+            } else {
+              break;
+            }
+          }
+          // string = string.slice(0, i + 4) + ' onClick={this.props.searchInit(' + string.slice(i + 12, i + 12 + j) + ')}' + string.slice(i + 32 + j);
+          string = string.slice(0, i) + 'class="wikiLink"' + string.slice(i + j);
+          }
+        // string = string.slice(0,i) +  'target="_blank" ' + string.slice(i);
+        // i += 20;
+        data = string;
       }
     }
     return data;
   },
   
   render: function(){
+
     return (
       <div id='wikiview' style={this.style}></div>
     );
   },
 
   style: {
-    position: 'fixed',
+    // position: 'fixed',
     left: '900px',
     overflow: 'scroll',
     marginTop: '50px',
