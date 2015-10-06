@@ -18,33 +18,8 @@ var ResultsView = React.createClass({
 
   componentDidMount: function() {
     window.addEventListener('resize', this.handleResize);
-  },
+    this.renderPreview({source: ''});
 
-  componentWillUnmount: function() {
-    window.removeEventListener('resize', this.handleResize);
-  },
-  
-  handleResize: function(e) {
-    this.setState({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-  },
-
-  queryTerm: function(searchTerm){
-    this.setState({
-      searchTerm: searchTerm
-    });
-  },
-
-  mouseOver: function(item){    
-    React.render(
-      <Preview previewItem={item} window={this.state} />,
-      document.getElementById('preview')
-    );
-  },
-
-  componentDidMount: function() {
     // $(window).scroll(function() {
     //    if($(window).height() === $(document).height()) {
     //        console.log("bottom!");
@@ -54,8 +29,16 @@ var ResultsView = React.createClass({
     // console.log('doc height:', $(document).height());
   },
 
-  render: function(){
+  componentWillReceiveProps: function() {
+    this.item = {source: ''};
+    this.renderPreview(this.item);
+  },
 
+  componentWillUnmount: function() {
+    window.removeEventListener('resize', this.handleResize);
+  },
+  
+  render: function(){
     return (
       <div id="results">
         <TopBar searchInit={this.props.searchInit} goBackHome={this.props.goBackHome} window={this.state} />
@@ -67,6 +50,34 @@ var ResultsView = React.createClass({
         </div>
       </div>
     );
+  },
+
+  item: {source: ''},
+
+  renderPreview: function(item) {
+    React.render(
+      <Preview previewItem={item} window={this.state} />,
+      document.getElementById('preview')
+    );
+  },
+
+  handleResize: function(e) {
+    this.setState({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+    this.renderPreview(this.item);
+  },
+
+  queryTerm: function(searchTerm){
+    this.setState({
+      searchTerm: searchTerm
+    });
+  },
+
+  mouseOver: function(item){    
+    this.item = item;
+    this.renderPreview(this.item);
   },
 });
 
