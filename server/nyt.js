@@ -107,7 +107,7 @@ module.exports = {
                     'width': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['width']),
                     'date': publishedDate,
                     'byline': mostPopular[article]['byline'],
-                    'abstract': mostPopular[article]['abstract']
+                    'abstract': (mostPopular[article]['abstract'])
                   }
                 ]
               };
@@ -121,7 +121,7 @@ module.exports = {
                   'width': (mostPopular[article]['media']['0'] === undefined ? '' : mostPopular[article]['media']['0']['media-metadata']['0']['width']),
                   'date': publishedDate,
                   'byline': mostPopular[article]['byline'],
-                  'abstract': mostPopular[article]['abstract']
+                  'abstract': (mostPopular[article]['abstract'])
                 }
               );
             }
