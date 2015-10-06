@@ -6,17 +6,16 @@ var i = 0;
 
 var TreeTimeLine = React.createClass({
 
-  renderCount: 0,
-
   getInitialState: function(){
-    return {
-      // wasSearchedFromTopBar: false,
-      // searchTerm: '',
+    
+  //Initial timespan set at one week
+  return {
       timeSpan: 7,
       apiData: [],
     };
   },
 
+  //Api's to be called are listed in this array
   apis: [
     'nyt',
     // 'twitter',
@@ -26,6 +25,7 @@ var TreeTimeLine = React.createClass({
 
   apiCounter: 0,
 
+  //Rendering the timeline will start a query for a search term passed down from the results page.
   query: function(searchTerm){
     var index = searchTerm.indexOf('(');
     if (index !== -1) searchTerm = searchTerm.slice(0, index);
@@ -39,21 +39,36 @@ var TreeTimeLine = React.createClass({
     }
   },
 
+  breakPoint: null,
+
   componentDidMount: function(){
     var component = this;
     this.query(this.props.searchTerm);
+
+    //When a user scrolls to the bottom of the document, a new timeline will be rendered that is 7 days longer.
     $(window).scroll(function() {
-       if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
-           console.log("bottom!");
+      var scrollPoint = $(window).scrollTop() + $(window).height();
+       if (scrollPoint > $(document).height()) {
+           component.breakPoint = scrollPoint;
+           //An upper limit for the timeline's span is set at 30 days.
            if (component.dates.length > 30) {
             return;
            }
            component.setTimeSpan(component.dates.length + 7);
        }
+       // if ($(window).scrollTop() + 800 < component.breakPoint) {
+       //  console.log('hit the top!');
+       //  if (component.dates.length < 9) {
+       //    return;
+       //  }
+       //  component.setTimeSpan(component.dates.length - 7)
+       // }
     });
   },
 
   componentWillReceiveProps: function(newProps){
+
+    //If the new search term matches the term queried for the current results, nothing will change.
     if (this.props.searchTerm !== newProps.searchTerm) {
       this.query(newProps.searchTerm);
     }
@@ -144,7 +159,7 @@ var TreeTimeLine = React.createClass({
     this.renderCanvas();    // Crucial step that (re-)renders D3 canvas
     return (
       <div>
-        <div id="d3container" style={this.style}></div>
+        <div id='d3container' style={this.style}></div>
       </div>
     )
   // <TimeSpanSlider setTimeSpan={ this.setTimeSpan } timeSpan={ this.state.timeSpan } />
@@ -302,13 +317,13 @@ var TreeTimeLine = React.createClass({
         });
 
       // Update the nodes…
-      var node = svg.selectAll("g.node")
+      var node = svg.selectAll('g.node')
           .data(nodes, function(d) { return d.id || (d.id = ++i); });
 
       // Enter any new nodes at the parent's previous position.
-      var nodeEnter = node.enter().append("svg:g")
-        .attr("class", "node")
-        .on("click", function(d) {
+      var nodeEnter = node.enter().append('svg:g')
+        .attr('class', 'node')
+        .on('click', function(d) {
           console.log(d);
           if (d.url) { 
             window.open(d.url,'_blank');
@@ -320,7 +335,7 @@ var TreeTimeLine = React.createClass({
           toggle(d); 
           update(d); 
         })
-        .on("mouseenter", function(d) {
+        .on('mouseenter', function(d) {
           if (d.depth === 3) {
             component.mouseOver(d);
           }
@@ -341,7 +356,7 @@ var TreeTimeLine = React.createClass({
               .attr({
                 r: 25,
               })
-          }
+            }
         })
 
       var defs = svg.append('svg:defs');
@@ -376,9 +391,9 @@ var TreeTimeLine = React.createClass({
           .attr('width', 15)
           .attr('height', 15)
 
-      nodeEnter.append("svg:circle")
-        .attr("r", 1e-6)
-        .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; })
+      nodeEnter.append('svg:circle')
+        .attr('r', 1e-6)
+        .style('fill', function(d) { return d._children ? 'lightsteelblue' : '#fff'; })
         .style({
           cursor: 'pointer',
           fill: '#fff',
@@ -389,15 +404,15 @@ var TreeTimeLine = React.createClass({
       var nodeUpdate = node.transition()
           .duration(duration)
           // .ease('linear')
-          .attr("transform", function(d) { 
+          .attr('transform', function(d) { 
             if (d == root) {
               d.y = -1000;
             }
-            return "translate(" + d.y + "," + d.x + ")"; 
+            return 'translate(' + d.y + ',' + d.x + ')'; 
           });
 
-      nodeUpdate.select("circle")
-          .attr("r", function(d) {
+      nodeUpdate.select('circle')
+          .attr('r', function(d) {
             if (d.depth === 1 && d._children) {
               return 12;
             } else if (d.depth === 1 && d.children) {
@@ -408,7 +423,7 @@ var TreeTimeLine = React.createClass({
               return 25;
           })
           .style('fill', 'white')
-          .style("fill", function(d) { 
+          .style('fill', function(d) { 
             var dat = d;
             if (d.source == 'twitter') {
               return 'url(/#tile-twitter)';
@@ -439,23 +454,23 @@ var TreeTimeLine = React.createClass({
                 .attr('height', 55)
               return 'url(/#tile-img' + d.id + ')'
             }
-            return d._children ? "lightsteelblue" : "#fff"; 
+            return d._children ? 'lightsteelblue' : '#fff'; 
           })
 
       var nodeExit = node.exit().transition()
           .duration(duration)
-          .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+          .attr('transform', function(d) { return 'translate(' + source.y + ',' + source.x + ')'; })
           .remove();
 
-      nodeExit.select("circle")
-          .attr("r", 1e-6);
+      nodeExit.select('circle')
+          .attr('r', 1e-6);
 
-      var link = svg.selectAll("path.link")
+      var link = svg.selectAll('path.link')
           .data(tree.links(nodes), function(d) { return d.target.id; })
 
-      link.enter().insert("svg:path", "g")
-          .attr("class", "link")
-          .attr("d", function(d) {
+      link.enter().insert('svg:path', 'g')
+          .attr('class', 'link')
+          .attr('d', function(d) {
             var origin = { x: source.x0, y: source.y0 };
             return diagonal({ source: origin, target: origin });
           })
@@ -466,17 +481,17 @@ var TreeTimeLine = React.createClass({
           })
         .transition()
           .duration(500)
-          .attr("d", diagonal)
+          .attr('d', diagonal)
 
       link.transition()
           .duration(500)
-          .attr("d", diagonal);
+          .attr('d', diagonal);
 
       link.exit().transition()
           .duration(500)
-          .attr("d", function(d) {
-            var o = {x: source.x, y: source.y};
-            return diagonal({source: o, target: o});
+          .attr('d', function(d) {
+            var origin = {x: source.x, y: source.y};
+            return diagonal({source: origin, target: origin});
           })
           .remove();
 

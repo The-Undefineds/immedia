@@ -86,14 +86,15 @@ var WikiView = React.createClass({
       if (data[i] === 'h' && data.slice(i+1, i+4) === 'ref') {
         var string = data;
         if (data.slice(i+6, i+11) === '/wiki') {
-          string = string.slice(0, i+6) + 'http://wikipedia.org' + string.slice(i+6);
-          for (var j = 0; j < 300; j++) {
-            if (string[i + j] !== '>') {
-              continue;
-            } else {
-              break;
+          // if (data.slice(i+12, i+16) == 'File') { return; }
+            string = string.slice(0, i+6) + 'http://wikipedia.org' + string.slice(i+6);
+            for (var j = 0; j < 300; j++) {
+              if (string[i + j] !== '>') {
+                continue;
+              } else {
+                break;
+              }
             }
-          }
           // string = string.slice(0, i + 4) + ' onClick={this.props.searchInit(' + string.slice(i + 12, i + 12 + j) + ')}' + string.slice(i + 32 + j);
           string = string.slice(0, i) + 'class="wikiLink"' + string.slice(i + j);
           }
