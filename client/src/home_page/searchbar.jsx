@@ -86,7 +86,7 @@ var SearchBar = React.createClass({
         },
         minLength: 3,
         select: function( event, ui ) {
-          console.log( ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
+          // console.log( ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
         },
         open: function() {
           $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
