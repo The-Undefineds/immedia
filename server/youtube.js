@@ -41,19 +41,20 @@ function callYoutube(date, item, callback){
       console.log(error);
       callback(404, error);
     } else {
-      body = JSON.parse(body);
+      var videos = Array.prototype.slice.call(JSON.parse(body).items);
       var obj = {};
       //snippet.thumbnails.(key) | key = default|medium|high | access through key.url
-      for (var i = 0; i < 3; i++){
-        var date = body.items[i].snippet.publishedAt.slice(0, 10); //Should be user defined
+      for (var i = 0; i < videos.length; i++){
+        if(i === 3) break;
+        var date = videos[i].snippet.publishedAt.slice(0, 10); //Should be user defined
         obj[date] = obj[date] || {
           source : 'youtube',
           children : []
         }
         obj[date].children.push({
-          title : body.items[i].snippet.title,
-          id : body.items[i].id.videoId,
-          thumbnail : body.items[i].snippet.thumbnails
+          title : videos[i].snippet.title,
+          id : videos[i].id.videoId,
+          thumbnail : videos[i].snippet.thumbnails
         })        
       }
     }
