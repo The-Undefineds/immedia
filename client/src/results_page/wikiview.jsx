@@ -145,7 +145,6 @@ var WikiView = React.createClass({
           loadHistoryView(img);
           var info = context.processData(x.html());
           var summary = context.processData(y.html());
-          context.checkIfPerson(x.html(), x);
           $('#wikiview').append(info);
           $('#wikiview').append(summary);
           $('.wikiLink').on('click', function() {
