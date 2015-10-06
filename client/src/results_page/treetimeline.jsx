@@ -9,8 +9,20 @@ var styles = StyleSheet.create({
   container: {
     position: 'absolute',
     top: '55px',
-    borderRight: 'solid 1px gray',
   },
+  title: {
+    fontFamily: 'Avenir',
+    fontSize: '24px',
+    color: '#00BFFF',
+    marginTop: '5px',
+    marginBottom: '1px',
+    textAlign: 'left',
+  },
+  d3: {
+    position: 'absolute',
+    top: '40px',
+    borderRight: 'solid 1px gray',
+  }
 });
 
 var TreeTimeLine = React.createClass({
@@ -150,21 +162,21 @@ var TreeTimeLine = React.createClass({
     generateDates(this.state.timeSpan);
 
     this.renderCanvas();    // Crucial step that (re-)renders D3 canvas
-
-    var styles = StyleSheet.create({
-      container: {
-        position: 'absolute',
-        top: '55px',
-        left: (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 5) + 'px',
-        width: (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350) + 'px',
-        height: (this.state.height - 55) + 'px',
-        borderRight: 'solid 1px gray',
-      },
-    });
+    this.getDynamicStyles();
 
     return (
-      <div id="d3container" style={styles.container}></div>
+      <div style={styles.container}>
+        <span id="d3title" style={styles.title}>recent events</span>
+        <div id="d3container" style={styles.d3}></div>
+      </div>
     );
+  },
+
+  getDynamicStyles: function() {
+    styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 5) + 'px';
+    styles.container.width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350) + 'px';
+    styles.container.height = (this.state.height - 100) + 'px';
+    return;
   },
 
   mouseOver: function(item) {
@@ -203,7 +215,7 @@ var TreeTimeLine = React.createClass({
     };
 
     var width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350),
-        height = this.state.height - 55;
+        height = this.state.height - 100;
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
                       this.state.apiData[this.state.apiData.length - 1] : null;
@@ -224,7 +236,7 @@ var TreeTimeLine = React.createClass({
     var svg = d3.select('#d3container').append('svg')
       .attr('class', 'timeLine')
       .attr('width', width)
-      .attr('height', this.state.height - 55)
+      .attr('height', this.state.height - 100)
       .append('g')
       .attr('transform', 'translate(60, ' + margin.top + ')')
 
