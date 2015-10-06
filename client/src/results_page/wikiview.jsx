@@ -9,6 +9,11 @@ var styles = StyleSheet.create({
     borderLeft: 'solid 1px gray',
     paddingLeft: '15px',
     paddingRight: '15px',
+  },
+
+  wikiLink: {
+    color: 'blue',
+    cursor: 'pointer',
   }
 });
 
@@ -52,6 +57,7 @@ var WikiView = React.createClass({
 
   //Alters all links in wiki-view to revert to a new Immedia query of the linked term
   processData: function(data){
+    var component = this;
     for (var i = 0; i < data.length; i++) {
       if (data[i] === 'h' && data.slice(i+1, i+4) === 'ref') {
         var string = data;
@@ -66,7 +72,7 @@ var WikiView = React.createClass({
               }
             }
           // string = string.slice(0, i + 4) + ' onClick={this.props.searchInit(' + string.slice(i + 12, i + 12 + j) + ')}' + string.slice(i + 32 + j);
-          string = string.slice(0, i) + 'class="wikiLink"' + string.slice(i + j);
+          string = string.slice(0, i) + 'style={styles.wikiLink} ' + string.slice(i + j);
           }
         // string = string.slice(0,i) +  'target="_blank" ' + string.slice(i);
         // i += 20;

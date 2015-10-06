@@ -71,15 +71,22 @@ var TreeTimeLine = React.createClass({
     //When a user scrolls to the bottom of the document, a new timeline will be rendered that is 7 days longer.
     $(window).scroll(function() {
       var scrollPoint = $(window).scrollTop() + $(window).height();
-       if (scrollPoint > $(document).height()) {
+
+       if (scrollPoint >= $(document).height()) {
+
            component.breakPoint = scrollPoint;
+           console.log('scrollTop:', $(window).scrollTop());
+           console.log('breakPoint:', component.breakPoint);
+           console.log('docHeight:', $(document).height());
+           console.log('windowHeight:', component.props.window.height)
            //An upper limit for the timeline's span is set at 30 days.
            if (component.dates.length > 30) {
             return;
            }
            component.setTimeSpan(component.dates.length + 7);
        }
-       // if ($(window).scrollTop() + 800 < component.breakPoint) {
+
+       // if ($(window).scrollTop() + $(document).height() + 50 > component.breakPoint) {
        //  console.log('hit the top!');
        //  if (component.dates.length < 9) {
        //    return;
@@ -97,10 +104,10 @@ var TreeTimeLine = React.createClass({
       this.setState({apiData: []});
     }
 
-    this.setState({
-      width: newProps.window.width,
-      height: newProps.window.height,
-    });
+    // this.setState({
+    //   width: newProps.window.width,
+    //   height: newProps.window.height,
+    // });
   },
 
   handleQuery: function(searchQuery){
@@ -161,6 +168,7 @@ var TreeTimeLine = React.createClass({
   dates: [],
 
   setTimeSpan: function(timeSpan) {
+    this.setState({ height: timeSpan * 120 });
     this.setState({ timeSpan: timeSpan });
   },
 
@@ -185,7 +193,7 @@ var TreeTimeLine = React.createClass({
     return (
       <div style={styles.container}>
         <span id="d3title" style={styles.title}>recent events</span>
-        <div id="d3container" style={styles.d3}></div>
+        <div id="d3container"></div>
       </div>
     );
   },
@@ -193,7 +201,8 @@ var TreeTimeLine = React.createClass({
   getDynamicStyles: function() {
     styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 5) + 'px';
     styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
-    styles.container.height = (this.state.height - 100) + 'px';
+    // styles.container.height = (this.state.height - 100) + 'px';
+    styles.container.height = this.dates.length * 120;
     return;
   },
 
@@ -233,7 +242,8 @@ var TreeTimeLine = React.createClass({
     };
 
     var width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350),
-        height = this.state.height - 100;
+        // height = this.state.height - 100;
+        height = this.dates.length*120;
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
                       this.state.apiData[this.state.apiData.length - 1] : null;
@@ -241,7 +251,6 @@ var TreeTimeLine = React.createClass({
     var y = d3.time.scale()
       .domain([new Date(this.dates[this.dates.length - 1]), new Date(this.dates[0])])
       .rangeRound([height - 4*(margin.top) - margin.bottom, 0])
-      // .clamp(true)
 
     var yAxis = d3.svg.axis()
       .scale(y)
@@ -254,7 +263,7 @@ var TreeTimeLine = React.createClass({
     var svg = d3.select('#d3container').append('svg')
       .attr('class', 'timeLine')
       .attr('width', width)
-      .attr('height', this.state.height - 100)
+      .attr('height', this.state.height)
       .append('g')
       .attr('transform', 'translate(60, ' + margin.top + ')')
 
@@ -324,7 +333,7 @@ var TreeTimeLine = React.createClass({
       nodes.forEach(function(d) { 
         if (d.depth === 1) {
           if (d === oldestItem) {
-            d.x = height - 2*(margin.top);
+            d.x = component.state.height - margin.bottom;
             d.y = 0;
             return;
           }
@@ -334,10 +343,10 @@ var TreeTimeLine = React.createClass({
         }
         else {
           if (d.depth === 2) {
-            d.y = 120;
+            d.y = 140;
           };
           if (d.depth === 3) {
-            d.y = 240;
+            d.y = 260;
             }
           }
         });

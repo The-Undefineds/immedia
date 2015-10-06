@@ -43,7 +43,7 @@ var ResultsView = React.createClass({
       <div id="results">
         <TopBar searchInit={this.props.searchInit} goBackHome={this.props.goBackHome} window={this.state} />
         <WikiView searchTerm={this.props.searchTerm} searchInit={this.props.searchInit} window={this.state} />
-        <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver} window={this.state} />
+        <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver} window={this.state}/>
         <div id="preview"></div>
         <p id="pastSearches_header">Recently Viewed</p>
         <div id="pastSearches" style={{textAlign:'center'}}>
@@ -61,7 +61,7 @@ var ResultsView = React.createClass({
     );
   },
 
-  handleResize: function(e) {
+  handleResize: function() {
     this.setState({
       width: window.innerWidth,
       height: window.innerHeight,
