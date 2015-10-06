@@ -3,13 +3,12 @@ var StyleSheet = require('react-style');
 
 var styles = StyleSheet.create({
   container: {
-    position: 'fixed',
-    left: '900px',
+    position: 'absolute',
     overflow: 'scroll',
-    marginTop: '50px',
-    maxHeight: '700px',
+    top: '100px',
     borderLeft: 'solid 1px gray',
-    paddingLeft: '10px',
+    paddingLeft: '15px',
+    paddingRight: '15px',
   }
 });
 
@@ -17,6 +16,64 @@ var SearchHistory = require('./searchhistory.jsx');
 
 var WikiView = React.createClass({
 
+  getInitialState: function() {
+    return {
+      width: this.props.window.width,
+      height: this.props.window.height,
+    };
+  },
+  
+  componentDidMount: function(){
+    this.query(this.props.searchTerm);
+  },
+
+  componentWillReceiveProps: function(nextProps){
+    if (this.props.searchTerm !== nextProps.searchTerm) {
+      this.query(nextProps.searchTerm);
+    }
+
+    this.setState({
+      width: nextProps.window.width,
+      height: nextProps.window.height,
+    });
+  },
+
+  render: function(){
+    this.getDynamicStyles();
+
+    return (
+      <div id='wikiview' style={styles.container}></div>
+    );
+  },
+
+  getDynamicStyles: function() {
+    // var $previewContent = $('#previewContent');
+    // if($previewContent !== undefined) {
+    //   // styles.container.right = this.state.width - (($previewContent.position()).left + $previewContent.width());
+    //   // styles.container.width = this.state.width - (($previewContent.position()).left + $previewContent.width());
+    // } else {
+      styles.container.left = this.state.width - (this.state.width - 1350 < 0 ? (365 * (this.state.width / 1350)) : ((this.state.width - 1350) / 2 + 365)) + 'px';
+      styles.container.width = (this.state.width - 1350 < 0 ? 365 * (this.state.width / 1350) : 365) + 'px';
+    // }
+    styles.container.height = (this.state.height - 100) + 'px';
+  },
+
+  // alters html so that hyperlinks, when clicked, open in new tab
+  processData: function(data){
+    for (var i = 0; i < data.length; i++) {
+      if (data[i] === 'h' && data.slice(i+1, i+4) === 'ref') {
+        var string = data;
+        if (data.slice(i+6, i+11) === '/wiki') {
+          string = string.slice(0, i+6) + 'http://wikipedia.org' + string.slice(i+6);
+        }
+        string = string.slice(0,i) +  'target="_blank" ' + string.slice(i);
+        i += 20;
+        data = string; 
+      }
+    }
+    return data;
+  },
+  
   query: function(searchTerm){
     var img,
         searchTerm = searchTerm,
@@ -91,49 +148,6 @@ var WikiView = React.createClass({
       })
     }
   },
-  
-  componentDidMount : function(){
-    this.query(this.props.searchTerm);
-  },
-
-  componentWillReceiveProps: function(newProps){
-    if (this.props.searchTerm !== newProps.searchTerm) {
-      this.query(newProps.searchTerm);
-    }
-  },
-
-  // alters html so that hyperlinks, when clicked, open in new tab
-  processData: function(data){
-    for (var i = 0; i < data.length; i++) {
-      if (data[i] === 'h' && data.slice(i+1, i+4) === 'ref') {
-        var string = data;
-        if (data.slice(i+6, i+11) === '/wiki') {
-          string = string.slice(0, i+6) + 'http://wikipedia.org' + string.slice(i+6);
-          for (var j = 0; j < 300; j++) {
-            if (string[i + j] !== '>') {
-              continue;
-            } else {
-              break;
-            }
-          }
-          // string = string.slice(0, i + 4) + ' onClick={this.props.searchInit(' + string.slice(i + 12, i + 12 + j) + ')}' + string.slice(i + 32 + j);
-          string = string.slice(0, i) + 'class="wikiLink"' + string.slice(i + j);
-          }
-        // string = string.slice(0,i) +  'target="_blank" ' + string.slice(i);
-        // i += 20;
-        data = string;
-      }
-    }
-    return data;
-  },
-  
-  render: function(){
-
-    return (
-      <div id='wikiview' style={styles.container}></div>
-    );
-  },
-
 });
 
 module.exports = WikiView;
