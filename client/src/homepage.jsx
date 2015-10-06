@@ -10,7 +10,7 @@ var HomePage = React.createClass({
 
   render: function(){
     return (
-      <div style={{marginTop:'150px'}}>
+      <div style={{textAlign: 'center', marginTop:'150px' }}>
         <img src={ './immedia.png' } height={200} width={200}/>
         <SearchBar searchInit={this.props.searchInit} atHome={this.props.atHome} />
       </div>
