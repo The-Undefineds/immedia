@@ -1,58 +1,55 @@
 var React = require('react');
+var StyleSheet = require('react-style');
 
 var NytPreview = require('./nytpreview.jsx');
 var TwitterPreview = require('./twitterpreview.jsx');
+var YouTubePreview = require('./youtubepreview.jsx');
 
-var player;
+var styles = StyleSheet.create({
+  preview: {
+    position: 'absolute',
+    paddingRight: '10px',
+  }
+});
 
 var Preview = React.createClass({
 
-  mountYouTubeVideo: function(videoId){
-    player = new YT.Player('preview', { // The 'player' refers to an id attached to an element
-      height: '195',
-      width: '320',
-      videoId: videoId,
-      events: {
-        'onReady': onPlayerReady,
-        'onStateChange': onPlayerStateChange
-      }
+  getInitialState: function() {
+    return {
+      width: this.props.window.width,
+      height: this.props.window.height,
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      width: nextProps.window.width,
+      height: nextProps.window.height,
     });
-    var onPlayerReady = function(event) {
-      event.target.playVideo();
-    }
-    var done = false;
-    var onPlayerStateChange = function(event) {
-      if (event.data == YT.PlayerState.PLAYING && !done) {
-        setTimeout(stopVideo, 6000);done = true;
-      }
-    }
-    var stopVideo = function() {
-      player.stopVideo();
-    }
   },
 
   render: function() {
-
-    var previewItem = this.props.previewItem;
-    var source = previewItem.source;
-
-    if (previewItem.tweet) {
-      var twitter = true;
-    } else if (source == 'nyt') {
-      var nyt = true;
-    } else if (source == 'youtube') {
-      this.mountYouTubeVideo(previewItem.id);
-    } else if (source == 'twitter') {
-      var twitter = true;
-    }
+    this.getDynamicStyles();
 
     return (
-      <div>
-        { nyt ? <NytPreview previewItem={ previewItem } /> : null }
-        { twitter ? <TwitterPreview previewItem={ previewItem } /> : null }
+      <div style={styles.preview}>
+        { this.props.previewItem.source === 'nyt' ? 
+          <NytPreview previewItem={ previewItem } /> : null }
+        { this.props.previewItem.source === 'twitter' ? 
+          <TwitterPreview previewItem={ previewItem } /> : null }
+        { this.props.previewItem.source === 'youtube' ? 
+          <YouTubePreview previewItem={ previewItem } width={styles.preview.width} height={styles.preview.height} /> : null }
       </div>
-      )
-  }
+    );
+  },
+
+  getDynamicStyles: function() {
+    var $d3title = $('#d3title');
+    styles.preview.top = (55 + $d3title.height() + 5 + 'px');
+    styles.preview.left = (this.state.width / 2) - (this.state.width - 1350 < 0 ? this.state.width * (500/1350) / 2 : 250) + 'px';
+    styles.preview.width = (this.state.width - 1350 < 0 ? this.state.width * (500/1350) : 500) + 'px';
+    styles.preview.height = (this.state.height - 600 < 0 ? this.state.height * (600/783) : 600) + 'px';
+  },
 });
 
 module.exports = Preview;

@@ -1,4 +1,5 @@
 var React = require('react');
+var StyleSheet = require('react-style');
 
 var TreeTimeLine = require('./results_page/treetimeline.jsx'),
     ForceTimeLine = require('./results_page/forcetimeline.jsx'),
@@ -36,20 +37,9 @@ var ResultsView = React.createClass({
     });
   },
 
-  mouseOver: function(item){
-    
-    this.hasMouseOver = true;
-    this.previewItem = item;
-
-    $preview = $('#preview');
-    if ($preview[0].localName === 'iframe') {
-      $preview.remove();
-      $('#results').append('<div id="preview"></div>')
-    } else if (!$preview) {
-      $('#results').append('<div id="preview"></div>')
-    }
+  mouseOver: function(item){    
     React.render(
-      <Preview previewItem={this.previewItem}/>,
+      <Preview previewItem={item} window={this.state} />,
       document.getElementById('preview')
     );
   },
