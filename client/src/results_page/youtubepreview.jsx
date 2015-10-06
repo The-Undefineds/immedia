@@ -20,6 +20,17 @@ var YouTubePreview = React.createClass({
     });
   },
 
+  componentWillUpdate: function() {
+    var $youtube = $('#youtube');
+    if($youtube[0].localName === 'iframe') {
+      $youtube.replaceWith('<div id=\"youtube\"></div>');
+    }
+  },
+
+  componentDidUpdate: function() {
+    this.mountYouTubeVideo(this.props.previewItem.id);
+  },
+
   render: function() {
     return (
       <div id="youtube"></div>
@@ -27,7 +38,7 @@ var YouTubePreview = React.createClass({
   },
 
   mountYouTubeVideo: function(videoId){
-    player = new YT.Player('youtube', { // The 'player' refers to an id attached to an element
+    var player = new YT.Player('youtube', { // The 'player' refers to an id attached to an element
       height: this.state.height,
       width: this.state.width,
       videoId: videoId,
@@ -42,7 +53,8 @@ var YouTubePreview = React.createClass({
     var done = false;
     var onPlayerStateChange = function(event) {
       if (event.data == YT.PlayerState.PLAYING && !done) {
-        setTimeout(stopVideo, 6000);done = true;
+        setTimeout(stopVideo, 6000);
+        done = true;
       }
     }
     var stopVideo = function() {
