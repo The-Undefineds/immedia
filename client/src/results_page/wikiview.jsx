@@ -86,12 +86,10 @@ var WikiView = React.createClass({
   query: function(searchTerm){
     var img,
         searchTerm = searchTerm,
-        context = this,
         cirrusRequest = "http://en.wikipedia.org/w/api.php?action=cirrus-suggest&text="+searchTerm+"&callback=?&format=json"
         searchRequest = "https://en.wikipedia.org/w/api.php?action=query&prop=pageprops|info&titles="+searchTerm+"&callback=?&format=json";
     
     $('#wikiview').empty();
-    var component = this;
 
     $.getJSON(searchRequest)
     .done(function(data){
@@ -106,55 +104,54 @@ var WikiView = React.createClass({
               highestScore = searchArea[i].score;
             }
           }
-          parse(searchTerm);
-        });
-      } 
-      else {
-        parse(searchTerm);
+          this.parse.call(this, searchTerm);
+        }.bind(this));
+      } else {
+        this.parse.call(this, searchTerm);
       }
-    });
+    }.bind(this));
+  },
 
-    function loadHistoryView(img){
-      // Add image for the search-history view (rendered below)
-      var history = JSON.parse(localStorage['immedia']);
-      if (img) {
-        history[0].img = img.src;
-      } else { // No argument passed is the signal that no image was found
-        history[0].img = 'https://upload.wikimedia.org/wikipedia/commons/f/fc/No_picture_available.png';
+  parse: function(searchTerm) {
+    var parseRequest = "http://en.wikipedia.org/w/api.php?action=parse&format=json&page="+searchTerm+"&redirects&prop=text&callback=?";
+    $.getJSON(parseRequest)
+    .done(function(data){
+      wikiHTML = data.parse.text["*"];
+      $wikiDOM = $("<document>" + wikiHTML + "</document>");
+      var x = $wikiDOM.find(".infobox");
+      var y = $wikiDOM.find("p:first-of-type:not(.infobox>p)");
+      // 'if/else', here, ensures that a wikipedia page deficient of a '.infobox' does not cause any errors
+      if (x[0]) {
+        img = x[0].getElementsByTagName("IMG")[0] || "";
+        this.loadHistoryView.call(this, img);
+        var info = this.processData.call(this, x.html());
+        var summary = this.processData.call(this, y.html());
+        $('#wikiview').append(info);
+        $('#wikiview').append(summary);
+        $('.wikiLink').on('click', function() {
+          this.props.searchInit($(this).text());
+        }.bind(this));
+      } else {
+        this.loadHistoryView.call(this);
       }
-      localStorage['immedia'] = JSON.stringify(history);
+    }.bind(this));
+  },
 
-      // Rendering the search-history view with the history pulled from localStorage
-      React.render(
-        <SearchHistory history={history} searchInit={context.props.searchInit} />,
-        document.getElementById('pastSearches')
-      );
-    };
-    
-    function parse(searchTerm){
-      var parseRequest = "http://en.wikipedia.org/w/api.php?action=parse&format=json&page="+searchTerm+"&redirects&prop=text&callback=?";
-      $.getJSON(parseRequest)
-      .done(function(data){
-        wikiHTML = data.parse.text["*"];
-        $wikiDOM = $("<document>" + wikiHTML + "</document>");
-        var x = $wikiDOM.find(".infobox");
-        var y = $wikiDOM.find("p:first-of-type:not(.infobox>p)");
-        // 'if/else', here, ensures that a wikipedia page deficient of a '.infobox' does not cause any errors
-        if (x[0]) {
-          img = x[0].getElementsByTagName("IMG")[0] || "";
-          loadHistoryView(img);
-          var info = context.processData(x.html());
-          var summary = context.processData(y.html());
-          $('#wikiview').append(info);
-          $('#wikiview').append(summary);
-          $('.wikiLink').on('click', function() {
-            component.props.searchInit($(this).text());
-          })
-        } else {
-          loadHistoryView();
-        }
-      })
+  loadHistoryView: function(img){
+    // Add image for the search-history view (rendered below)
+    var history = JSON.parse(localStorage['immedia']);
+    if (img) {
+      history[0].img = img.src;
+    } else { // No argument passed is the signal that no image was found
+      history[0].img = 'https://upload.wikimedia.org/wikipedia/commons/f/fc/No_picture_available.png';
     }
+    localStorage['immedia'] = JSON.stringify(history);
+
+    // Rendering the search-history view with the history pulled from localStorage
+    React.render(
+      <SearchHistory history={history} searchInit={this.props.searchInit} />,
+      document.getElementById('pastSearches')
+    );
   },
 
 });
