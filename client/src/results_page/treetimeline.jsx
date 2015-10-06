@@ -11,7 +11,7 @@ var styles = StyleSheet.create({
     top: '55px',
   },
   title: {
-    fontFamily: 'Avenir',
+    fontFamily: 'Nunito',
     fontSize: '24px',
     color: '#00BFFF',
     marginTop: '5px',
@@ -232,19 +232,19 @@ var TreeTimeLine = React.createClass({
       .ticks(d3.time.days, 1)
       .tickFormat(d3.time.format('%a %d'))
       .tickSize(0)
-      .tickPadding(20)
+      .tickPadding(10);
 
     var svg = d3.select('#d3container').append('svg')
       .attr('class', 'timeLine')
       .attr('width', width)
       .attr('height', this.state.height - 100)
       .append('g')
-      .attr('transform', 'translate(60, ' + margin.top + ')')
+      .attr('transform', 'translate(60, ' + margin.top + ')');
 
     svg.append('g')
       .attr('class', 'yAxis')
       .attr({
-        'font-family': 'Arial, sans-serif',
+        'font-family': 'Nunito',
         'font-size': 10 * (this.state.width / 1350) + 'px',
       })
       .attr({
@@ -317,10 +317,10 @@ var TreeTimeLine = React.createClass({
         }
         else {
           if (d.depth === 2) {
-            d.y = 120;
+            d.y = 120 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
           };
           if (d.depth === 3) {
-            d.y = 240;
+            d.y = 240 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
             }
           }
         });
@@ -354,7 +354,7 @@ var TreeTimeLine = React.createClass({
             d3.select(this).select('circle')
               .transition()
               .attr({
-                r: 28,
+                r: 28 * (component.state.width / 1350),
               })
             }
         })
@@ -363,10 +363,10 @@ var TreeTimeLine = React.createClass({
             d3.select(this).select('circle')
               .transition()
               .attr({
-                r: 25,
+                r: 25 * (component.state.width / 1350),
               })
           }
-        })
+        });
 
       var defs = svg.append('svg:defs');
         defs.append('svg:pattern')
@@ -398,7 +398,7 @@ var TreeTimeLine = React.createClass({
           .attr('x', 4)
           .attr('y', 5)
           .attr('width', 15)
-          .attr('height', 15)
+          .attr('height', 15);
 
       nodeEnter.append("svg:circle")
         .attr("r", 1e-6)
@@ -408,7 +408,7 @@ var TreeTimeLine = React.createClass({
           fill: '#fff',
           stroke: 'steelblue',
           strokeWidth: '1.5px',
-        })
+        });
 
       var nodeUpdate = node.transition()
           .duration(duration)
@@ -464,7 +464,7 @@ var TreeTimeLine = React.createClass({
               return 'url(/#tile-img' + d.id + ')'
             }
             return d._children ? "lightsteelblue" : "#fff"; 
-          })
+          });
 
       var nodeExit = node.exit().transition()
           .duration(duration)
@@ -475,7 +475,7 @@ var TreeTimeLine = React.createClass({
           .attr("r", 1e-6);
 
       var link = svg.selectAll("path.link")
-          .data(tree.links(nodes), function(d) { return d.target.id; })
+          .data(tree.links(nodes), function(d) { return d.target.id; });
 
       link.enter().insert("svg:path", "g")
           .attr("class", "link")
@@ -490,7 +490,7 @@ var TreeTimeLine = React.createClass({
           })
         .transition()
           .duration(500)
-          .attr("d", diagonal)
+          .attr("d", diagonal);
 
       link.transition()
           .duration(500)
