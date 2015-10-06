@@ -5,7 +5,7 @@ var styles = StyleSheet.create({
   anchor: {
     textDecoration: 'none',
     color: 'inherit',
-  }
+  },
 });
 
 var NytPreview = React.createClass({
@@ -24,13 +24,13 @@ var NytPreview = React.createClass({
     return (
       <a style={styles.anchor} href={ this.props.previewItem.url } target="_blank">
         <div>
-          <h1>{ this.props.previewItem.title }</h1>
-          <h3>{ this.props.previewItem.byline }</h3>
+          <h1 style={{marginTop: '0px', marginBottom: '10px'}}>{ this.props.previewItem.title }</h1>
+          <h3 style={{marginTop: '5px', marginBottom: '5px'}}>{ this.props.previewItem.byline }</h3>
           { this.props.previewItem.img !== '' ? 
-            <img src={ this.props.previewItem.img } height={ this.props.previewItem.height * ratio } width= { this.props.previewItem.width * ratio }></img> :
+            <img src={ this.props.previewItem.img } style={{textAlign: 'center'}} height={ this.props.previewItem.height * ratio } width= { this.props.previewItem.width * ratio }></img> :
             null
           }
-          <p>{ this.props.previewItem.abstract }</p>
+          <p style={{textAlign: 'left', paddingLeft: '15px', paddingRight: '15px'}}>{ this.props.previewItem.abstract }</p>
         </div>
       </a>
     );
