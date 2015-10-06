@@ -58,17 +58,26 @@ var WikiView = React.createClass({
     styles.container.height = (this.state.height - 100) + 'px';
   },
 
-  // alters html so that hyperlinks, when clicked, open in new tab
+  // Alters html so that hyperlinks, when clicked, make a new immedia-search
   processData: function(data){
     for (var i = 0; i < data.length; i++) {
       if (data[i] === 'h' && data.slice(i+1, i+4) === 'ref') {
         var string = data;
         if (data.slice(i+6, i+11) === '/wiki') {
           string = string.slice(0, i+6) + 'http://wikipedia.org' + string.slice(i+6);
-        }
-        string = string.slice(0,i) +  'target="_blank" ' + string.slice(i);
-        i += 20;
-        data = string; 
+          for (var j = 0; j < 300; j++) {
+            if (string[i + j] !== '>') {
+              continue;
+            } else {
+              break;
+            }
+          }
+          // string = string.slice(0, i + 4) + ' onClick={this.props.searchInit(' + string.slice(i + 12, i + 12 + j) + ')}' + string.slice(i + 32 + j);
+          string = string.slice(0, i) + 'class="wikiLink"' + string.slice(i + j);
+          }
+        // string = string.slice(0,i) +  'target="_blank" ' + string.slice(i);
+        // i += 20;
+        data = string;
       }
     }
     return data;
@@ -106,7 +115,7 @@ var WikiView = React.createClass({
     });
 
     function loadHistoryView(img){
-      //Add image for the search-history view (rendered below)
+      // Add image for the search-history view (rendered below)
       var history = JSON.parse(localStorage['immedia']);
       if (img) {
         history[0].img = img.src;
@@ -134,20 +143,21 @@ var WikiView = React.createClass({
         if (x[0]) {
           img = x[0].getElementsByTagName("IMG")[0] || "";
           loadHistoryView(img);
+          var info = context.processData(x.html());
+          var summary = context.processData(y.html());
+          context.checkIfPerson(x.html(), x);
+          $('#wikiview').append(info);
+          $('#wikiview').append(summary);
+          $('.wikiLink').on('click', function() {
+            component.props.searchInit($(this).text());
+          })
         } else {
           loadHistoryView();
         }
-        // if (img) { img.parentNode.removeChild(img) }; // this line removes the image from the info-box
-        var info = context.processData(x.html());
-        var summary = context.processData(y.html());
-        $('#wikiview').append(info);
-        $('#wikiview').append(summary);
-        $('.wikiLink').on('click', function() {
-          component.props.searchInit($(this).text());
-        })
       })
     }
   },
+
 });
 
 module.exports = WikiView;
