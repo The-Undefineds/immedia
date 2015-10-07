@@ -8,7 +8,7 @@ var styles = StyleSheet.create({
     top: '100px',
     borderLeft: 'solid 1px gray',
     paddingLeft: '15px',
-    paddingRight: '15px',
+    paddingRight: '5px',
   }
 });
 
@@ -47,15 +47,9 @@ var WikiView = React.createClass({
   },
 
   getDynamicStyles: function() {
-    // var $previewContent = $('#previewContent');
-    // if($previewContent !== undefined) {
-    //   // styles.container.right = this.state.width - (($previewContent.position()).left + $previewContent.width());
-    //   // styles.container.width = this.state.width - (($previewContent.position()).left + $previewContent.width());
-    // } else {
-      styles.container.left = this.state.width - (this.state.width - 1350 < 0 ? (365 * (this.state.width / 1350)) : ((this.state.width - 1350) / 2 + 365)) + 'px';
-      styles.container.width = (this.state.width - 1350 < 0 ? 365 * (this.state.width / 1350) : 365) + 'px';
-    // }
-    styles.container.height = (this.state.height - 100) + 'px';
+    styles.container.right = (this.state.width < 1350 ? 0 : (this.state.width - 1350) / 2) + 'px';
+    styles.container.width = (this.state.width < 1350 ? 365 * (this.state.width / 1350) : 365) + 'px';
+    styles.container.height = (this.state.height - 100 - 150) + 'px';
   },
 
   // Alters html so that hyperlinks, when clicked, make a new immedia-search
@@ -146,12 +140,6 @@ var WikiView = React.createClass({
       history[0].img = 'https://upload.wikimedia.org/wikipedia/commons/f/fc/No_picture_available.png';
     }
     localStorage['immedia'] = JSON.stringify(history);
-
-    // Rendering the search-history view with the history pulled from localStorage
-    React.render(
-      <SearchHistory history={history} searchInit={this.props.searchInit} />,
-      document.getElementById('pastSearches')
-    );
   },
 
 });
