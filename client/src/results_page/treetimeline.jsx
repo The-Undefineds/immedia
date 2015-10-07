@@ -8,7 +8,8 @@ var i = 0;
 var styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: '55px',
+    top: '50px',
+    paddingTop: '10px',
   },
   title: {
     fontFamily: 'Nunito',
@@ -49,11 +50,9 @@ var TreeTimeLine = React.createClass({
   ],
 
   query: function(searchTerm){
-    var index = searchTerm.indexOf('(');
-    if (index !== -1) searchTerm = searchTerm.slice(0, index);
     for(var i = 0; i < this.apis.length; i++){
       this.handleQuery({
-        searchTerm: searchTerm,
+        searchTerm: searchTerm.replace(/\s\(.*$/,''),
         url: 'http://127.0.0.1:3000/api/' + this.apis[i],
         api: this.apis[i]
       });
@@ -65,7 +64,6 @@ var TreeTimeLine = React.createClass({
     this.query(this.props.searchTerm);
     $(window).scroll(function() {
        if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
-           console.log("bottom!");
            if (component.dates.length > 30) {
             return;
            }
@@ -175,8 +173,8 @@ var TreeTimeLine = React.createClass({
 
   getDynamicStyles: function() {
     styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 5) + 'px';
-    styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
-    styles.container.height = (this.state.height - 100) + 'px';
+    styles.container.width = (this.state.width - 1350 < 0 ? 365 * (this.state.width/1350) : 365) + 'px';
+    styles.container.height = (this.state.height - 50) + 'px';
     return;
   },
 
@@ -215,7 +213,7 @@ var TreeTimeLine = React.createClass({
       left: 40
     };
 
-    var width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350),
+    var width = (this.state.width - 1350 < 0 ? this.state.width * (365/1350) : 365),
         height = this.state.height - 100;
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
