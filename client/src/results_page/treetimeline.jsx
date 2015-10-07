@@ -72,25 +72,21 @@ var TreeTimeLine = React.createClass({
     $(window).scroll(function() {
 
       var scrollPoint = $(window).scrollTop() + $(window).height();
-       if (scrollPoint >= $(document).height()) {
-
-           console.log('breakPoint:', component.breakPoint);
-           console.log('docHeight:', $(document).height());
-           console.log('windowHeight:', component.props.window.height);
+      if (scrollPoint >= $(document).height()) {
            //An upper limit for the timeline's span is set at 30 days.
-           if (component.dates.length > 30) {
+           if (component.dates.length > 27) {
             return;
            }
            component.breakPoint = scrollPoint;
-           component.setTimeSpan(component.dates.length + 7);
+           component.setTimeSpan(component.dates.length + 6);
        }
 
-       if ($(window).scrollTop() + component.props.window.height < component.breakPoint) {
+      if ($(window).scrollTop() + component.props.window.height < component.breakPoint) {
         if (component.dates.length < 8) {
           return;
         }
         component.breakPoint = component.breakPoint - component.props.window.height;
-        component.setTimeSpan(component.dates.length - 7)
+        component.setTimeSpan(component.dates.length - 8);
        }
     });
   },
@@ -174,7 +170,7 @@ var TreeTimeLine = React.createClass({
   render: function() {
 
     var component = this;
-
+    console.log(component.state.timeSpan);
     var generateDates = function(timeSpan) {
         component.dates = [];
         for (var i = -1; i < timeSpan; i++) {
@@ -324,6 +320,7 @@ var TreeTimeLine = React.createClass({
         } else if (!d.rendered) {
           d.rendered = 1;
         }
+        // component.mouseOver(d);
         return 500;
       }
 

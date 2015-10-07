@@ -72,7 +72,7 @@ var WikiView = React.createClass({
               }
             }
           // string = string.slice(0, i + 4) + ' onClick={this.props.searchInit(' + string.slice(i + 12, i + 12 + j) + ')}' + string.slice(i + 32 + j);
-          string = string.slice(0, i) + 'style={styles.wikiLink} ' + string.slice(i + j);
+          string = string.slice(0, i) + 'class="wikiLink" ' + string.slice(i + j);
           }
         // string = string.slice(0,i) +  'target="_blank" ' + string.slice(i);
         // i += 20;
@@ -146,6 +146,7 @@ var WikiView = React.createClass({
           var summary = context.processData(y.html());
           $('#wikiview').append(info);
           $('#wikiview').append(summary);
+          $('.wikiLink').css({ color: 'blue', cursor: 'pointer' })
           $('.wikiLink').on('click', function() {
             component.props.searchInit($(this).text());
           })

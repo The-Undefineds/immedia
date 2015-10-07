@@ -83,8 +83,6 @@ function grabTimeline(newUrl, params, callback){
           var tweet = tweetsBySocialCount[topTweetCounts[j]];
           var date = utils.getSimpleDate(tweet.created_at);
 
-          console.log(date);
-
           date = date.year + '-' + date.month + '-' + date.day;
 
           tweetToSend = {
@@ -95,8 +93,8 @@ function grabTimeline(newUrl, params, callback){
             tweet_id_str: tweet.id_str,
             type: 'user'
           };
+          
           responseObj[date] = responseObj[date] || { source: 'twitter', children: [] };
-          // responseObj[date].children = responseObj[date].children || [];
           responseObj[date].children.push(tweetToSend);
           
         }
