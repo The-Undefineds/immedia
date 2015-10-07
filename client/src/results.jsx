@@ -19,14 +19,6 @@ var ResultsView = React.createClass({
   componentDidMount: function() {
     window.addEventListener('resize', this.handleResize);
     this.renderPreview({source: ''});
-
-    // $(window).scroll(function() {
-    //    if($(window).height() === $(document).height()) {
-    //        console.log("bottom!");
-    //    }
-    // });
-    // console.log('scroll top:', $(window).height());
-    // console.log('doc height:', $(document).height());
   },
 
   componentWillReceiveProps: function() {

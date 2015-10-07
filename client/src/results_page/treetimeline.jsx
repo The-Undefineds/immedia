@@ -42,17 +42,18 @@ var TreeTimeLine = React.createClass({
   //Api's to be called are listed in this array
   apis: [
     'nyt',
-    'twitter',
+    // 'twitter',
     'youtube',
     // 'news'
   ],
-
-  apiCounter: 0,
 
   //Rendering the timeline will start a query for a search term passed down from the results page.
   query: function(searchTerm){
     var index = searchTerm.indexOf('(');
     if (index !== -1) searchTerm = searchTerm.slice(0, index);
+
+    $.post('http://127.0.0.1:3000/searches/incrementSearchTerm', { searchTerm: searchTerm });
+
     for(var i = 0; i < this.apis.length; i++){
       this.handleQuery({
         searchTerm: searchTerm,
@@ -170,7 +171,7 @@ var TreeTimeLine = React.createClass({
   render: function() {
 
     var component = this;
-    console.log(component.state.timeSpan);
+
     var generateDates = function(timeSpan) {
         component.dates = [];
         for (var i = -1; i < timeSpan; i++) {
@@ -246,7 +247,6 @@ var TreeTimeLine = React.createClass({
     var y = d3.time.scale()
       .domain([new Date(this.dates[this.dates.length - 1]), new Date(this.dates[0])])
       .rangeRound([height - 4*(margin.top) - margin.bottom, 0])
-      .clamp(true)
 
     var yAxis = d3.svg.axis()
       .scale(y)
@@ -276,9 +276,9 @@ var TreeTimeLine = React.createClass({
       })
       .call(yAxis);
 
-    var timeLine = svg.selectAll('.timeLine')
-      .data({ 'name': 'data', 'children': this.state.apiData })
-      .attr('y', function(d) { return y(new Date(d.date)); })
+    // var timeLine = svg.selectAll('.timeLine')
+    //   .data({ 'name': 'data', 'children': this.state.apiData })
+    //   .attr('y', function(d) { return y(new Date(d.date)); })
 
     svg.selectAll('g.node').remove();
 
@@ -307,6 +307,7 @@ var TreeTimeLine = React.createClass({
       // Initialize the display to show a few nodes.
       // root.children.forEach(toggleAll);
       // toggle(root.children[0]);
+      // toggle(root.children[1]);
 
       update(root);
 
@@ -330,19 +331,26 @@ var TreeTimeLine = React.createClass({
       nodes.forEach(function(d) { 
         if (d.depth === 1) {
           if (d === oldestItem) {
-            d.x = component.state.height - margin.bottom;
+            d.x = height - margin.bottom;
             d.y = 0;
             return;
           }
           d.x = y(new Date(d.date)) - 20;
           d.y = 0;
+          // if (d.x > height) { 
+          //   d.outOfRange = true; 
+          // } else {
+          //   d.outOfRange = false;
+          // }
           d.fixed = true;
         }
         else {
           if (d.depth === 2) {
+            if (d.parent.outOfRange) { d.y = -1000; console.log('parent is out of scope'); return; };
             d.y = 140;
           };
           if (d.depth === 3) {
+            if (d.parent.parent.outOfRange) { d.y = -1000; console.log('grandparent is out of scope'); return; };
             d.y = 260;
             }
           }
