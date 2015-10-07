@@ -22,7 +22,7 @@ window.twttr = (function(d, s, id) {
 var TwitterPreview = React.createClass({
 
   embedTweet: function() {
-    var tweetId = this.props.previewItem.url.slice(this.props.previewItem.url.length - 18, this.props.previewItem.url.length);
+    var tweetId = this.props.previewItem.tweetId;
 
     $('<div id="tweet"></div>').hide().prependTo('#twitterPreview').fadeIn(800);
     twttr.widgets.createTweet(

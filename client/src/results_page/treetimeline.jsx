@@ -42,7 +42,7 @@ var TreeTimeLine = React.createClass({
   //Api's to be called are listed in this array
   apis: [
     'nyt',
-    // 'twitter',
+    'twitter',
     'youtube',
     // 'news'
   ],
@@ -70,29 +70,28 @@ var TreeTimeLine = React.createClass({
 
     //When a user scrolls to the bottom of the document, a new timeline will be rendered that is 7 days longer.
     $(window).scroll(function() {
-      var scrollPoint = $(window).scrollTop() + $(window).height();
 
+      var scrollPoint = $(window).scrollTop() + $(window).height();
        if (scrollPoint >= $(document).height()) {
 
-           component.breakPoint = scrollPoint;
-           console.log('scrollTop:', $(window).scrollTop());
            console.log('breakPoint:', component.breakPoint);
            console.log('docHeight:', $(document).height());
-           console.log('windowHeight:', component.props.window.height)
+           console.log('windowHeight:', component.props.window.height);
            //An upper limit for the timeline's span is set at 30 days.
            if (component.dates.length > 30) {
             return;
            }
+           component.breakPoint = scrollPoint;
            component.setTimeSpan(component.dates.length + 7);
        }
 
-       // if ($(window).scrollTop() + $(document).height() + 50 > component.breakPoint) {
-       //  console.log('hit the top!');
-       //  if (component.dates.length < 9) {
-       //    return;
-       //  }
-       //  component.setTimeSpan(component.dates.length - 7)
-       // }
+       if ($(window).scrollTop() + component.props.window.height < component.breakPoint) {
+        if (component.dates.length < 8) {
+          return;
+        }
+        component.breakPoint = component.breakPoint - component.props.window.height;
+        component.setTimeSpan(component.dates.length - 7)
+       }
     });
   },
 
@@ -219,7 +218,7 @@ var TreeTimeLine = React.createClass({
         img: item.img,
         source: item.parent.source,
         id: item.id,
-        tweet: item.tweet,
+        tweetId: item.tweet_id_str,
         byline: (item.hasOwnProperty('byline') ? item.byline : ''),
         abstract: (item.hasOwnProperty('abstract') ? item.abstract : ''),
         height: (item.hasOwnProperty('height') ? item.height : ''),
@@ -251,6 +250,7 @@ var TreeTimeLine = React.createClass({
     var y = d3.time.scale()
       .domain([new Date(this.dates[this.dates.length - 1]), new Date(this.dates[0])])
       .rangeRound([height - 4*(margin.top) - margin.bottom, 0])
+      .clamp(true)
 
     var yAxis = d3.svg.axis()
       .scale(y)

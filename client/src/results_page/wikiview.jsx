@@ -114,7 +114,7 @@ var WikiView = React.createClass({
     });
 
     function loadHistoryView(img){
-      //Add image for the search-history view (rendered below)
+      // Add image for the search-history view (rendered below)
       var history = JSON.parse(localStorage['immedia']);
       if (img) {
         history[0].img = img.src;
@@ -142,17 +142,16 @@ var WikiView = React.createClass({
         if (x[0]) {
           img = x[0].getElementsByTagName("IMG")[0] || "";
           loadHistoryView(img);
+          var info = context.processData(x.html());
+          var summary = context.processData(y.html());
+          $('#wikiview').append(info);
+          $('#wikiview').append(summary);
+          $('.wikiLink').on('click', function() {
+            component.props.searchInit($(this).text());
+          })
         } else {
           loadHistoryView();
         }
-        // if (img) { img.parentNode.removeChild(img) }; // this line removes the image from the info-box
-        var info = context.processData(x.html());
-        var summary = context.processData(y.html());
-        $('#wikiview').append(info);
-        $('#wikiview').append(summary);
-        $('.wikiLink').on('click', function() {
-          component.props.searchInit($(this).text());
-        })
       })
     }
   },
@@ -164,7 +163,6 @@ var WikiView = React.createClass({
       <div id='wikiview' style={styles.container}></div>
     );
   },
-
 
 });
 

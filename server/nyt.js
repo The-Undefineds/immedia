@@ -148,7 +148,7 @@ module.exports = {
                     'height': (img === undefined ? '' : img['height']),
                     'width': (img === undefined ? '' : img['width']),
                     'date': date,
-                    'byline': articles[i]['byline']['original'],
+                    'byline': (articles[i]['byline']['original'] === null ? '' : articles[i]['byline']['original']),
                     'abstract': (articles[i]['abstract'] === null ? articles[i]['snippet'] : articles[i]['abstract'])
                   }
                 ]
@@ -169,7 +169,7 @@ module.exports = {
                     'height': (img === undefined ? '' : img['height']),
                     'width': (img === undefined ? '' : img['width']),
                     'date': date,
-                    'byline': articles[i]['byline']['original'],
+                    'byline': (articles[i]['byline']['original'] === null ? '' : articles[i]['byline']['original']),
                     'abstract': (articles[i]['abstract'] === null ? articles[i]['snippet'] : articles[i]['abstract'])
                   }
                 );

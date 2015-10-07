@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>immedia</title>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="shortcut icon" href="./immedia.ico" />
     <style>
       body {
         padding: 0;
@@ -21,10 +22,7 @@
         left: 1425px;
         margin-top: 90px;
       }
-    
-      .ui-autocomplete-loading {
-        background: white url("images/ui-anim_basic_16x16.gif") right center no-repeat;
-      }
+
       #city { width: 25em; }
     </style>
   </head>
@@ -35,44 +33,7 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js'></script>
     <script src='https://www.youtube.com/iframe_api'></script> 
     <script src='./build/build.min.js'></script>
-    <!-- // <script src="//code.jquery.com/jquery-1.10.2.js"></script> -->
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-    <script>
-      $(function() {
-        function log( message ) {
-          $( "<div>" ).text( message ).prependTo( "#log" );
-          $( "#log" ).scrollTop( 0 );
-        }
-     
-        $( "#searchbox" ).autocomplete({
-          source: function( request, response ) {
-            $.ajax({
-              url: "http://en.wikipedia.org/w/api.php",
-              dataType: "jsonp",
-              data: {
-                'action': "opensearch",
-                'format': "json",
-                'search': request.term
-              },
-              success: function( data ) {
-                response( data[1] );
-              }
-            });
-          },
-          minLength: 3,
-          select: function( event, ui ) {
-            log( ui.item ?
-              "Selected: " + ui.item.label :
-              "Nothing selected, input was " + this.value);
-          },
-          open: function() {
-            $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-          },
-          close: function() {
-            $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-          }
-        });
-      });
-      </script>
   </body>
 </html>
