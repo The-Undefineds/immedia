@@ -112,14 +112,14 @@ var WikiView = React.createClass({
     .done(function(data){
       wikiHTML = data.parse.text["*"];
       $wikiDOM = $("<document>" + wikiHTML + "</document>");
-      var x = $wikiDOM.find(".infobox");
-      var y = $wikiDOM.find("p:first-of-type:not(.infobox>p)");
+      var $infobox = $wikiDOM.find(".infobox");
+      var $overview = $wikiDOM.children('p').first();
       // 'if/else', here, ensures that a wikipedia page deficient of a '.infobox' does not cause any errors
-      if (x[0]) {
-        img = x[0].getElementsByTagName("IMG")[0] || "";
+      if ($infobox[0]) {
+        img = $infobox[0].getElementsByTagName("IMG")[0] || "";
         this.loadHistoryView.call(this, img);
-        var info = this.processData.call(this, x.html());
-        var summary = this.processData.call(this, y.html());
+        var info = this.processData.call(this, $infobox.html());
+        var summary = this.processData.call(this, $overview.html());
         $('#wikiview').append(info);
         $('#wikiview').append(summary);
         $('.wikiLink').on('click', function() {
