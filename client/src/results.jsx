@@ -5,7 +5,8 @@ var TreeTimeLine = require('./results_page/treetimeline.jsx'),
     ForceTimeLine = require('./results_page/forcetimeline.jsx'),
     WikiView = require('./results_page/wikiview.jsx'),
     Preview = require('./results_page/preview.jsx'),
-    TopBar = require('./results_page/topbar.jsx');
+    TopBar = require('./results_page/topbar.jsx'),
+    SearchHistory = require('./results_page/searchhistory.jsx');
 
 var ResultsView = React.createClass({
 
@@ -45,9 +46,7 @@ var ResultsView = React.createClass({
         <WikiView searchTerm={this.props.searchTerm} searchInit={this.props.searchInit} window={this.state} />
         <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver} window={this.state} />
         <div id="preview"></div>
-        <p id="pastSearches_header">Recently Viewed</p>
-        <div id="pastSearches" style={{textAlign:'center'}}>
-        </div>
+        <SearchHistory searchTerm={this.props.searchTerm} searchInit={this.props.searchInit} window={this.state} />
       </div>
     );
   },

@@ -1,4 +1,13 @@
 var React = require('react');
+var StyleSheet = require('react-style');
+
+var styles = StyleSheet.create({
+  image: {
+    width: 'auto',
+    height: '90px',
+    cursor: 'pointer',
+  },
+})
 
 var PastSearch = React.createClass({
 
@@ -10,10 +19,8 @@ var PastSearch = React.createClass({
 
   render: function(){
     return (
-        <div>
-          <img src={this.props.page.img} style={{width: '70px', height: '95px' }} onClick={this.loadPage}></img>
-        </div>
-      )
+      <img src={this.props.page.img} style={styles.image} onClick={this.loadPage}></img>
+    );
   }
 
 });
