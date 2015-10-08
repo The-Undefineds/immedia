@@ -122,7 +122,7 @@ var WikiView = React.createClass({
   },
 
   loadHistoryView: function(img){
-    // Add image for the search-history view (rendered below)
+    // Add image for the search-history view
     var history = JSON.parse(localStorage['immedia']);
     if (img) {
       history[0].img = img;
