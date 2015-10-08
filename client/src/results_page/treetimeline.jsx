@@ -8,10 +8,11 @@ var i = 0;
 var styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: '55px',
+    top: '50px',
+    paddingTop: '10px',
   },
   title: {
-    fontFamily: 'Avenir',
+    fontFamily: 'Nunito',
     fontSize: '24px',
     color: '#00BFFF',
     marginTop: '5px',
@@ -22,7 +23,6 @@ var styles = StyleSheet.create({
   d3: {
     position: 'absolute',
     top: '40px',
-    borderRight: 'solid 1px gray',
   }
 });
 
@@ -42,21 +42,17 @@ var TreeTimeLine = React.createClass({
   //Api's to be called are listed in this array
   apis: [
     'nyt',
-    // 'twitter',
+    'twitter',
     'youtube',
     // 'news'
   ],
 
   //Rendering the timeline will start a query for a search term passed down from the results page.
   query: function(searchTerm){
-    var index = searchTerm.indexOf('(');
-    if (index !== -1) searchTerm = searchTerm.slice(0, index);
-
-    $.post('http://127.0.0.1:3000/searches/incrementSearchTerm', { searchTerm: searchTerm });
-
+    
     for(var i = 0; i < this.apis.length; i++){
       this.handleQuery({
-        searchTerm: searchTerm,
+        searchTerm: searchTerm.replace(/\s\(.*$/,''),
         url: 'http://127.0.0.1:3000/api/' + this.apis[i],
         api: this.apis[i]
       });
@@ -73,7 +69,7 @@ var TreeTimeLine = React.createClass({
     $(window).scroll(function() {
 
       var scrollPoint = $(window).scrollTop() + $(window).height();
-      if (scrollPoint >= $(document).height()) {
+      if (scrollPoint >= $(document).height() - 50) {
            //An upper limit for the timeline's span is set at 30 days.
            if (component.dates.length > 27) {
             return;
@@ -199,6 +195,7 @@ var TreeTimeLine = React.createClass({
     styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
     // styles.container.height = (this.state.height - 100) + 'px';
     styles.container.height = this.dates.length * 120;
+
     return;
   },
 
@@ -241,6 +238,7 @@ var TreeTimeLine = React.createClass({
         // height = this.state.height - 100;
         height = this.dates.length*80;
 
+
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
                       this.state.apiData[this.state.apiData.length - 1] : null;
 
@@ -254,19 +252,19 @@ var TreeTimeLine = React.createClass({
       .ticks(d3.time.days, 1)
       .tickFormat(d3.time.format('%a %d'))
       .tickSize(0)
-      .tickPadding(20)
+      .tickPadding(10);
 
     var svg = d3.select('#d3container').append('svg')
       .attr('class', 'timeLine')
       .attr('width', width)
       .attr('height', this.state.height)
       .append('g')
-      .attr('transform', 'translate(60, ' + margin.top + ')')
+      .attr('transform', 'translate(60, ' + margin.top + ')');
 
     svg.append('g')
       .attr('class', 'yAxis')
       .attr({
-        'font-family': 'Arial, sans-serif',
+        'font-family': 'Nunito',
         'font-size': 10 * (this.state.width / 1350) + 'px',
       })
       .attr({
@@ -346,14 +344,14 @@ var TreeTimeLine = React.createClass({
         }
         else {
           if (d.depth === 2) {
-            if (d.parent.outOfRange) { d.y = -1000; console.log('parent is out of scope'); return; };
-            d.y = 140;
+            //If Twitter has more than 3 tweets in a day, only one child node will appear on the canvas
+            //When this node is moused over, a timeline of tweets from the day will appear in the preview window
+            d.y = 120 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
           };
           if (d.depth === 3) {
-            //Display first item in preview box by simulating a mouseover event
             component.mouseOver(d);
-            if (d.parent.parent.outOfRange) { d.y = -1000; console.log('grandparent is out of scope'); return; };
-            d.y = 260;
+            d.y = 240 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
+
             }
           }
         });
@@ -399,7 +397,8 @@ var TreeTimeLine = React.createClass({
                 r: 25,
               })
             }
-        })
+        });
+
 
       var defs = svg.append('svg:defs');
         defs.append('svg:pattern')
@@ -431,7 +430,7 @@ var TreeTimeLine = React.createClass({
           .attr('x', 4)
           .attr('y', 5)
           .attr('width', 15)
-          .attr('height', 15)
+          .attr('height', 15);
 
       nodeEnter.append('svg:circle')
         .attr('r', 1e-6)
@@ -441,7 +440,7 @@ var TreeTimeLine = React.createClass({
           fill: '#fff',
           stroke: 'steelblue',
           strokeWidth: '1.5px',
-        })
+        });
 
       var nodeUpdate = node.transition()
           .duration(duration)
@@ -507,6 +506,7 @@ var TreeTimeLine = React.createClass({
       nodeExit.select('circle')
           .attr('r', 1e-6);
 
+
       var link = svg.selectAll('path.link')
           .data(tree.links(nodes), function(d) { return d.target.id; })
 
@@ -524,6 +524,7 @@ var TreeTimeLine = React.createClass({
         .transition()
           .duration(500)
           .attr('d', diagonal)
+
 
       link.transition()
           .duration(500)

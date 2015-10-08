@@ -14,10 +14,23 @@ var styles = StyleSheet.create({
     marginTop: '5px',
     marginLeft: '2px',
     paddingTop: '2px',
-    fontSize: '22px',
-    fontFamily: 'Avenir',
+    fontSize: '24px',
+    fontFamily: 'Nunito',
     color: '#00BFFF',
     cursor: 'pointer',
+  },
+  searchButton: {
+      verticalAlign: 'middle',
+      marginLeft: '2px',
+      marginTop: '10px',
+      width: '100px',
+      height: '25px',
+      fontFamily: 'Nunito',
+      fontSize: '12px',
+      color: 'white',
+      textAlign: 'center',
+      background: '#3498db',
+      cursor: 'pointer',
   },
 });
 
@@ -47,7 +60,7 @@ var TopBar = React.createClass({
       // alert('Please input something');
       this.setState({errorHandle: 'Input a search term'});
     else {
-      this.props.searchInit(this.state.searchTerm);
+      this.props.searchInit(this.state.suggestedSearchTerm);
       this.setState({ searchTerm: '' });
     }
   },
@@ -55,6 +68,7 @@ var TopBar = React.createClass({
   goBackHome: function(){ this.props.goBackHome(); },
   
   componentDidMount : function() {
+    var component = this;
       $(function() {
         $( "#topbar" ).autocomplete({
           source: function( request, response ) {
@@ -67,6 +81,7 @@ var TopBar = React.createClass({
                 'search': request.term
               },
               success: function( data ) {
+                component.setState({ suggestedSearchTerm: data[1][0] })
                 response(data[1]);
               }
             });
@@ -118,20 +133,6 @@ var TopBar = React.createClass({
       width: this.state.width * (400 / 1378),
       height: '25px',
       paddingLeft: '10px',
-    };
-
-    styles.searchButton = {
-      verticalAlign: 'middle',
-      marginLeft: '2px',
-      marginTop: '10px',
-      width: '100px',
-      height: '25px',
-      fontFamily: 'Avenir',
-      fontSize: '12px',
-      color: 'white',
-      textAlign: 'center',
-      background: '#3498db',
-      cursor: 'pointer',
     };
   },
 

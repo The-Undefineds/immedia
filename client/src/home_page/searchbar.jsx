@@ -14,7 +14,7 @@ var styles = StyleSheet.create({
     marginTop: '10px',
     width: '200px',
     height: '24px',
-    fontFamily: 'Avenir',
+    fontFamily: 'Nunito',
     fontSize: '14px',
     color: 'white',
     textAlign: 'center',
@@ -25,7 +25,7 @@ var styles = StyleSheet.create({
   errorMsg: {
     color: '#FF0000', 
     marginTop:'10px',
-    fontFamily: 'Avenir',
+    fontFamily: 'Nunito',
   }
 });
 
@@ -34,7 +34,8 @@ var SearchBar = React.createClass({
   getInitialState: function(){
     return {
       searchTerm: '',
-      errorHandle: ''
+      errorHandle: '',
+      suggestedSearchTerm: '',
     };
   },
 
@@ -58,11 +59,15 @@ var SearchBar = React.createClass({
         this.setState({errorHandle: ''});
       }.bind(this), 5000);
     } else {
-      this.props.searchInit(this.state.searchTerm);
+      //Search will initialize with Wikipedia's first auto-complete suggestion.
+      this.props.searchInit(this.state.suggestedSearchTerm);
     }
   },
   
   componentDidMount : function(){
+
+    var component = this;
+
     $(function() {
       function log( message ) {
         $( "<div>" ).text( message ).prependTo( "#log" );
@@ -80,6 +85,7 @@ var SearchBar = React.createClass({
               'search': request.term
             },
             success: function( data ) {
+              component.setState({ suggestedSearchTerm: data[1][0] });
               response(data[1]);
             }
           });

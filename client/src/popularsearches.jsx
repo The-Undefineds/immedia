@@ -12,6 +12,7 @@ var PopularSearches = React.createClass({
   componentDidMount: function() {
     var component = this;
     $.get('http://127.0.0.1:3000/searches/popularSearches/', function(data, status) {
+      console.log('popular searches:', data);
       component.setState({
         popularSearches: data,
       })
@@ -51,14 +52,14 @@ var PopularSearches = React.createClass({
 
     var root = {
       name: 'Popular Searches',
-      rank: 10,
       children: [],
     }
 
     for (var term in component.state.popularSearches) {
       root.children.push({
         term: term,
-        rank: component.state.popularSearches[term],
+        rank: component.state.popularSearches[term].rank,
+        img: component.state.popularSearches[term].img
       })
     };
 
@@ -131,6 +132,8 @@ var PopularSearches = React.createClass({
             return colors(d.id);
           })
 
+      var defs = svg.append('svg:defs');
+
       node.transition()
           .attr("r", function(d) {
             return 100/(d.rank);
@@ -141,24 +144,40 @@ var PopularSearches = React.createClass({
           .attr("cx", function(d) { return d.x; })
           .attr("cy", function(d) { return d.y; })
           .attr("r", function(d) {
-            return 100/(d.rank);
-          })
-          .style('fill', function(d) {
-            return colors(d.id);
-          })
-          // .on("click", toggle)
-          .call(force.drag)
-          .append('text')
-            .attr({
-              dy: 10,
-              dx: 10,
-            })
-          .text(function(d) {
-            return d.term;
+            if (d == root) { return 10; }
+            // return 50/(d.rank);
+            if (d.rank) { return 25; }
           })
           .style({
-            stroke: 'black',
+            cursor: 'pointer',
+            fill: '#fff',
+            stroke: 'steelblue',
+            strokeWidth: '1.5px',
           })
+          .style('fill', function(d) {
+            if (d == root) { return 'lightsteelblue'; }
+            if (d.img) {
+              defs.append('svg:pattern')
+                .attr('id', 'tile-img' + d.id)
+                .attr({
+                  'width': '40',
+                  'height': '40',
+                })
+                .append('svg:image')
+                .attr('xlink:href', function() {
+                  return d.img;
+                })
+                .attr('x', -8)
+                .attr('y', 0)
+                .attr('width', 65)
+                .attr('height', 65)
+              return 'url(/#tile-img' + d.id + ')'
+            }
+          })
+          .on('click', function(d) {
+            console.log(d);
+          })
+          .call(force.drag)
 
       node.exit().remove();
     }

@@ -1,8 +1,25 @@
 var React = require('react');
+var StyleSheet = require('react-style');
 
 var SearchBar = require('./home_page/searchbar.jsx'),
     TopSearches = require('./home_page/topsearches.jsx'),
     PopularSearches = require('./popularsearches.jsx');
+
+var styles = StyleSheet.create({
+  container: {
+    textAlign: 'center',
+    marginTop: '150px',
+  },
+  logo: {
+    height: 'auto',
+    width: '150px',
+  },
+  title: {
+    fontFamily: 'Nunito',
+    fontSize: '32px',
+    color: '#00BFFF',
+  },
+});
 
 var HomePage = React.createClass({
 
@@ -18,12 +35,13 @@ var HomePage = React.createClass({
 
   render: function(){
     return (
-      <div style={{textAlign: 'center', marginTop:'150px' }}>
-        <img src={ './immedia.png' } height={200} width={200}/>
+      <div style={styles.container}>
+        <img style={styles.logo} src={ './immedia_logo.png' } />
+        <div style={styles.title}>immedia</div>
         <SearchBar searchInit={this.props.searchInit} atHome={this.props.atHome} />
         <PopularSearches />
       </div>
-      )
+    );
   }
 });
 

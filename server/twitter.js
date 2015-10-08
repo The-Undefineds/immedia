@@ -4,7 +4,6 @@ var utils = require('./utils.js');
 
 var baseUrl = 'https://api.twitter.com/1.1/users/search.json';
 var newUrl = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
-// var url = 'https://api.twitter.com/1/statuses/oembed.json';
 
 var tweets = {};
 
@@ -59,6 +58,7 @@ function grabTimeline(newUrl, params, callback){
   search.url = newUrl;
   search.qs = {user_id : params.id, include_rts : 'false'};
   search.headers.Authorization = OAuth(newUrl, 'user_id=' + params.id, 'include_rts=false');
+
   request(search, function(error, response, body){
     if(error) {
       callback(404, error);
@@ -76,10 +76,10 @@ function grabTimeline(newUrl, params, callback){
 
         var topTweetCounts = Object.keys(tweetsBySocialCount).sort(function(a, b) {
           return b - a;
-        }).slice(0, 6);
+        }).slice(0, 20);
 
         for(var j = 0; j < topTweetCounts.length; j++) {
-          // tweetIdsToSend.push(tweetsBySocialCount[topTweetCounts[j]]);
+
           var tweet = tweetsBySocialCount[topTweetCounts[j]];
           var date = utils.getSimpleDate(tweet.created_at);
 
@@ -93,14 +93,19 @@ function grabTimeline(newUrl, params, callback){
             tweet_id_str: tweet.id_str,
             type: 'user'
           };
-          
-          responseObj[date] = responseObj[date] || { source: 'twitter', children: [] };
-          responseObj[date].children.push(tweetToSend);
-          
+
+          var daysAgo = utils.getDateFromToday(0, '') - date.replace(/[-]/gi, '');
+
+          //If the tweets were dated within 28 days, aggregate the top three from any day therein
+          if (daysAgo <= 28) {
+            responseObj[date] = responseObj[date] || { source: 'twitter', children: [] };
+            if (responseObj[date].children.length < 3) {
+              responseObj[date].children.push(tweetToSend);
+            }
+          }
         }
 
         callback(200, responseObj);
-        // embedTweet(url, tweetIdsToSend, callback, {'date': date, 'img': params.img});
       } else {
         grabTimeline(newUrl, params, callback);
       }
@@ -108,34 +113,3 @@ function grabTimeline(newUrl, params, callback){
   })
 };
 
-// function embedTweet(url, tweetIds, callback, params){
-//   var obj = {};
-//   var manualPromise = 0;
-//   obj[params.date] = {
-//     source : 'twitter',
-//     children : []
-//   }
-  
-//   search.url = url;
-//   search.headers.Authorization = null;
-  
-//   for (var i = 0; i < tweetIds.length; i++){
-//     search.qs = {id : tweetIds[i], omit_script: 'true'};
-//     request(search, function(error, response, body){
-//       if(error) {
-//         callback(404, error);
-//       } else {
-//         body = JSON.parse(body);  
-//         obj[params.date].children.push({
-//           url : body.url,
-//           tweet : body.html,
-//           img: params.img,
-//           // tweetid: tweetId,
-//           type: 'user'
-//         })
-//         manualPromise++;
-//         if (manualPromise === 3) callback(200, obj);
-//       }
-//     })
-//   }
-// }
