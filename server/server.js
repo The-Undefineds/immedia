@@ -7,7 +7,7 @@ var nyt = require('./nyt.js');
 var twitter = require('./twitter');
 var cors = require('express-cors');
 var mongoose = require('mongoose');
-var news = require('./news.js');
+// var news = require('./news.js');
 
 var app = express();
 var server = http.createServer(app);
@@ -42,7 +42,7 @@ app.post('/api/youtube', youtube.search);
 
 app.post('/api/nyt', nyt.getArticles);
 
-app.post('/api/twitter', news.test);
+app.post('/api/twitter', twitter.getTweetsPerson);
 
 ///////////////////////////
 
