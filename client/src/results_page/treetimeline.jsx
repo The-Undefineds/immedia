@@ -1,17 +1,30 @@
 var React = require('react');
+var StyleSheet = require('react-style');
 
-var dates = [];
-var generateDates = function(timeSpan) {
-  for (var i = -1; i < timeSpan; i++) {
-    var date = new Date();
-    date.setDate(date.getDate() - i);
-    dates.push(date.toJSON().slice(0, 10));
-  }
-}
-
-generateDates(8);
+var TimeSpanSlider = require('./timespanslider.jsx');
 
 var i = 0;
+
+var styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: '55px',
+  },
+  title: {
+    fontFamily: 'Avenir',
+    fontSize: '24px',
+    color: '#00BFFF',
+    marginTop: '5px',
+    marginBottom: '1px',
+    textAlign: 'left',
+    paddingLeft: '5px',
+  },
+  d3: {
+    position: 'absolute',
+    top: '40px',
+    borderRight: 'solid 1px gray',
+  }
+});
 
 var TreeTimeLine = React.createClass({
 
@@ -21,23 +34,23 @@ var TreeTimeLine = React.createClass({
     return {
       // wasSearchedFromTopBar: false,
       // searchTerm: '',
+      timeSpan: 7,
       apiData: [],
+      width: this.props.window.width,
+      height: this.props.window.height,
     };
   },
 
   apis: [
     'nyt',
-    'twitter',
+    // 'twitter',
     'youtube',
     // 'news'
   ],
 
-  apiCounter: 0,
-
   query: function(searchTerm){
     var index = searchTerm.indexOf('(');
     if (index !== -1) searchTerm = searchTerm.slice(0, index);
-    this.apiCounter = 0;
     for(var i = 0; i < this.apis.length; i++){
       this.handleQuery({
         searchTerm: searchTerm,
@@ -48,13 +61,29 @@ var TreeTimeLine = React.createClass({
   },
 
   componentDidMount: function(){
+    var component = this;
     this.query(this.props.searchTerm);
+    $(window).scroll(function() {
+       if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
+           console.log("bottom!");
+           if (component.dates.length > 30) {
+            return;
+           }
+           component.setTimeSpan(component.dates.length + 7);
+       }
+    });
   },
 
   componentWillReceiveProps: function(newProps){
     if (this.props.searchTerm !== newProps.searchTerm) {
       this.query(newProps.searchTerm);
+      this.setState({apiData: []});
     }
+
+    this.setState({
+      width: newProps.window.width,
+      height: newProps.window.height,
+    });bz
   },
 
   handleQuery: function(searchQuery){
@@ -64,6 +93,7 @@ var TreeTimeLine = React.createClass({
         // Set State to initiate a re-rendering based on new API call data
         this.setState(function(previousState, currentProps) {
           // Make a copy of previous apiData to mutate and use to reset State
+          var previousApiData = previousState['apiData'].slice();
           // Data is structured in an array that corresponds to sorted order by date descending
           // where each index has the following object:
           /*
@@ -77,13 +107,6 @@ var TreeTimeLine = React.createClass({
                 ]
               }
           */
-      
-          if (this.apiCounter === 0) {
-            var previousApiData = [];
-          } else {
-            var previousApiData = previousState['apiData'].slice();
-          }
-          this.apiCounter++;
 
           // Loop through each day in apiData and add new articles/videos/etc
           // from returning API appropriately
@@ -118,20 +141,51 @@ var TreeTimeLine = React.createClass({
      }.bind(this));
   },
 
-  render: function() {
-    this.renderCanvas();    // Crucial step that (re-)renders D3 canvas
-    return (
-      <div id="d3container" style={this.style}></div>
-    )
+  dates: [],
+
+  setTimeSpan: function(timeSpan) {
+    this.setState({ timeSpan: timeSpan });
   },
 
-  style: {
-    position: 'fixed',
-    marginTop: '50px',
-    left: '50px'
+  render: function() {
+
+    var component = this;
+
+    var generateDates = function(timeSpan) {
+        component.dates = [];
+        for (var i = -1; i < timeSpan; i++) {
+        var date = new Date();
+        date.setDate(date.getDate() - i);
+        component.dates.push(date.toJSON().slice(0, 10));
+      }
+    }
+
+    generateDates(this.state.timeSpan);
+
+    this.renderCanvas();    // Crucial step that (re-)renders D3 canvas
+    this.getDynamicStyles();
+
+    return (
+      <div style={styles.container}>
+        <span id="d3title" style={styles.title}>recent events</span>
+        <div id="d3container" style={styles.d3}></div>
+      </div>
+    );
+  },
+
+  getDynamicStyles: function() {
+    styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 5) + 'px';
+    styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
+    styles.container.height = (this.state.height - 100) + 'px';
+    return;
   },
 
   mouseOver: function(item) {
+    if (this.mousedOver === item) {
+      return;
+    } else {
+      this.mousedOver = item;
+    }
     this.props.mouseOver({
         title: item.title,
         date: item.date,
@@ -161,14 +215,14 @@ var TreeTimeLine = React.createClass({
       left: 40
     };
 
-    var width = 350,
-        height = 700;
+    var width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350),
+        height = this.state.height - 100;
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
                       this.state.apiData[this.state.apiData.length - 1] : null;
 
     var y = d3.time.scale()
-      .domain([new Date(dates[dates.length - 1]), new Date(dates[0])])
+      .domain([new Date(this.dates[this.dates.length - 1]), new Date(this.dates[0])])
       .rangeRound([height - 4*(margin.top) - margin.bottom, 0])
       // .clamp(true)
 
@@ -183,7 +237,7 @@ var TreeTimeLine = React.createClass({
     var svg = d3.select('#d3container').append('svg')
       .attr('class', 'timeLine')
       .attr('width', width)
-      .attr('height', height)
+      .attr('height', this.state.height - 100)
       .append('g')
       .attr('transform', 'translate(60, ' + margin.top + ')')
 
@@ -191,7 +245,7 @@ var TreeTimeLine = React.createClass({
       .attr('class', 'yAxis')
       .attr({
         'font-family': 'Arial, sans-serif',
-        'font-size': '10px',
+        'font-size': 10 * (this.state.width / 1350) + 'px',
       })
       .attr({
         fill: 'none',
@@ -301,8 +355,6 @@ var TreeTimeLine = React.createClass({
               .transition()
               .attr({
                 r: 28,
-                stroke: '#46008B',
-                strokeWidth: '2.5px'
               })
             }
         })
@@ -312,8 +364,6 @@ var TreeTimeLine = React.createClass({
               .transition()
               .attr({
                 r: 25,
-                // stroke: 'steelblue',
-                // strokeWidth: '1.5px'
               })
           }
         })
@@ -381,6 +431,7 @@ var TreeTimeLine = React.createClass({
             } else if (d.depth === 3)
               return 25;
           })
+          .style('fill', 'white')
           .style("fill", function(d) { 
             var dat = d;
             if (d.source == 'twitter') {

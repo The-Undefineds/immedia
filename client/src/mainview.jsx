@@ -90,9 +90,10 @@ var MainView = React.createClass({
   },
 
   render: function(){
+
     return (
-      <div style={{textAlign:'center'}} >
-        { this.state.atHome ? <HomePage searchInit={this.searchInit} atHome={this.state.atHome}/> : null }
+      <div>
+        { this.state.atHome ? <HomePage  searchInit={this.searchInit} atHome={this.state.atHome}/> : null }
         { !this.state.atHome ? <ResultsView searchTerm={this.state.searchTerm} goBackHome={this.goBackHome} searchInit={this.searchInit} /> : null }
       </div>
       )

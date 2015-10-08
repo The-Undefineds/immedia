@@ -1,4 +1,5 @@
 var React = require('react');
+var StyleSheet = require('react-style');
 
 var TreeTimeLine = require('./results_page/treetimeline.jsx'),
     ForceTimeLine = require('./results_page/forcetimeline.jsx'),
@@ -8,42 +9,75 @@ var TreeTimeLine = require('./results_page/treetimeline.jsx'),
 
 var ResultsView = React.createClass({
 
-  queryTerm: function(searchTerm){
-    this.setState({
-      searchTerm: searchTerm
-    });
+  getInitialState: function() {
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
   },
 
-  mouseOver: function(item){
-    
-    this.hasMouseOver = true;
-    this.previewItem = item;
+  componentDidMount: function() {
+    window.addEventListener('resize', this.handleResize);
+    this.renderPreview({source: ''});
 
-    $preview = $('#preview');
-    if ($preview[0].localName === 'iframe') {
-      $preview.remove();
-      $('#results').append('<div id="preview"></div>')
-    } else if (!$preview) {
-      $('#results').append('<div id="preview"></div>')
-    }
-    React.render(
-      <Preview previewItem={this.previewItem}/>,
-      document.getElementById('preview')
-      )
+    // $(window).scroll(function() {
+    //    if($(window).height() === $(document).height()) {
+    //        console.log("bottom!");
+    //    }
+    // });
+    // console.log('scroll top:', $(window).height());
+    // console.log('doc height:', $(document).height());
   },
 
+  componentWillReceiveProps: function() {
+    this.item = {source: ''};
+    this.renderPreview(this.item);
+  },
+
+  componentWillUnmount: function() {
+    window.removeEventListener('resize', this.handleResize);
+  },
+  
   render: function(){
     return (
       <div id="results">
-        <TopBar searchInit={this.props.searchInit} goBackHome={this.props.goBackHome} />
-        <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver} />
-        <WikiView searchTerm={this.props.searchTerm} searchInit={this.props.searchInit} />
+        <TopBar searchInit={this.props.searchInit} goBackHome={this.props.goBackHome} window={this.state} />
+        <WikiView searchTerm={this.props.searchTerm} searchInit={this.props.searchInit} window={this.state} />
+        <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver} window={this.state} />
         <div id="preview"></div>
         <p id="pastSearches_header">Recently Viewed</p>
         <div id="pastSearches" style={{textAlign:'center'}}>
         </div>
       </div>
     );
+  },
+
+  item: {source: ''},
+
+  renderPreview: function(item) {
+    React.render(
+      <Preview previewItem={item} window={this.state} />,
+      document.getElementById('preview')
+    );
+  },
+
+  handleResize: function(e) {
+    this.setState({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+    this.renderPreview(this.item);
+  },
+
+  queryTerm: function(searchTerm){
+    this.setState({
+      searchTerm: searchTerm
+    });
+  },
+
+  mouseOver: function(item){    
+    this.item = item;
+    this.renderPreview(this.item);
   },
 });
 

@@ -1,11 +1,34 @@
 var React = require('react');
+var StyleSheet = require('react-style');
+
+var styles = StyleSheet.create({
+  logo: {
+    position: 'absolute',
+    left: '15px',
+    marginTop: '6px',
+    cursor: 'pointer',
+  },
+  title: {
+    position: 'absolute',
+    left: '70px',
+    marginTop: '5px',
+    marginLeft: '2px',
+    paddingTop: '2px',
+    fontSize: '22px',
+    fontFamily: 'Avenir',
+    color: '#00BFFF',
+    cursor: 'pointer',
+  },
+});
 
 var TopBar = React.createClass({
 
   getInitialState: function(){
     return {
       searchTerm: '',
-      errorHandle: ''
+      errorHandle: '',
+      width: this.props.window.width,
+      height: this.props.window.height,
     };
   },
 
@@ -59,15 +82,59 @@ var TopBar = React.createClass({
       });
   },
 
+  componentWillReceiveProps: function(nextProps) {
+    if(!(this.state.width === nextProps.window.width && this.state.height === nextProps.window.height)) {
+      this.setState({
+        width: nextProps.window.width,
+        height: nextProps.window.height,
+      });
+    }
+  },
+
   render: function(){
+    this.getDynamicStyles();
+
     return (
-      <div style={{textAlign:'center', backgroundColor: '#46008B', padding: '10px'}} >
-        <input id='topbar' type='text' value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
-        <input type='button' onClick={this.handleSubmit} value='Immedia search'/>
-        <input onClick={this.goBackHome} value='home' type='button'/>
+      <div style={styles.topBar}>
+        <img src={'./immedia_logo.png'} height={40} width={40 * (167/137)} style={styles.logo} onClick={this.goBackHome} />
+        <span style={styles.title} onClick={this.goBackHome}>immedia</span>
+        <input id='topbar' type='text' style={styles.searchBar} value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
+        <input type='button' style={styles.searchButton} onClick={this.handleSubmit} value='immedia Search'/>
       </div>
-      )
-  }
+    );
+  },
+
+  getDynamicStyles: function() {
+    styles.topBar = {
+      width: this.state.width,
+      height: '50px',
+      backgroundColor: 'rgba(128,128,128,0.1)',
+      textAlign: 'center',
+    };
+
+    styles.searchBar = {
+      marginTop: '12px',
+      verticalAlign: 'middle',
+      width: this.state.width * (400 / 1378),
+      height: '25px',
+      paddingLeft: '10px',
+    };
+
+    styles.searchButton = {
+      verticalAlign: 'middle',
+      marginLeft: '2px',
+      marginTop: '10px',
+      width: '100px',
+      height: '25px',
+      fontFamily: 'Avenir',
+      fontSize: '12px',
+      color: 'white',
+      textAlign: 'center',
+      background: '#3498db',
+      cursor: 'pointer',
+    };
+  },
+
 })
 
 module.exports = TopBar;

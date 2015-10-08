@@ -17,7 +17,8 @@ app.use(cors({
   allowedOrigins: ['localhost:3000', 'http://www.immedia.xyz', 'http://immedia.xyz']
 }))
 
-app.use(express.static(('dist')))
+app.use(express.static('dist'));
+app.use(express.static('./client/assets'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 

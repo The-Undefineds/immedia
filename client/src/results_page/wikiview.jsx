@@ -1,9 +1,88 @@
 var React = require('react');
+var StyleSheet = require('react-style');
+
+var styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    overflow: 'scroll',
+    top: '100px',
+    borderLeft: 'solid 1px gray',
+    paddingLeft: '15px',
+    paddingRight: '15px',
+  }
+});
 
 var SearchHistory = require('./searchhistory.jsx');
 
 var WikiView = React.createClass({
 
+  getInitialState: function() {
+    return {
+      width: this.props.window.width,
+      height: this.props.window.height,
+    };
+  },
+  
+  componentDidMount: function(){
+    this.query(this.props.searchTerm);
+  },
+
+  componentWillReceiveProps: function(nextProps){
+    if (this.props.searchTerm !== nextProps.searchTerm) {
+      this.query(nextProps.searchTerm);
+    }
+
+    this.setState({
+      width: nextProps.window.width,
+      height: nextProps.window.height,
+    });
+  },
+
+  render: function(){
+    this.getDynamicStyles();
+
+    return (
+      <div id='wikiview' style={styles.container}></div>
+    );
+  },
+
+  getDynamicStyles: function() {
+    // var $previewContent = $('#previewContent');
+    // if($previewContent !== undefined) {
+    //   // styles.container.right = this.state.width - (($previewContent.position()).left + $previewContent.width());
+    //   // styles.container.width = this.state.width - (($previewContent.position()).left + $previewContent.width());
+    // } else {
+      styles.container.left = this.state.width - (this.state.width - 1350 < 0 ? (365 * (this.state.width / 1350)) : ((this.state.width - 1350) / 2 + 365)) + 'px';
+      styles.container.width = (this.state.width - 1350 < 0 ? 365 * (this.state.width / 1350) : 365) + 'px';
+    // }
+    styles.container.height = (this.state.height - 100) + 'px';
+  },
+
+  // Alters html so that hyperlinks, when clicked, make a new immedia-search
+  processData: function(data){
+    for (var i = 0; i < data.length; i++) {
+      if (data[i] === 'h' && data.slice(i+1, i+4) === 'ref') {
+        var string = data;
+        if (data.slice(i+6, i+11) === '/wiki') {
+          string = string.slice(0, i+6) + 'http://wikipedia.org' + string.slice(i+6);
+          for (var j = 0; j < 300; j++) {
+            if (string[i + j] !== '>') {
+              continue;
+            } else {
+              break;
+            }
+          }
+          // string = string.slice(0, i + 4) + ' onClick={this.props.searchInit(' + string.slice(i + 12, i + 12 + j) + ')}' + string.slice(i + 32 + j);
+          string = string.slice(0, i) + 'class="wikiLink"' + string.slice(i + j);
+          }
+        // string = string.slice(0,i) +  'target="_blank" ' + string.slice(i);
+        // i += 20;
+        data = string;
+      }
+    }
+    return data;
+  },
+  
   query: function(searchTerm){
     var img,
         searchTerm = searchTerm,
@@ -12,6 +91,7 @@ var WikiView = React.createClass({
         searchRequest = "https://en.wikipedia.org/w/api.php?action=query&prop=pageprops|info&titles="+searchTerm+"&callback=?&format=json";
     
     $('#wikiview').empty();
+    var component = this;
 
     $.getJSON(searchRequest)
     .done(function(data){
@@ -35,12 +115,16 @@ var WikiView = React.createClass({
     });
 
     function loadHistoryView(img){
-      //Add image for the search-history view (rendered below)
+      // Add image for the search-history view (rendered below)
       var history = JSON.parse(localStorage['immedia']);
-      history[0].img = img.src;
+      if (img) {
+        history[0].img = img.src;
+      } else { // No argument passed is the signal that no image was found
+        history[0].img = 'https://upload.wikimedia.org/wikipedia/commons/f/fc/No_picture_available.png';
+      }
       localStorage['immedia'] = JSON.stringify(history);
 
-      // Rendering the search-history view
+      // Rendering the search-history view with the history pulled from localStorage
       React.render(
         <SearchHistory history={history} searchInit={context.props.searchInit} />,
         document.getElementById('pastSearches')
@@ -55,56 +139,23 @@ var WikiView = React.createClass({
         $wikiDOM = $("<document>" + wikiHTML + "</document>");
         var x = $wikiDOM.find(".infobox");
         var y = $wikiDOM.find("p:first-of-type:not(.infobox>p)");
-        img = x[0].getElementsByTagName("IMG")[0] || "";
-        loadHistoryView(img);
-        // if (img) { img.parentNode.removeChild(img) }; // this line removes the image from the info-box
-        var info = context.processData(x.html());
-        var summary = context.processData(y.html());
-        $('#wikiview').append(info);
-        $('#wikiview').append(summary);
+        // 'if/else', here, ensures that a wikipedia page deficient of a '.infobox' does not cause any errors
+        if (x[0]) {
+          img = x[0].getElementsByTagName("IMG")[0] || "";
+          loadHistoryView(img);
+          var info = context.processData(x.html());
+          var summary = context.processData(y.html());
+          $('#wikiview').append(info);
+          $('#wikiview').append(summary);
+          $('.wikiLink').on('click', function() {
+            component.props.searchInit($(this).text());
+          })
+        } else {
+          loadHistoryView();
+        }
       })
     }
   },
-  
-  componentDidMount : function(){
-    this.query(this.props.searchTerm);
-  },
-
-  componentWillReceiveProps: function(newProps){
-    if (this.props.searchTerm !== newProps.searchTerm) {
-      this.query(newProps.searchTerm);
-    }
-  },
-
-  // alters html so that hyperlinks, when clicked, open in new tab
-  processData: function(data){
-    for (var i = 0; i < data.length; i++) {
-      if (data[i] === 'h' && data.slice(i+1, i+4) === 'ref') {
-        var string = data;
-        if (data.slice(i+6, i+11) === '/wiki') {
-          string = string.slice(0, i+6) + 'http://wikipedia.org' + string.slice(i+6);
-        }
-        string = string.slice(0,i) +  'target="_blank" ' + string.slice(i);
-        i += 20;
-        data = string; 
-      }
-    }
-    return data;
-  },
-  
-  render: function(){
-    return (
-      <div id='wikiview' style={this.style}></div>
-    );
-  },
-
-  style: {
-    position: 'fixed',
-    left: '900px',
-    overflow: 'scroll',
-    marginTop: '50px',
-    maxHeight: '680px'
-  }
 
 });
 
