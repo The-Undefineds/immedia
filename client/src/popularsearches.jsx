@@ -145,8 +145,8 @@ var PopularSearches = React.createClass({
           .attr("cy", function(d) { return d.y; })
           .attr("r", function(d) {
             if (d == root) { return 10; }
-            // return 50/(d.rank);
-            if (d.rank) { return 25; }
+            return 40 - 2*(d.rank);
+            // if (d.rank) { return 25; }
           })
           .style({
             cursor: 'pointer',
@@ -167,10 +167,10 @@ var PopularSearches = React.createClass({
                 .attr('xlink:href', function() {
                   return d.img;
                 })
-                .attr('x', -8)
-                .attr('y', 0)
-                .attr('width', 65)
-                .attr('height', 65)
+                .attr('x', 2)
+                .attr('y', 3)
+                .attr('width', 70)
+                .attr('height', 70)
               return 'url(/#tile-img' + d.id + ')'
             }
           })

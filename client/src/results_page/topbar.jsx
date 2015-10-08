@@ -60,8 +60,12 @@ var TopBar = React.createClass({
       // alert('Please input something');
       this.setState({errorHandle: 'Input a search term'});
     else {
-      this.props.searchInit(this.state.suggestedSearchTerm);
-      this.setState({ searchTerm: '' });
+      if (this.state.suggestedSearchTerm !== '') {
+        this.props.searchInit(this.state.suggestedSearchTerm);
+      } else {
+        this.props.searchInit(this.state.searchTerm);
+      }
+      // this.setState({ searchTerm: '' });
     }
   },
 

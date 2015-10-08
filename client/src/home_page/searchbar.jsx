@@ -60,7 +60,12 @@ var SearchBar = React.createClass({
       }.bind(this), 5000);
     } else {
       //Search will initialize with Wikipedia's first auto-complete suggestion.
-      this.props.searchInit(this.state.suggestedSearchTerm);
+      console.log('suggested search term:', this.state.suggestedSearchTerm);
+      if (this.state.suggestedSearchTerm !== '') {
+        this.props.searchInit(this.state.suggestedSearchTerm);
+      } else {
+        this.props.searchInit(this.state.searchTerm);
+      }
     }
   },
   

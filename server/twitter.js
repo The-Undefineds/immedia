@@ -99,7 +99,7 @@ function grabTimeline(newUrl, params, callback){
           //If the tweets were dated within 28 days, aggregate the top three from any day therein
           if (daysAgo <= 28) {
             responseObj[date] = responseObj[date] || { source: 'twitter', children: [] };
-            if (responseObj[date].children.length < 3) {
+            if (responseObj[date].children.length < 2) {
               responseObj[date].children.push(tweetToSend);
             }
           }

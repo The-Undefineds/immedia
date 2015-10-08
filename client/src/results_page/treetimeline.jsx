@@ -69,7 +69,7 @@ var TreeTimeLine = React.createClass({
     $(window).scroll(function() {
 
       var scrollPoint = $(window).scrollTop() + $(window).height();
-      if (scrollPoint >= $(document).height() - 50) {
+      if (scrollPoint >= $(document).height() - 20) {
            //An upper limit for the timeline's span is set at 30 days.
            if (component.dates.length > 27) {
             return;
@@ -160,7 +160,7 @@ var TreeTimeLine = React.createClass({
   dates: [],
 
   setTimeSpan: function(timeSpan) {
-    this.setState({ height: timeSpan * 120 });
+    this.setState({ height: timeSpan * 80 });
     this.setState({ timeSpan: timeSpan });
   },
 
@@ -194,7 +194,7 @@ var TreeTimeLine = React.createClass({
     styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 5) + 'px';
     styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
     // styles.container.height = (this.state.height - 100) + 'px';
-    styles.container.height = this.dates.length * 120;
+    styles.container.height = this.dates.length * 80;
 
     return;
   },

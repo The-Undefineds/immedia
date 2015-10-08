@@ -61,7 +61,7 @@ module.exports = {
   getPopularSearches: function(req, res, next) {
 
     //Will retreive all searches that are ranked from 1 to 20 in popularity
-    Search.find({ rank: { $gte: 1, $lte: 20 }})
+    Search.find({ rank: { $gte: 1, $lte: 10 }})
       .then(function (searches) {
         if (searches) {
           var responseObj = {};
