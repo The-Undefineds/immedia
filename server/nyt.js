@@ -30,7 +30,7 @@ var getPictureArticleSearch = function(article) {
 
 var createArticleSearchMap = function(searchTerm, beginDate, response) {
   if(response['1'] === undefined) {
-    res.end();
+    return [];
   }
   var body = JSON.parse(response['1']).response;    // Parse request body
   var articles = Array.prototype.slice.call(body.docs);   // Article objects for FIRST PAGE of Article Search results
