@@ -14,7 +14,7 @@ var styles = StyleSheet.create({
     marginTop: '10px',
     width: '200px',
     height: '24px',
-    fontFamily: 'Avenir',
+    fontFamily: 'Nunito',
     fontSize: '14px',
     color: 'white',
     textAlign: 'center',
@@ -25,7 +25,7 @@ var styles = StyleSheet.create({
   errorMsg: {
     color: '#FF0000', 
     marginTop:'10px',
-    fontFamily: 'Avenir',
+    fontFamily: 'Nunito',
   }
 });
 

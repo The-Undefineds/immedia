@@ -3,7 +3,7 @@ var StyleSheet = require('react-style');
 
 var styles = StyleSheet.create({
   directions: {
-    fontFamily: 'Avenir',
+    fontFamily: 'Nunito',
     fontSize: '24px',
     color: '#00BFFF',
   }
@@ -28,6 +28,7 @@ var EmptyPreview = React.createClass({
 
   getDynamicStyles: function() {
     styles.directions.left = (this.state.width / 2) - 50 + 'px';
+    styles.directions.width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) + 'px';
   },
 
 });

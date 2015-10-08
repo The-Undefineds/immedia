@@ -6,11 +6,21 @@ var youtube = require('./youtube');
 var nyt = require('./nyt.js');
 var twitter = require('./twitter');
 var cors = require('express-cors');
+var mongoose = require('mongoose');
+// var news = require('./news.js');
 
 var app = express();
 var server = http.createServer(app);
 var port = 3000;
 var url = '127.0.0.1'; //Change url as necessary
+
+mongoose.connect('mongodb://localhost/local', function(error){
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('mongo connected');
+  }
+});
 
 //app.use();
 app.use(cors({
