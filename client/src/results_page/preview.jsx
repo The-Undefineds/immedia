@@ -8,7 +8,7 @@ var EmptyPreview = require('./emptypreview.jsx');
 
 var styles = StyleSheet.create({
   preview: {
-    position: 'relative',
+    position: 'absolute',
     paddingRight: '10px',
     textAlign: 'center',
   }
@@ -49,7 +49,7 @@ var Preview = React.createClass({
 
   getDynamicStyles: function() {
     var $d3title = $('#d3title');
-    // styles.preview.top = (55 + $d3title.height() + 5 + 'px');
+    styles.preview.top = (55 + $d3title.height() + 5 + 'px');
     // styles.preview.top = (60 + $(window).scrollTop()) + 'px';
     styles.preview.left = (this.state.width / 2) - (this.state.width - 1350 < 0 ? 500 * (this.state.width / 1350) / 2 : 250) + 'px';
     styles.preview.width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) + 'px';
