@@ -97,6 +97,7 @@ var WikiView = React.createClass({
   },
 
   parse: function(searchTerm) {
+    var profileImage;
     var parseRequest = "http://en.wikipedia.org/w/api.php?action=parse&format=json&page="+searchTerm+"&redirects&prop=text&callback=?";
     $.getJSON(parseRequest)
     .done(function(data){
@@ -113,6 +114,8 @@ var WikiView = React.createClass({
       var historyImage = $($infobox[0].getElementsByTagName('img')[0]).attr('src').replace('//','https://') || '';  // Add fallback Google Image request here
       historyImage ? this.loadHistoryView.call(this, historyImage) : this.loadHistoryView.call(this);
 
+      $.post('http://127.0.0.1:3000/searches/incrementSearchTerm', { searchTerm: searchTerm, img: profileImage });
+      
       this.setState({
         infobox: infobox,
         profileImage: profileImage,
@@ -120,6 +123,8 @@ var WikiView = React.createClass({
       });
 
     }.bind(this));
+
+    
   },
 
   loadHistoryView: function(img){
@@ -132,6 +137,14 @@ var WikiView = React.createClass({
     }
     localStorage['immedia'] = JSON.stringify(history);
   },
+  
+  // render: function(){
+  //   this.getDynamicStyles();
+
+  //   return (
+  //     <div id='wikiview' style={styles.container}></div>
+  //   );
+  // },
 
 });
 

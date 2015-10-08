@@ -117,8 +117,8 @@ var createArticleSearchArticle = function(article, date, img) {
     'height': (img === undefined ? '' : img['height']),
     'width': (img === undefined ? '' : img['width']),
     'date': date,
-    'byline': ((article['byline'] === null || article['byline'] === undefined) ? '' : article['byline']['original']).replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
-    'abstract': (article['abstract'] === null ? article['snippet'] : article['abstract']).replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\'')
+    'byline': ((article['byline'] === null || article['byline'] === undefined) ? '' : (article['byline']['original'] || '')).replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
+    'abstract': (article['abstract'] === null ? (article['snippet'] || '') : article['abstract']).replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\'')
   };
 };
 
