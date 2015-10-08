@@ -58,21 +58,22 @@ var SearchHistory = React.createClass({
       });
     }
 
-    this.setState({
-      width: nextProps.window.width,
-      height: nextProps.window.height,
-    });
+    if(!(this.state.width === nextProps.window.width && this.state.height === nextProps.window.height)) {
+      this.setState({
+        width: nextProps.window.width,
+        height: nextProps.window.height,
+      });
+    }
   },
 
   render: function(){
     var history = this.compileHistory();
     this.getDynamicStyles();
+
     return (
       <div id="recentlyVisited" style={styles.container}>
         <span style={styles.title}>recently visited</span>
-        <div style={styles.searches}>
-          { history }
-        </div>
+        <div style={styles.searches}>{ history }</div>
       </div>
     );
   },

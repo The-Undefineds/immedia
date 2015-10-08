@@ -23,7 +23,6 @@ var styles = StyleSheet.create({
   d3: {
     position: 'absolute',
     top: '40px',
-    borderRight: 'solid 1px gray',
   }
 });
 
@@ -33,8 +32,6 @@ var TreeTimeLine = React.createClass({
 
   getInitialState: function(){
     return {
-      // wasSearchedFromTopBar: false,
-      // searchTerm: '',
       timeSpan: 7,
       apiData: [],
       width: this.props.window.width,
