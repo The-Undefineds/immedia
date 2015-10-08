@@ -29,7 +29,7 @@ var convertDateToInteger = function(date){
   return year * 480 + month * 40 + day * 1;
 };
 
-var parse ....
+// var parse ....
 
 
 module.exports = {

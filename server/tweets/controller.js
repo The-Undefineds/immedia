@@ -80,7 +80,7 @@ var requestNewTweets = function(screenName, sinceID, maxID){
             text: tweet.text,
             url: help.extractUrl(tweet.text),
             retweet_count: tweet.retweet_count,
-            topics: help.parseText(tweet.text),
+            // topics: help.parseText(tweet.text),
             tweeted_by: screenName,
             profile_img: tweet.user.profile_image_url_https,
             background_img: tweet.user.profile_background_image_url_https

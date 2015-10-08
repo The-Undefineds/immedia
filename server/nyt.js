@@ -37,7 +37,7 @@ var addArticleToArticleSearchDate = function(article) {
 };
 
 var createArticleSearchMap = function(searchTerm, beginDate, response) {
-  if(response['1'] === undefined) {
+  if(!response['1']) {
     return [];
   }
   var body = JSON.parse(response['1']).response;    // Parse request body
@@ -76,7 +76,7 @@ var createMostPopularMap = function(timePeriod) {
 
 var addArticlesToArticleSearch = function(responses) {
   for(var i = 0; i < responses.length; i++) {
-    if(responses[i]['1'] === undefined) continue;
+    if(!responses[i]['1']) continue;
     var articles = Array.prototype.slice.call(JSON.parse(responses[i]['1']).response.docs);
     for(var j = 0; j < articles.length; j++) {
       articleSearch[articles[j]['web_url']] = articles[j];                                    // Add articles from parallel async requests to object from line 46
@@ -87,7 +87,7 @@ var addArticlesToArticleSearch = function(responses) {
 
 var addArticlesToMostPopular = function(responses) {
   for(var i = 0; i < responses.length; i++) {  
-    if(responses[i]['1'] === undefined) continue;
+    if(!responses[i]['1']) continue;
     var articles = Array.prototype.slice.call(JSON.parse(responses[i]['1']).results);
     for(var j = 0; j < articles.length; j++) {
       mostPopular[articles[j]['url']] = articles[j];                                            // Maintain object to track most popular articles by NYT web url key
@@ -117,7 +117,7 @@ var createArticleSearchArticle = function(article, date, img) {
     'height': (img === undefined ? '' : img['height']),
     'width': (img === undefined ? '' : img['width']),
     'date': date,
-    'byline': (article['byline'] === undefined ? '' : article['byline']['original']).replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
+    'byline': ((article['byline'] === null || article['byline'] === undefined) ? '' : article['byline']['original']).replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
     'abstract': (article['abstract'] === null ? article['snippet'] : article['abstract']).replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\'')
   };
 };
