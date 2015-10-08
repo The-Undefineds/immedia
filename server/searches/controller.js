@@ -21,8 +21,6 @@ module.exports = {
                 if (term.total > otherTerm.total) {
                   Search.findOneAndUpdate({ search_term: term.search_term }, { $dec: { rank: 1 }});
                   Search.findOneAndUpdate({ search_term: otherTerm.search_term }, { $inc: { rank: 1 }});
-                  console.log(otherTerm.search_term, otherTerm.total);
-                  console.log(term.search_term, term.total)
                 }
               }
             })

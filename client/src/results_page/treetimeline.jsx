@@ -239,7 +239,7 @@ var TreeTimeLine = React.createClass({
 
     var width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350),
         // height = this.state.height - 100;
-        height = this.dates.length*120;
+        height = this.dates.length*80;
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
                       this.state.apiData[this.state.apiData.length - 1] : null;
@@ -350,6 +350,8 @@ var TreeTimeLine = React.createClass({
             d.y = 140;
           };
           if (d.depth === 3) {
+            //Display first item in preview box by simulating a mouseover event
+            component.mouseOver(d);
             if (d.parent.parent.outOfRange) { d.y = -1000; console.log('grandparent is out of scope'); return; };
             d.y = 260;
             }
