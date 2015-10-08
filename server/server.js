@@ -7,6 +7,7 @@ var nyt = require('./nyt.js');
 var twitter = require('./twitter');
 var cors = require('express-cors');
 var mongoose = require('mongoose');
+var cron = require('./cronjob.js');
 // var news = require('./news.js');
 
 var app = express();
@@ -21,6 +22,10 @@ mongoose.connect('mongodb://localhost/local', function(error){
     console.log('mongo connected');
   }
 });
+
+// Activates cron-jobs that update news-tweets every half-hour
+cron.job.start();
+cron.job2.start();
 
 //app.use();
 app.use(cors({
