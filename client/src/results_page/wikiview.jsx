@@ -1,14 +1,23 @@
 var React = require('react');
 var StyleSheet = require('react-style');
 
+var Summary = require('./summary.jsx');
+// var Infobox = require('./infobox.jsx');
+
 var styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    overflow: 'scroll',
     top: '100px',
-    borderLeft: 'solid 1px gray',
     paddingLeft: '15px',
     paddingRight: '5px',
+    textAlign: 'center',
+  },
+  title: {
+    position: 'absolute',
+    fontFamily: 'Nunito',
+    fontSize: '28px',
+    textAlign: 'center',
+    fontWeight: 'bold',
   }
 });
 
@@ -20,6 +29,10 @@ var WikiView = React.createClass({
     return {
       width: this.props.window.width,
       height: this.props.window.height,
+      summaryView: true,
+      summary: '',
+      profileImage: '',
+      infobox: '',
     };
   },
   
@@ -42,7 +55,11 @@ var WikiView = React.createClass({
     this.getDynamicStyles();
 
     return (
-      <div id='wikiview' style={styles.container}></div>
+      <div id='wikiview' style={styles.container}>
+        { this.state.summaryView ? 
+          <Summary summary={this.state.summary} profileImage={this.state.profileImage} searchTerm={this.props.searchTerm} window={{width: this.state.width, height: this.state.height}}/> 
+          : null }
+      </div>
     );
   },
 
@@ -51,31 +68,6 @@ var WikiView = React.createClass({
     styles.container.width = (this.state.width < 1350 ? 365 * (this.state.width / 1350) : 365) + 'px';
     styles.container.height = (this.state.height - 100 - 150) + 'px';
   },
-
-  // Alters html so that hyperlinks, when clicked, make a new immedia-search
-  processData: function(data){
-    for (var i = 0; i < data.length; i++) {
-      if (data[i] === 'h' && data.slice(i+1, i+4) === 'ref') {
-        var string = data;
-        if (data.slice(i+6, i+11) === '/wiki') {
-          string = string.slice(0, i+6) + 'http://wikipedia.org' + string.slice(i+6);
-          for (var j = 0; j < 300; j++) {
-            if (string[i + j] !== '>') {
-              continue;
-            } else {
-              break;
-            }
-          }
-          // string = string.slice(0, i + 4) + ' onClick={this.props.searchInit(' + string.slice(i + 12, i + 12 + j) + ')}' + string.slice(i + 32 + j);
-          string = string.slice(0, i) + 'class="wikiLink"' + string.slice(i + j);
-          }
-        // string = string.slice(0,i) +  'target="_blank" ' + string.slice(i);
-        // i += 20;
-        data = string;
-      }
-    }
-    return data;
-  },
   
   query: function(searchTerm){
     var img,
@@ -83,8 +75,6 @@ var WikiView = React.createClass({
         cirrusRequest = "http://en.wikipedia.org/w/api.php?action=cirrus-suggest&text="+searchTerm+"&callback=?&format=json"
         searchRequest = "https://en.wikipedia.org/w/api.php?action=query&prop=pageprops|info&titles="+searchTerm+"&callback=?&format=json";
     
-    $('#wikiview').empty();
-
     $.getJSON(searchRequest)
     .done(function(data){
       if ('-1' in data.query.pages) {
@@ -110,24 +100,24 @@ var WikiView = React.createClass({
     var parseRequest = "http://en.wikipedia.org/w/api.php?action=parse&format=json&page="+searchTerm+"&redirects&prop=text&callback=?";
     $.getJSON(parseRequest)
     .done(function(data){
-      wikiHTML = data.parse.text["*"];
-      $wikiDOM = $("<document>" + wikiHTML + "</document>");
+      var wikiHTML = data.parse.text["*"];
+      var $wikiDOM = $("<document>" + wikiHTML + "</document>");
+
       var $infobox = $wikiDOM.find(".infobox");
-      var $overview = $wikiDOM.children('p').first();
-      // 'if/else', here, ensures that a wikipedia page deficient of a '.infobox' does not cause any errors
-      if ($infobox[0]) {
-        img = $infobox[0].getElementsByTagName("IMG")[0] || "";
-        this.loadHistoryView.call(this, img);
-        var info = this.processData.call(this, $infobox.html());
-        var summary = this.processData.call(this, $overview.html());
-        $('#wikiview').append(info);
-        $('#wikiview').append(summary);
-        $('.wikiLink').on('click', function() {
-          this.props.searchInit($(this).text());
-        }.bind(this));
-      } else {
-        this.loadHistoryView.call(this);
-      }
+      var infobox = $infobox.html().replace(/href=".*?"/g, 'class="wikiLink"');
+
+      var $summary = $wikiDOM.children('p').first();
+      var summary = $summary.html().replace(/href=".*?"/g, 'class="wikiLink"');
+      
+      var profileImage = $($wikiDOM[0].getElementsByTagName('img')[0]).attr('src').replace('//','https://') || '';  // Add fallback Google Image request here
+      profileImage ? this.loadHistoryView.call(this, profileImage) : this.loadHistoryView.call(this);
+
+      this.setState({
+        infobox: infobox,
+        profileImage: profileImage,
+        summary: summary,
+      });
+
     }.bind(this));
   },
 
@@ -135,7 +125,7 @@ var WikiView = React.createClass({
     // Add image for the search-history view (rendered below)
     var history = JSON.parse(localStorage['immedia']);
     if (img) {
-      history[0].img = img.src;
+      history[0].img = img;
     } else { // No argument passed is the signal that no image was found
       history[0].img = 'https://upload.wikimedia.org/wikipedia/commons/f/fc/No_picture_available.png';
     }
