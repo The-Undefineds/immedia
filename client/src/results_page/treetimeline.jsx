@@ -8,10 +8,11 @@ var i = 0;
 var styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: '55px',
+    top: '50px',
+    paddingTop: '10px',
   },
   title: {
-    fontFamily: 'Avenir',
+    fontFamily: 'Nunito',
     fontSize: '24px',
     color: '#00BFFF',
     marginTop: '5px',
@@ -22,7 +23,6 @@ var styles = StyleSheet.create({
   d3: {
     position: 'absolute',
     top: '40px',
-    borderRight: 'solid 1px gray',
   }
 });
 
@@ -32,8 +32,6 @@ var TreeTimeLine = React.createClass({
 
   getInitialState: function(){
     return {
-      // wasSearchedFromTopBar: false,
-      // searchTerm: '',
       timeSpan: 7,
       apiData: [],
       width: this.props.window.width,
@@ -49,11 +47,9 @@ var TreeTimeLine = React.createClass({
   ],
 
   query: function(searchTerm){
-    var index = searchTerm.indexOf('(');
-    if (index !== -1) searchTerm = searchTerm.slice(0, index);
     for(var i = 0; i < this.apis.length; i++){
       this.handleQuery({
-        searchTerm: searchTerm,
+        searchTerm: searchTerm.replace(/\s\(.*$/,''),
         url: 'http://127.0.0.1:3000/api/' + this.apis[i],
         api: this.apis[i]
       });
@@ -65,7 +61,6 @@ var TreeTimeLine = React.createClass({
     this.query(this.props.searchTerm);
     $(window).scroll(function() {
        if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
-           console.log("bottom!");
            if (component.dates.length > 30) {
             return;
            }
@@ -175,8 +170,8 @@ var TreeTimeLine = React.createClass({
 
   getDynamicStyles: function() {
     styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 5) + 'px';
-    styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
-    styles.container.height = (this.state.height - 100) + 'px';
+    styles.container.width = (this.state.width - 1350 < 0 ? 365 * (this.state.width/1350) : 365) + 'px';
+    styles.container.height = (this.state.height - 50) + 'px';
     return;
   },
 
@@ -215,7 +210,7 @@ var TreeTimeLine = React.createClass({
       left: 40
     };
 
-    var width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350),
+    var width = (this.state.width - 1350 < 0 ? this.state.width * (365/1350) : 365),
         height = this.state.height - 100;
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
@@ -232,19 +227,19 @@ var TreeTimeLine = React.createClass({
       .ticks(d3.time.days, 1)
       .tickFormat(d3.time.format('%a %d'))
       .tickSize(0)
-      .tickPadding(20)
+      .tickPadding(10);
 
     var svg = d3.select('#d3container').append('svg')
       .attr('class', 'timeLine')
       .attr('width', width)
       .attr('height', this.state.height - 100)
       .append('g')
-      .attr('transform', 'translate(60, ' + margin.top + ')')
+      .attr('transform', 'translate(60, ' + margin.top + ')');
 
     svg.append('g')
       .attr('class', 'yAxis')
       .attr({
-        'font-family': 'Arial, sans-serif',
+        'font-family': 'Nunito',
         'font-size': 10 * (this.state.width / 1350) + 'px',
       })
       .attr({
@@ -317,10 +312,10 @@ var TreeTimeLine = React.createClass({
         }
         else {
           if (d.depth === 2) {
-            d.y = 120;
+            d.y = 120 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
           };
           if (d.depth === 3) {
-            d.y = 240;
+            d.y = 240 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
             }
           }
         });
@@ -354,7 +349,7 @@ var TreeTimeLine = React.createClass({
             d3.select(this).select('circle')
               .transition()
               .attr({
-                r: 28,
+                r: 28 * (component.state.width / 1350),
               })
             }
         })
@@ -363,10 +358,10 @@ var TreeTimeLine = React.createClass({
             d3.select(this).select('circle')
               .transition()
               .attr({
-                r: 25,
+                r: 25 * (component.state.width / 1350),
               })
           }
-        })
+        });
 
       var defs = svg.append('svg:defs');
         defs.append('svg:pattern')
@@ -398,7 +393,7 @@ var TreeTimeLine = React.createClass({
           .attr('x', 4)
           .attr('y', 5)
           .attr('width', 15)
-          .attr('height', 15)
+          .attr('height', 15);
 
       nodeEnter.append("svg:circle")
         .attr("r", 1e-6)
@@ -408,7 +403,7 @@ var TreeTimeLine = React.createClass({
           fill: '#fff',
           stroke: 'steelblue',
           strokeWidth: '1.5px',
-        })
+        });
 
       var nodeUpdate = node.transition()
           .duration(duration)
@@ -464,7 +459,7 @@ var TreeTimeLine = React.createClass({
               return 'url(/#tile-img' + d.id + ')'
             }
             return d._children ? "lightsteelblue" : "#fff"; 
-          })
+          });
 
       var nodeExit = node.exit().transition()
           .duration(duration)
@@ -475,7 +470,7 @@ var TreeTimeLine = React.createClass({
           .attr("r", 1e-6);
 
       var link = svg.selectAll("path.link")
-          .data(tree.links(nodes), function(d) { return d.target.id; })
+          .data(tree.links(nodes), function(d) { return d.target.id; });
 
       link.enter().insert("svg:path", "g")
           .attr("class", "link")
@@ -490,7 +485,7 @@ var TreeTimeLine = React.createClass({
           })
         .transition()
           .duration(500)
-          .attr("d", diagonal)
+          .attr("d", diagonal);
 
       link.transition()
           .duration(500)
