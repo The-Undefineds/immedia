@@ -3,7 +3,6 @@ var mongoose  = require('mongoose');
 var TweetsSchema = new mongoose.Schema({
   tweet_id: {
     type: Number,
-    required: true,
     unique: true
   },
   created_at: String,
@@ -11,7 +10,9 @@ var TweetsSchema = new mongoose.Schema({
   url: String,
   retweet_count: Number,
   tweeted_by: String,
-  search_tags: Array
+  topics: Array,
+  profile_img: String,
+  background_img: String
 });
 
 module.exports = mongoose.model('tweets', TweetsSchema);
