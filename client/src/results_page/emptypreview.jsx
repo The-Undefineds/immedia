@@ -22,7 +22,7 @@ var EmptyPreview = React.createClass({
     this.getDynamicStyles();
 
     return (
-      <span style={styles.directions}>Hover over a recent event to preview its content</span>
+      <span style={styles.directions}></span>
     );
   },
 
