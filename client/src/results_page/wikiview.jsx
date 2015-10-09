@@ -7,18 +7,11 @@ var Summary = require('./summary.jsx');
 var styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: '100px',
+    top: '60px',
     paddingLeft: '15px',
     paddingRight: '5px',
     textAlign: 'center',
   },
-  title: {
-    position: 'absolute',
-    fontFamily: 'Nunito',
-    fontSize: '28px',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  }
 });
 
 var SearchHistory = require('./searchhistory.jsx');
@@ -66,7 +59,7 @@ var WikiView = React.createClass({
   getDynamicStyles: function() {
     styles.container.right = (this.state.width < 1350 ? 0 : (this.state.width - 1350) / 2) + 'px';
     styles.container.width = (this.state.width < 1350 ? 365 * (this.state.width / 1350) : 365) + 'px';
-    styles.container.height = (this.state.height - 100 - 150) + 'px';
+    styles.container.height = (this.state.height - 55 - 150) + 'px';
   },
   
   query: function(searchTerm){
@@ -122,9 +115,7 @@ var WikiView = React.createClass({
         summary: summary,
       });
 
-    }.bind(this));
-
-    
+    }.bind(this));  
   },
 
   loadHistoryView: function(img){
@@ -137,14 +128,6 @@ var WikiView = React.createClass({
     }
     localStorage['immedia'] = JSON.stringify(history);
   },
-  
-  // render: function(){
-  //   this.getDynamicStyles();
-
-  //   return (
-  //     <div id='wikiview' style={styles.container}></div>
-  //   );
-  // },
 
 });
 
