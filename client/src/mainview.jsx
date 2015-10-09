@@ -95,7 +95,7 @@ var MainView = React.createClass({
     return (
       <div>
         { this.state.atHome ? <HomePage  searchInit={this.searchInit} atHome={this.state.atHome}/> : null }
-        { !this.state.atHome ? <ResultsView searchTerm={this.state.searchTerm} goBackHome={this.goBackHome} searchInit={this.searchInit} /> : null }
+        { this.state.atHome ? <ResultsView searchTerm={this.state.searchTerm} goBackHome={this.goBackHome} searchInit={this.searchInit} /> : null }
       </div>
       )
   },

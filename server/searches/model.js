@@ -1,6 +1,7 @@
 var mongoose  = require('mongoose');
 
 var SearchesSchema = new mongoose.Schema({
+  user_id: Number,
   rank: Number,
   weeklyCount: Array,
   total: Number,
@@ -9,7 +10,8 @@ var SearchesSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  img: String
+  img: String,
+  tweets: Array
 });
 
 

@@ -66,26 +66,26 @@ var TreeTimeLine = React.createClass({
     this.query(this.props.searchTerm);
 
     //When a user scrolls to the bottom of the document, a new timeline will be rendered that is 7 days longer.
-    // $(window).scroll(function() {
+    $(window).scroll(function() {
 
-    //   var scrollPoint = $(window).scrollTop() + $(window).height();
-    //   if (scrollPoint >= $(document).height() - 20) {
-    //        //An upper limit for the timeline's span is set at 30 days.
-    //        if (component.dates.length > 27) {
-    //         return;
-    //        }
-    //        component.breakPoint = scrollPoint;
-    //        component.setTimeSpan(component.dates.length + 6);
-    //    }
+      var scrollPoint = $(window).scrollTop() + $(window).height();
+      if (scrollPoint >= $(document).height() - 20) {
+           //An upper limit for the timeline's span is set at 30 days.
+           if (component.dates.length > 27) {
+            return;
+           }
+           component.breakPoint = scrollPoint;
+           component.setTimeSpan(component.dates.length + 6);
+       }
 
-    //   if ($(window).scrollTop() + component.props.window.height < component.breakPoint) {
-    //     if (component.dates.length < 8) {
-    //       return;
-    //     }
-    //     component.breakPoint = component.breakPoint - component.props.window.height;
-    //     component.setTimeSpan(component.dates.length - 8);
-    //    }
-    // });
+      if ($(window).scrollTop() + component.props.window.height < component.breakPoint) {
+        if (component.dates.length < 8) {
+          return;
+        }
+        component.breakPoint = component.breakPoint - component.props.window.height;
+        component.setTimeSpan(component.dates.length - 8);
+       }
+    });
   },
 
   componentWillReceiveProps: function(newProps){
@@ -96,16 +96,17 @@ var TreeTimeLine = React.createClass({
       this.setState({apiData: []});
     }
 
-    // this.setState({
-    //   width: newProps.window.width,
-    //   height: newProps.window.height,
-    // });
+    this.setState({
+      width: newProps.window.width,
+      // height: newProps.window.height,
+      height: this.dates.length*120,
+    });
   },
 
   handleQuery: function(searchQuery){
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
-
+        console.log(response);
         // Set State to initiate a re-rendering based on new API call data
         this.setState(function(previousState, currentProps) {
           // Make a copy of previous apiData to mutate and use to reset State
@@ -160,7 +161,7 @@ var TreeTimeLine = React.createClass({
   dates: [],
 
   setTimeSpan: function(timeSpan) {
-    this.setState({ height: timeSpan * 80 });
+    this.setState({ height: timeSpan * 120 });
     this.setState({ timeSpan: timeSpan });
   },
 
@@ -194,13 +195,13 @@ var TreeTimeLine = React.createClass({
     styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 5) + 'px';
     styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
     // styles.container.height = (this.state.height - 100) + 'px';
-    styles.container.height = this.dates.length * 80;
+    styles.container.height = this.state.height;
 
     return;
   },
 
   mouseOver: function(item) {
-    if (this.mousedOver === item) {
+    if (this.mousedOver == item) {
       return;
     } else {
       this.mousedOver = item;
@@ -236,7 +237,7 @@ var TreeTimeLine = React.createClass({
 
     var width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350),
         // height = this.state.height - 100;
-        height = this.dates.length*80;
+        height = this.state.height;
 
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
@@ -319,7 +320,6 @@ var TreeTimeLine = React.createClass({
         } else if (!d.rendered) {
           d.rendered = 1;
         }
-        // component.mouseOver(d);
         return 500;
       }
 
@@ -344,8 +344,6 @@ var TreeTimeLine = React.createClass({
         }
         else {
           if (d.depth === 2) {
-            //If Twitter has more than 3 tweets in a day, only one child node will appear on the canvas
-            //When this node is moused over, a timeline of tweets from the day will appear in the preview window
             d.y = 120 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
           };
           if (d.depth === 3) {
