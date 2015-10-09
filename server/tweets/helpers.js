@@ -29,14 +29,15 @@ var convertDateToInteger = function(date){
 };
 
 var parseText = function(tweet){
+  //character.toUpperCase()
   
   //Removed ending text that consists of links
   var index = tweet.indexOf('http');
-  tweet = tweet.slice(0, index);
+  if (index !== -1) tweet = tweet.slice(0, index);
   
-  //Removes all symbols
-  var fixedTweet = tweet.replace(/([.,'"*+?^=!:${}()|\[\]\/\\])/g, " "),
-      newTweet = [],
+  var fixedTweet = tweet.replace(/([.,'"*+?^=!:${}()@#’|\-\[\]\/\\])/g, " ")
+  
+  var newTweet = [],
       topic = [],
       obj = {},
       i;
@@ -50,14 +51,14 @@ var parseText = function(tweet){
     
     for (var z = 1; z < fixedTweet[i].length; z++){
       if (fixedTweet[i][z] === fixedTweet[i][z].toUpperCase()){
-        indexes.push(fixedTweet[i].indexOf(fixedTweet[i][z]));
+        indexes.push(z);
         changed = true;
       }
     }
     
     if (!changed) newTweet.push(fixedTweet[i].toLowerCase());
     else {
-      newTweet.push(fixedTweet[i].slice(0, indexes[0]));
+      newTweet.push(fixedTweet[i].slice(0, indexes[0]).toLowerCase());
       for (z = 0; z < indexes.length; z++){
         if (z + 1 === indexes.length){
           newTweet.push(fixedTweet[i].slice(indexes[z]).toLowerCase());
