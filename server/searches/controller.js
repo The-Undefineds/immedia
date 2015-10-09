@@ -1,4 +1,5 @@
-var Search = require('./model.js');
+var Search  = require('./model.js'),
+    help    = require('./helpers.js');
 
 var Q = require('q');
 
@@ -60,7 +61,7 @@ module.exports = {
 
   getPopularSearches: function(req, res, next) {
 
-    //Will retreive all searches that are ranked from 1 to 20 in popularity
+    // Will retreive all searches that are ranked from 1 to 20 in popularity
     Search.find({ rank: { $gte: 1, $lte: 10 }})
       .then(function (searches) {
         if (searches) {
@@ -76,7 +77,56 @@ module.exports = {
           console.log('Could not retreive most popular searches');
           res.status(401).send()
         }
-      })
+      });
+  },
+
+  addTweet: function(tweet, text){
+    var topicStrings = help.parseText(text),
+        context = this,
+        tweetAsString = JSON.stringify(tweet);
+    topicStrings.forEach(function(string){
+      Search.findOne({ search_term: string })
+        .then(function(topic){
+          if (topic.length !== 0 && topic.tweets.length !== 0) {
+            var foundMatch = false;
+            topic.tweets.forEach(function(item){
+              var oldTweet = JSON.parse(item);
+              if (oldTweet.created_at === tweet.created_at) {
+                foundMatch = true;
+                if (oldTweet.retweet_count < tweet.retweet_count) {
+                  topic.tweets.pull(item);
+                  topic.tweets.addToSet(tweetAsString);
+                  topic.save();
+                }
+              }
+            });
+            if (!foundMatch) {
+              topic.tweets.addToSet(tweetAsString);
+              topic.save();
+            }
+          } else {
+            context.addSearch(string, tweet);
+          }
+        });
+    });
+  },
+
+  addSearch: function(string, tweet){
+    var tweet = JSON.stringify(tweet);
+    Search.create({
+      search_term: string,
+      tweets: [ tweet ]
+    });
+  },
+
+  retrieveTweets: function(queryString, response){
+    console.log('retrieving tweets')
+    Search.find({
+      search_term: queryString
+    })
+      .then(function(topic){
+        console.log(JSON.stringify(topic));
+      });
   }
 
 };

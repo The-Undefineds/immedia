@@ -9,7 +9,8 @@ var SearchesSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  img: String
+  img: String,
+  tweets: Array
 });
 
 
