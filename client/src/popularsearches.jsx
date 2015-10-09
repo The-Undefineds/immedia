@@ -65,7 +65,7 @@ var PopularSearches = React.createClass({
 
     root.fixed = true;
     root.x = width / 2;
-    root.y = height / 2;
+    root.y = height / 4;
     update(root, force);
 
     function update(source, force) {
