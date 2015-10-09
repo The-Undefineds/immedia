@@ -56,20 +56,48 @@ var TopBar = React.createClass({
   },
 
   handleSubmit: function(){
+
     if(this.state.searchTerm.search(/\w/g) === -1)
-      // alert('Please input something');
       this.setState({errorHandle: 'Input a search term'});
     else {
+      //If the user selects an item from the suggested search terms that is not the first suggestion, 
+      //the user's selected term will be searched. Otherwise, the first suggested term on the list will be searched.
+      if (this.state.searchTerm === 'immediahomepage') {
+        this.props.searchInit('immediahomepage');
+      };
       if (this.state.suggestedSearchTerm !== '') {
-        this.props.searchInit(this.state.suggestedSearchTerm.toLowerCase());
+        if (this.state.suggestedSearchTerms.indexOf(this.state.searchTerm) !== -1) {
+          this.props.searchInit(this.state.searchTerm.toLowerCase())
+        } else {
+          this.props.searchInit(this.state.suggestedSearchTerms[0].toLowerCase());
+        }
       } else {
-        this.props.searchInit(this.state.searchTerm);
+        //If Wikipedia has not responded with a suggested search term, one more GET request will be attempted
+        //If this fails, the text in the search box will be searched
+        $.ajax({
+          url: "http://en.wikipedia.org/w/api.php",
+          dataType: "jsonp",
+          data: {
+            'action': "opensearch",
+            'format': "json",
+            'search': this.state.searchTerm,
+          },
+          success: function( data ) {
+            console.log('wiki suggestions:', data);
+            if (data[1].indexOf(this.state.searchTerm) !== -1) {
+              this.props.searchInit(this.state.searchTerm.toLowerCase())
+            } else {
+              this.props.searchInit(data[1][0].toLowerCase());
+            }
+          },
+          error: function( data ) {
+            this.props.searchInit(this.state.searchTerm);
+          }
+        });
       }
       this.setState({ searchTerm: '' });
     }
   },
-
-  goBackHome: function(){ this.props.goBackHome(); },
   
   componentDidMount : function() {
     var component = this;
@@ -85,8 +113,8 @@ var TopBar = React.createClass({
                 'search': request.term
               },
               success: function( data ) {
-                component.setState({ suggestedSearchTerm: data[1][0] })
-                response(data[1]);
+                  component.setState({ suggestedSearchTerm: data[1][0], suggestedSearchTerms: data[1] })
+                  response(data[1]);
               }
             });
           },

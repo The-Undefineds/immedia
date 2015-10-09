@@ -64,28 +64,29 @@ var TreeTimeLine = React.createClass({
   componentDidMount: function(){
     var component = this;
     this.query(this.props.searchTerm);
+    // this.setTimeSpan(this.state.timeSpan);
 
     //When a user scrolls to the bottom of the document, a new timeline will be rendered that is 7 days longer.
-    $(window).scroll(function() {
+    // $(window).scroll(function() {
 
-      var scrollPoint = $(window).scrollTop() + $(window).height();
-      if (scrollPoint >= $(document).height() - 20) {
-           //An upper limit for the timeline's span is set at 30 days.
-           if (component.dates.length > 27) {
-            return;
-           }
-           component.breakPoint = scrollPoint;
-           component.setTimeSpan(component.dates.length + 6);
-       }
+    //   var scrollPoint = $(window).scrollTop() + $(window).height();
+    //   if (scrollPoint >= $(document).height() - 20) {
+    //        //An upper limit for the timeline's span is set at 30 days.
+    //        if (component.dates.length > 27) {
+    //         return;
+    //        }
+    //        component.breakPoint = scrollPoint;
+    //        component.setTimeSpan(component.dates.length + 6);
+    //    }
 
-      if ($(window).scrollTop() + component.props.window.height < component.breakPoint) {
-        if (component.dates.length < 8) {
-          return;
-        }
-        component.breakPoint = component.breakPoint - component.props.window.height;
-        component.setTimeSpan(component.dates.length - 8);
-       }
-    });
+    //   if ($(window).scrollTop() + component.props.window.height < component.breakPoint) {
+    //     if (component.dates.length < 8) {
+    //       return;
+    //     }
+    //     component.breakPoint = component.breakPoint - component.props.window.height;
+    //     component.setTimeSpan(component.dates.length - 8);
+    //    }
+    // });
   },
 
   componentWillReceiveProps: function(newProps){
@@ -98,8 +99,8 @@ var TreeTimeLine = React.createClass({
 
     this.setState({
       width: newProps.window.width,
-      // height: newProps.window.height,
-      height: this.dates.length*120,
+      height: newProps.window.height,
+      // height: this.dates.length*120,
     });
   },
 
