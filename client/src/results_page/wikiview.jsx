@@ -103,9 +103,8 @@ var WikiView = React.createClass({
       var $summary = $wikiDOM.children('p').first();
       var summary = $summary.html().replace(/href=".*?"/g, 'class="wikiLink"');
       
-      var profileImage = $($wikiDOM[0].getElementsByTagName('img')[0]).attr('src').replace('//','https://') || '';  // Add fallback Google Image request here
-      var historyImage = $($infobox[0].getElementsByTagName('img')[0]).attr('src').replace('//','https://') || '';  // Add fallback Google Image request here
-      historyImage ? this.loadHistoryView.call(this, historyImage) : this.loadHistoryView.call(this);
+      var profileImage = $($infobox[0].getElementsByTagName('img')[0]).attr('src').replace('//','https://') || '';  // Add fallback Google Image request here
+      profileImage ? this.loadHistoryView.call(this, profileImage) : this.loadHistoryView.call(this);
 
       $.post('http://127.0.0.1:3000/searches/incrementSearchTerm', { searchTerm: searchTerm, img: profileImage });
       
