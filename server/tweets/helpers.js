@@ -88,7 +88,6 @@ var parseText = function(tweet){
   return topic;
 };
 
-
 module.exports = {
   extractUrl: extractUrl,
   convertDateToInteger: convertDateToInteger,

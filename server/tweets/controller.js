@@ -9,6 +9,7 @@ var newsOrgs = require('../assets/assets.js').newsOrgs;
 
 var apiUrl = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
 
+
 // These four lines create a string that holds a month ago's date from the present date, in order 
 // to later compare with tweet dates, and through this, set an age limit to the retrieval of tweets from twitter's API
 var monthAgo = new Date();
@@ -80,7 +81,7 @@ var requestNewTweets = function(screenName, sinceID, maxID){
             text: tweet.text,
             url: help.extractUrl(tweet.text),
             retweet_count: tweet.retweet_count,
-            topics: help.parseText(tweet.text),
+            // topics: help.parseText(tweet.text),
             tweeted_by: screenName,
             profile_img: tweet.user.profile_image_url_https,
             background_img: tweet.user.profile_background_image_url_https

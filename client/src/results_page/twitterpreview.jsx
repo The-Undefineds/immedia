@@ -21,27 +21,26 @@ window.twttr = (function(d, s, id) {
 
 var TwitterPreview = React.createClass({
 
-  embedTweet: function() {
-    var tweetId = this.props.previewItem.url.slice(this.props.previewItem.url.length - 18, this.props.previewItem.url.length);
+  embedTweet: function(tweetId) {
 
     $('<div id="tweet"></div>').hide().prependTo('#twitterPreview').fadeIn(800);
-    twttr.widgets.createTweet(
-      tweetId,
-      document.getElementById('tweet')
-      )
+      twttr.widgets.createTweet(
+        tweetId,
+        document.getElementById('tweet')
+        )
   },
 
   componentDidMount: function() {
-    this.embedTweet();
+    this.componentDidUpdate();
 },
 
   componentDidUpdate: function() {
     $('#twitterPreview').empty();
-    this.embedTweet();
+    var twitterItem = this.props.previewItem;
+    this.embedTweet(twitterItem.tweetId);
   },
 
   render: function() {
-
     return (
       <div id='twitterPreview'></div>
       )

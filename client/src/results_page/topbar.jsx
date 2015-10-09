@@ -60,14 +60,19 @@ var TopBar = React.createClass({
       // alert('Please input something');
       this.setState({errorHandle: 'Input a search term'});
     else {
-      this.props.searchInit(this.state.searchTerm);
-      this.setState({ searchTerm: '' });
+      if (this.state.suggestedSearchTerm !== '') {
+        this.props.searchInit(this.state.suggestedSearchTerm);
+      } else {
+        this.props.searchInit(this.state.searchTerm);
+      }
+      // this.setState({ searchTerm: '' });
     }
   },
 
   goBackHome: function(){ this.props.goBackHome(); },
   
   componentDidMount : function() {
+    var component = this;
       $(function() {
         $( "#topbar" ).autocomplete({
           source: function( request, response ) {
@@ -80,6 +85,7 @@ var TopBar = React.createClass({
                 'search': request.term
               },
               success: function( data ) {
+                component.setState({ suggestedSearchTerm: data[1][0] })
                 response(data[1]);
               }
             });

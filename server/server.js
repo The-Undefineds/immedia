@@ -5,9 +5,11 @@ var bodyParser = require('body-parser');
 var youtube = require('./youtube');
 var nyt = require('./nyt.js');
 var twitter = require('./twitter');
+var searches = require('./searches/controller.js');
 var cors = require('express-cors');
 var mongoose = require('mongoose');
 var cron = require('./cronjob.js');
+
 // var news = require('./news.js');
 
 var app = express();
@@ -48,6 +50,10 @@ app.post('/api/youtube', youtube.search);
 app.post('/api/nyt', nyt.getArticles);
 
 app.post('/api/twitter', twitter.getTweetsPerson);
+
+app.post('/searches/incrementSearchTerm', searches.incrementSearchTerm);
+
+app.get('/searches/popularSearches', searches.getPopularSearches);
 
 ///////////////////////////
 
