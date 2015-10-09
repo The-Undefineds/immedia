@@ -36,7 +36,6 @@ var MainView = React.createClass({
       this.enqueue(searchTerm);
     }
     // Setting 'atHome' to false routes the home-page to the results-page
-    console.log('main view search term:', searchTerm)
     this.setState({ 
       atHome : false,
       searchTerm: searchTerm,
