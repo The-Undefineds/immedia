@@ -12,6 +12,9 @@ var styles = StyleSheet.create({
     fontSize: '24px',
     color: '#00BFFF',
     backgroundColor: 'rgba(128, 128, 128, 0.1)',
+    marginBottom: '10px',
+    textAlign: 'left',
+    paddingLeft: '5px',
   },
   image: {
     width: 'auto',
@@ -21,7 +24,6 @@ var styles = StyleSheet.create({
     fontSize: '14px',
     textAlign: 'left',
     overflow: 'scroll',
-    height: '125px',
   },
 });
 
@@ -36,7 +38,7 @@ var Summary = React.createClass({
 
   componentDidMount: function() {
     this.getDynamicStyles();
-
+    
     $('.wikiLink').on('click', function() {
       this.props.searchInit($(this).text());
     }.bind(this));
@@ -52,12 +54,12 @@ var Summary = React.createClass({
   },
 
   render: function() {
-    var searchTermClean = this.props.searchTerm.replace(/\s\(.*$/, '').replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    var searchTermClean = this.props.searchTerm.replace(/\s\(.*$/, '').toLowerCase();
     this.getDynamicStyles();
 
     return (
       <div id="wikiSummary" style={styles.summary}>
-        <div id="wikiTitle" style={styles.title}>{searchTermClean}</div>
+        <div id="wikiTitle" style={styles.title}>wiki: {searchTermClean}</div>
         <img id="wikiImage" style={styles.image} src={this.props.profileImage}></img>
         <div id="wikiBody" style={styles.body} dangerouslySetInnerHTML={{__html: this.props.summary}}></div>
       </div>
@@ -66,11 +68,9 @@ var Summary = React.createClass({
 
   getDynamicStyles: function() {
     var $wikiTitle = $('#wikiTitle');
-    var $wikiImage = $('#wikiImage');
-    var wikiImageHeight = $wikiImage.height() ? $wikiImage.height() : 300;
-    styles.image.maxHeight = (this.state.height * 0.6) + 'px';
-    styles.summary.height = (this.state.height - 100 - 150) + 'px';
-    styles.body.height = (this.state.height - 100 - 150) - $wikiTitle.height() - wikiImageHeight + 'px';
+    styles.summary.height = (this.state.height - 60 - 140) + 'px';
+    styles.image.height = (this.state.height * 0.4) + 'px';
+    styles.body.height = (this.state.height - 60 - 140) - $wikiTitle.height() - (this.state.height * 0.4) + 'px';
     styles.title.width = (this.state.width < 1350 ? 365 * (this.state.width / 1350) : 365) + 'px';
   },
 

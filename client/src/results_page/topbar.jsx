@@ -11,7 +11,7 @@ var styles = StyleSheet.create({
   title: {
     position: 'absolute',
     left: '70px',
-    marginTop: '5px',
+    marginTop: '8px',
     marginLeft: '2px',
     paddingTop: '2px',
     fontSize: '24px',
@@ -114,11 +114,11 @@ var TopBar = React.createClass({
     this.getDynamicStyles();
 
     return (
-      <div style={styles.topBar}>
+      <div id="navbar" style={styles.topBar}>
         <img src={'./immedia_logo.png'} height={40} width={40 * (167/137)} style={styles.logo} onClick={this.goBackHome} />
         <span style={styles.title} onClick={this.goBackHome}>immedia</span>
         <input id='topbar' type='text' style={styles.searchBar} value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
-        <input type='button' style={styles.searchButton} onClick={this.handleSubmit} value='immedia Search'/>
+        <input type='button' style={styles.searchButton} onClick={this.handleSubmit} value='immedia search'/>
       </div>
     );
   },

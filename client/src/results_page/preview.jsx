@@ -7,11 +7,21 @@ var YouTubePreview = require('./youtubepreview.jsx');
 var EmptyPreview = require('./emptypreview.jsx');
 
 var styles = StyleSheet.create({
-  preview: {
+  container: {
     position: 'absolute',
+    top: '60px',
     paddingRight: '10px',
     textAlign: 'center',
-  }
+  },
+  title: {
+    fontFamily: 'Nunito',
+    fontSize: '24px',
+    color: '#00BFFF',
+    backgroundColor: 'rgba(128, 128, 128, 0.1)',
+    marginBottom: '10px',
+    textAlign: 'left',
+    paddingLeft: '5px',
+  },
 });
 
 var Preview = React.createClass({
@@ -34,7 +44,8 @@ var Preview = React.createClass({
     this.getDynamicStyles();
 
     return (
-      <div id="previewContent" style={styles.preview}>
+      <div id="previewContent" style={styles.container}>
+        <div id="previewTitle" style={styles.title}>{ this.props.previewItem.source || 'immmedia' }: preview</div>
         { this.props.previewItem.source === '' ? 
           <EmptyPreview window={this.state} /> : null }
         { this.props.previewItem.source === 'nyt' ? 
@@ -42,18 +53,16 @@ var Preview = React.createClass({
         { this.props.previewItem.source === 'twitter' ? 
           <TwitterPreview previewItem={ this.props.previewItem } /> : null }
         { this.props.previewItem.source === 'youtube' ? 
-          <YouTubePreview previewItem={ this.props.previewItem } width={styles.preview.width} height={styles.preview.height} /> : null }
+          <YouTubePreview previewItem={ this.props.previewItem } width={styles.container.width} height={styles.container.height} /> : null }
       </div>
     );
   },
 
   getDynamicStyles: function() {
     var $d3title = $('#d3title');
-    styles.preview.top = (55 + $d3title.height() + 5 + 'px');
-    // styles.preview.top = (60 + $(window).scrollTop()) + 'px';
-    styles.preview.left = (this.state.width / 2) - (this.state.width - 1350 < 0 ? 500 * (this.state.width / 1350) / 2 : 250) + 'px';
-    styles.preview.width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) + 'px';
-    styles.preview.height = (this.state.height - 600 < 0 ? 600 * (this.state.height/783) : 600) + 'px';
+    styles.container.left = (this.state.width / 2) - (this.state.width - 1350 < 0 ? 500 * (this.state.width / 1350) / 2 : 250) + 'px';
+    styles.container.width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) + 'px';
+    styles.container.height = (this.state.height - 600 < 0 ? 600 * (this.state.height/783) : 600) + 'px';
   },
 });
 
