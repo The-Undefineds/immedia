@@ -8,21 +8,29 @@ var i = 0;
 var styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: '50px',
-    paddingTop: '10px',
+    top: '60px',
+    paddingRight: '10px',
+    textAlign: 'center',
   },
   title: {
     fontFamily: 'Nunito',
     fontSize: '24px',
     color: '#00BFFF',
-    marginTop: '5px',
-    marginBottom: '1px',
+    backgroundColor: 'rgba(128, 128, 128, 0.1)',
+    marginBottom: '5px',
     textAlign: 'left',
-    paddingLeft: '5px',
+    paddingLeft: '10px',
+  },
+  subhead: {
+    fontFamily: 'Nunito',
+    fontSize: '14px',
+    color: 'rgb(128, 128, 128)',
+    marginTop: '1px',
+    marginBottom: '5px',
+    textAlign: 'left',
+    paddingLeft: '10px',
   },
   d3: {
-    position: 'absolute',
-    top: '40px',
   }
 });
 
@@ -96,10 +104,10 @@ var TreeTimeLine = React.createClass({
       this.setState({apiData: []});
     }
 
-    // this.setState({
-    //   width: newProps.window.width,
-    //   height: newProps.window.height,
-    // });
+    this.setState({
+      width: newProps.window.width,
+      height: newProps.window.height,
+    });
   },
 
   handleQuery: function(searchQuery){
@@ -183,19 +191,20 @@ var TreeTimeLine = React.createClass({
     this.getDynamicStyles();
 
     return (
-      <div style={styles.container}>
-        <span id="d3title" style={styles.title}>recent events</span>
-        <div id="d3container"></div>
+      <div id="d3container" style={styles.container}>
+        <div id="d3title" style={styles.title}>immedia: recent events</div>
+        <div id="d3subhead" style={styles.subhead}>hover over a bubble to preview</div>
+        <div id="d3canvas"></div>
       </div>
     );
   },
 
   getDynamicStyles: function() {
-    styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 5) + 'px';
+    styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 0) + 'px';
     styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
-    // styles.container.height = (this.state.height - 100) + 'px';
-    styles.container.height = this.dates.length * 80;
-
+    styles.container.height = (this.state.height - 60) + 'px';
+    // styles.container.height = this.dates.length * 80;
+    styles.d3.height = this.state.height - 120 + 'px';
     return;
   },
 
@@ -235,8 +244,8 @@ var TreeTimeLine = React.createClass({
     };
 
     var width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350),
-        // height = this.state.height - 100;
-        height = this.dates.length*80;
+        height = this.state.height - 130;
+        // height = this.dates.length*80;
 
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
@@ -254,7 +263,7 @@ var TreeTimeLine = React.createClass({
       .tickSize(0)
       .tickPadding(10);
 
-    var svg = d3.select('#d3container').append('svg')
+    var svg = d3.select('#d3canvas').append('svg')
       .attr('class', 'timeLine')
       .attr('width', width)
       .attr('height', this.state.height)
