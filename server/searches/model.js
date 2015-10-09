@@ -1,14 +1,16 @@
 var mongoose  = require('mongoose');
 
 var SearchesSchema = new mongoose.Schema({
-  wiki_url: {
+  rank: Number,
+  weeklyCount: Array,
+  total: Number,
+  search_term: {
     type: String,
     required: true,
     unique: true
   },
-  count: Array,
-  total: Number,
-  search_term: String
+  img: String
 });
+
 
 module.exports = mongoose.model('searches', SearchesSchema);

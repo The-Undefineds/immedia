@@ -28,8 +28,16 @@ var getPictureArticleSearch = function(article) {
   return;
 };
 
+var addArticleToArticleSearchDate = function(article) {
+  if(articleSearchDate[article['pub_date'].substring(0, 10)] === undefined) {
+    articleSearchDate[article['pub_date'].substring(0, 10)] = [ article ];
+  } else {
+    articleSearchDate[article['pub_date'].substring(0, 10)].push( article );
+  }
+};
+
 var createArticleSearchMap = function(searchTerm, beginDate, response) {
-  if(response['1'] === undefined) {
+  if(!response['1']) {
     return [];
   }
   var body = JSON.parse(response['1']).response;    // Parse request body
@@ -40,10 +48,11 @@ var createArticleSearchMap = function(searchTerm, beginDate, response) {
 
   for(var j = 0; j < articles.length; j++) {
     articleSearch[articles[j]['web_url']] = articles[j];  // Maintain object to track articles by NYT web url key
+    addArticleToArticleSearchDate(articles[j]);
   }
 
   for(var i = 1; i < numRequests ; i++) {
-    var queryString = articleSearchURI + 'q=' + searchTerm + '&fq=body:("' + searchTerm + '")&' + 'begin_date=' + beginDate + '&' + 'page=' + i + '&' + 'api-key=' + keys.nytArticleSearch;
+    var queryString = articleSearchURI + 'q=' + searchTerm + '&fq=headline:("' + searchTerm + '")&' + 'begin_date=' + beginDate + '&' + 'page=' + i + '&' + 'api-key=' + keys.nytArticleSearch;
     
     getRequestURIs.push(    // Create an array to carry-out parallel async requests
       request(queryString)
@@ -67,7 +76,7 @@ var createMostPopularMap = function(timePeriod) {
 
 var addArticlesToArticleSearch = function(responses) {
   for(var i = 0; i < responses.length; i++) {
-    if(responses[i]['1'] === undefined) continue;
+    if(!responses[i]['1']) continue;
     var articles = Array.prototype.slice.call(JSON.parse(responses[i]['1']).response.docs);
     for(var j = 0; j < articles.length; j++) {
       articleSearch[articles[j]['web_url']] = articles[j];                                    // Add articles from parallel async requests to object from line 46
@@ -78,7 +87,7 @@ var addArticlesToArticleSearch = function(responses) {
 
 var addArticlesToMostPopular = function(responses) {
   for(var i = 0; i < responses.length; i++) {  
-    if(responses[i]['1'] === undefined) continue;
+    if(!responses[i]['1']) continue;
     var articles = Array.prototype.slice.call(JSON.parse(responses[i]['1']).results);
     for(var j = 0; j < articles.length; j++) {
       mostPopular[articles[j]['url']] = articles[j];                                            // Maintain object to track most popular articles by NYT web url key
@@ -102,14 +111,14 @@ var createMostPopularArticle = function(article, date) {
 
 var createArticleSearchArticle = function(article, date, img) {
   return {
-    'title': articles[i]['headline']['main'].replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
-    'url': articles[i]['web_url'],
+    'title': article['headline']['main'].replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
+    'url': article['web_url'],
     'img': (img === undefined ? '' : img['url']),
     'height': (img === undefined ? '' : img['height']),
     'width': (img === undefined ? '' : img['width']),
     'date': date,
-    'byline': (articles[i]['byline'] === undefined ? '' : articles[i]['byline']['original']).replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
-    'abstract': (articles[i]['abstract'] === undefined ? articles[i]['snippet'] : articles[i]['abstract']).replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\'')
+    'byline': ((article['byline'] === null || article['byline'] === undefined) ? '' : (article['byline']['original'] || '')).replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\''),
+    'abstract': (article['abstract'] === null ? (article['snippet'] || '') : article['abstract']).replace(/&#8217;/g, '\'').replace(/&#8216;/g, '\'')
   };
 };
 
@@ -150,7 +159,7 @@ var prepareDataForResponse = function() {
       var publishedDate = utils.correctDateInFuture(articles[i]['pub_date'].substring(0, 10), '-');
       var img = getPictureArticleSearch(articles[i]);
       var articleObject = createArticleSearchArticle(articles[i], publishedDate, img);
-      
+
       if(results[publishedDate] === undefined) {
         results[publishedDate] = {
           'source': 'nyt',
@@ -166,7 +175,7 @@ var prepareDataForResponse = function() {
         }
 
         if(j === existingArticles.length) {
-          results[date]['children'].push(articleObject);
+          results[publishedDate]['children'].push(articleObject);
         }
       }
     }
@@ -182,6 +191,7 @@ module.exports = {
 
     // NYT Article Search parameters (note: CAN search by topic)
     var beginDate = utils.getDateFromToday(-days);
+    var today = utils.getDateFromToday(0);
     var queryStringArticleSearch = articleSearchURI + 'q=' + searchTerm + '&fq=body:("' + searchTerm + '")&' + 'begin_date=' + beginDate + '&' + 'page=' + 0 + '&' + 'api-key=' + keys.nytArticleSearch;
 
     // Most-Popular NYT article parameters (note: cannot search by topic)
@@ -207,6 +217,7 @@ module.exports = {
         articleSearch = {};
         articleSearchDate = {};
         mostPopular = {};
+        results = {};
       })
       .done();
   }

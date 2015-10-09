@@ -20,14 +20,6 @@ var ResultsView = React.createClass({
   componentDidMount: function() {
     window.addEventListener('resize', this.handleResize);
     this.renderPreview({source: ''});
-
-    // $(window).scroll(function() {
-    //    if($(window).height() === $(document).height()) {
-    //        console.log("bottom!");
-    //    }
-    // });
-    // console.log('scroll top:', $(window).height());
-    // console.log('doc height:', $(document).height());
   },
 
   componentWillReceiveProps: function() {
@@ -44,7 +36,7 @@ var ResultsView = React.createClass({
       <div id="results">
         <TopBar searchInit={this.props.searchInit} goBackHome={this.props.goBackHome} window={this.state} />
         <WikiView searchTerm={this.props.searchTerm} searchInit={this.props.searchInit} window={this.state} />
-        <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver} window={this.state} />
+        <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver} window={this.state}/>
         <div id="preview"></div>
         <SearchHistory searchTerm={this.props.searchTerm} searchInit={this.props.searchInit} window={this.state} />
       </div>
@@ -60,7 +52,7 @@ var ResultsView = React.createClass({
     );
   },
 
-  handleResize: function(e) {
+  handleResize: function() {
     this.setState({
       width: window.innerWidth,
       height: window.innerHeight,

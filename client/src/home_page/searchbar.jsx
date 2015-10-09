@@ -34,7 +34,8 @@ var SearchBar = React.createClass({
   getInitialState: function(){
     return {
       searchTerm: '',
-      errorHandle: ''
+      errorHandle: '',
+      suggestedSearchTerm: '',
     };
   },
 
@@ -58,11 +59,20 @@ var SearchBar = React.createClass({
         this.setState({errorHandle: ''});
       }.bind(this), 5000);
     } else {
-      this.props.searchInit(this.state.searchTerm);
+      //Search will initialize with Wikipedia's first auto-complete suggestion.
+      console.log('suggested search term:', this.state.suggestedSearchTerm);
+      if (this.state.suggestedSearchTerm !== '') {
+        this.props.searchInit(this.state.suggestedSearchTerm);
+      } else {
+        this.props.searchInit(this.state.searchTerm);
+      }
     }
   },
   
   componentDidMount : function(){
+
+    var component = this;
+
     $(function() {
       function log( message ) {
         $( "<div>" ).text( message ).prependTo( "#log" );
@@ -80,6 +90,7 @@ var SearchBar = React.createClass({
               'search': request.term
             },
             success: function( data ) {
+              component.setState({ suggestedSearchTerm: data[1][0] });
               response(data[1]);
             }
           });

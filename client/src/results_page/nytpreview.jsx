@@ -17,8 +17,8 @@ var NytPreview = React.createClass({
         ratio = 320 / this.props.previewItem.height;
       }
     } else {
-      if((365 / this.props.previewItem.width) < 1) {
-        ratio = 365 / this.props.previewItem.width;
+      if((465 / this.props.previewItem.width) < 1) {
+        ratio = 465 / this.props.previewItem.width;
       }
     }
     return (

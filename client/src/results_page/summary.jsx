@@ -52,11 +52,12 @@ var Summary = React.createClass({
   },
 
   render: function() {
+    var searchTermClean = this.props.searchTerm.replace(/\s\(.*$/, '').replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
     this.getDynamicStyles();
 
     return (
       <div id="wikiSummary" style={styles.summary}>
-        <div id="wikiTitle" style={styles.title}>{this.props.searchTerm}</div>
+        <div id="wikiTitle" style={styles.title}>{searchTermClean}</div>
         <img id="wikiImage" style={styles.image} src={this.props.profileImage}></img>
         <div id="wikiBody" style={styles.body} dangerouslySetInnerHTML={{__html: this.props.summary}}></div>
       </div>

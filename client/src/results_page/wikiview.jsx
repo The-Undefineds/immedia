@@ -97,6 +97,7 @@ var WikiView = React.createClass({
   },
 
   parse: function(searchTerm) {
+    var profileImage;
     var parseRequest = "http://en.wikipedia.org/w/api.php?action=parse&format=json&page="+searchTerm+"&redirects&prop=text&callback=?";
     $.getJSON(parseRequest)
     .done(function(data){
@@ -110,8 +111,11 @@ var WikiView = React.createClass({
       var summary = $summary.html().replace(/href=".*?"/g, 'class="wikiLink"');
       
       var profileImage = $($wikiDOM[0].getElementsByTagName('img')[0]).attr('src').replace('//','https://') || '';  // Add fallback Google Image request here
-      profileImage ? this.loadHistoryView.call(this, profileImage) : this.loadHistoryView.call(this);
+      var historyImage = $($infobox[0].getElementsByTagName('img')[0]).attr('src').replace('//','https://') || '';  // Add fallback Google Image request here
+      historyImage ? this.loadHistoryView.call(this, historyImage) : this.loadHistoryView.call(this);
 
+      $.post('http://127.0.0.1:3000/searches/incrementSearchTerm', { searchTerm: searchTerm, img: profileImage });
+      
       this.setState({
         infobox: infobox,
         profileImage: profileImage,
@@ -119,10 +123,12 @@ var WikiView = React.createClass({
       });
 
     }.bind(this));
+
+    
   },
 
   loadHistoryView: function(img){
-    // Add image for the search-history view (rendered below)
+    // Add image for the search-history view
     var history = JSON.parse(localStorage['immedia']);
     if (img) {
       history[0].img = img;
@@ -131,6 +137,14 @@ var WikiView = React.createClass({
     }
     localStorage['immedia'] = JSON.stringify(history);
   },
+  
+  // render: function(){
+  //   this.getDynamicStyles();
+
+  //   return (
+  //     <div id='wikiview' style={styles.container}></div>
+  //   );
+  // },
 
 });
 
