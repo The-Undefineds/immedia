@@ -1,5 +1,6 @@
 var Search  = require('./model.js'),
-    help    = require('./helpers.js');
+    help    = require('./helpers.js'),
+    getDate = require('../utils.js');
 
 var Q = require('q');
 
@@ -18,10 +19,10 @@ module.exports = {
     // Search.findOneAndUpdate({ search_term: searchTerm }, { $inc: { total: 1 }, { weeklyCount[0]: 1 } })
       .then (function(term) {
         if (term) {
-          if (term.rank !== 1) {
           Search.findOne({ rank: term.rank - 1 })
             .then(function(otherTerm) {
               if(otherTerm) {
+
                 //The total popularity count will be calculated with priority on the current week's search total
                 //(denoted by searchCountArr[0]).
                 var calcPopCount = function(searchCountArr) {
@@ -32,8 +33,8 @@ module.exports = {
                   return popCount;
                 }
 
-                // termPopCount = calcPopCount(term.weeklyCount);
-                // otherTermPopCount = calcPopCount(otherTerm.weeklyCount);
+                termPopCount = calcPopCount(term.weeklyCount);
+                otherTermPopCount = calcPopCount(otherTerm.weeklyCount);
 
                 //If the current search term's popularity count now exceeds the pop count of the next highest ranked
                 //term, the current term's rank will be incremented, the other decremented.
@@ -44,12 +45,9 @@ module.exports = {
                 }
               }
             })
-          }
         } else {
           //If the current search term is not found in the database, a new entry will be created with a ranking
           //equal to the number of search terms in the database.
-          console.log('term not found');
-          newSearchRank++;
           Search.create({
             rank: newSearchRank,
             count: [],
@@ -57,6 +55,7 @@ module.exports = {
             search_term: searchTerm,
             img: img,
           });
+          newSearchRank++;
       }
     })
   },
@@ -82,38 +81,32 @@ module.exports = {
       });
   },
 
-  // 
   addTweet: function(tweet, text){
-    var topicStrings = help.parseText(text), // Separates tweet text into plausible search-term strings
+    var topicStrings = help.parseText(text),
         context = this,
-        tweetAsString = JSON.stringify(tweet);  // For saving later in Mongo db (for comparability)
-
-    // 'forEach' of our search-terms, we either (A) make a new table for it (if there isn't one already), 
-    // (B) decide whether to add it to an existing table. We only add the tweet if there is (C) no other tweet 
-    // already stored for that day, or (D) it has a higher retweet count than the tweet already stored for 
-    // that day. (The point is to only store the tweet with the most tweets for each search-term string per day)
+        tweetAsString = JSON.stringify(tweet);
     topicStrings.forEach(function(string){
       Search.findOne({ search_term: string })
         .then(function(topic){
-          if (topic !== null && topic.length !== 0 && topic.tweets.length !== 0) {   // (B)
+          if (topic !== null && topic.length !== 0 && topic.tweets.length !== 0) {
             var foundMatch = false;
             topic.tweets.forEach(function(item){
               var oldTweet = JSON.parse(item);
               if (oldTweet.created_at === tweet.created_at) {
                 foundMatch = true;
-                if (oldTweet.retweet_count < tweet.retweet_count) {  // (D)
+                if (oldTweet.retweet_count < tweet.retweet_count) {
                   topic.tweets.pull(item);
                   topic.tweets.addToSet(tweetAsString);
                   topic.save();
                 }
               }
             });
-            if (!foundMatch) {   // (C)
+            if (!foundMatch) {
               topic.tweets.addToSet(tweetAsString);
               topic.save();
             }
           } else {
-            context.addSearch(string, tweet); // (A)
+            context.addSearch(string, tweet);
           }
         });
     });
@@ -127,14 +120,80 @@ module.exports = {
     });
   },
 
+  //Called from /api/news
+  //Retrieve 3 tweets with the highest retweet count for each week for 1 month 
+  //from the database base on the search term
   retrieveTweets: function(queryString, response){
-    console.log('retrieving tweets')
-    Search.find({
+
+    Search.findOne({
       search_term: queryString
     })
-      .then(function(topic){
-        console.log(JSON.stringify(topic));
-      });
+    .then(function(topic){
+      var highestRetweet = [];
+      var a = 0, b = 1, c = 2, i, j = 0;
+      var tweet, weeks = [[],[],[],[]];
+      var date = [{},{},{},{}];
+      for (i = -1; i >= -28; i--){
+        date[j][getDate.getDateFromToday(i + 1, '-')] = true;
+        if (i !== 0 && i % 7 === 0) j++;
+      }
+
+      topic.tweets.forEach(function(item){
+        tweet = JSON.parse(item);
+        for (i = 0; i < 4; i++){
+          if (date[i][help.getDate(tweet.created_at)]) {
+            weeks[i].push(tweet);
+            i += 100;
+          }
+        }
+      })
+
+      for (i = 0; i < weeks.length; i++){
+        for (j = 0; j < weeks[i].length; j++){
+          tweet = weeks[i][j];
+
+          if (highestRetweet.length <= (3 * i)) {
+            highestRetweet[a] = tweet;
+            highestRetweet[b] = {retweet_count:0};
+            highestRetweet[c] = {retweet_count:0};
+          }
+          else {
+            if (tweet.retweet_count > highestRetweet[a].retweet_count) {
+              highestRetweet[c] = highestRetweet[b];
+              highestRetweet[b] = highestRetweet[a];
+              highestRetweet[a] = tweet;
+            }
+            else if (tweet.retweet_count > highestRetweet[c].retweet_count) {
+              if (tweet.retweet_count > highestRetweet[b].retweet_count) {
+                highestRetweet[c] = highestRetweet[b];
+                highestRetweet[b] = tweet;
+              }
+              else highestRetweet[c] = tweet;
+            }
+          }
+        }
+        a += 3;
+        b += 3;
+        c += 3;
+      }
+
+      var objToSend = {};
+      for (i = 0; i < highestRetweet.length; i++){
+        if (!(highestRetweet[i].created_at)) continue;
+        var date = help.getDate(highestRetweet[i].created_at);
+        objToSend[date] = objToSend[date] || { source: 'twitter news', children: []};
+        objToSend[date].children.push({
+          tweetId: highestRetweet[i].tweet_id,
+          url: highestRetweet[i].url || '',
+          img: highestRetweet[i].profile_img || '',
+          background: highestRetweet[i].background_img || '',
+          source: highestRetweet[i].tweeted_by || 'The Void'
+        })
+      }
+      
+      console.log(objToSend)
+      response.send(highestRetweet);
+    });
   }
 
 };
