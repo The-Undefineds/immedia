@@ -2,6 +2,13 @@ var React = require('react');
 var StyleSheet = require('react-style');
 
 var styles = StyleSheet.create({
+  topBar: {
+      zIndex: 1,
+      position: 'fixed',
+      height: '50px',
+      backgroundColor: 'rgba(245,245,245,1)',
+      textAlign: 'center',      
+  },
   logo: {
     position: 'absolute',
     left: '15px',
@@ -185,15 +192,7 @@ var TopBar = React.createClass({
   },
 
   getDynamicStyles: function() {
-    styles.topBar = {
-      zIndex: 1,
-      position: 'fixed',
-      width: this.state.width,
-      height: '50px',
-      backgroundColor: 'rgba(245,245,245,1)',
-      textAlign: 'center',
-    };
-
+    styles.topBar.width = this.state.width;
     styles.searchBar.width = this.state.width * (400 / 1378);
   },
 
