@@ -1,4 +1,4 @@
-var key = (process.env.NODE_ENV === 'production') ? require('../../keys.js') : require('./keys.js');
+var key = require('./keys.js');
 var utils = require('./utils.js');
 var request = require('request');
 
@@ -22,10 +22,25 @@ module.exports = {
 //To grab videos on a specific month just add publishedBefore and publishedAfter in the query
 
 function callYoutube(date, item, callback){
-  var search = {
-    url : youtube + '/search',
-    qs : {part : 'snippet', type : 'video', videoEmbeddable : true, q : item, key : key.youtube},
-    method : 'GET'
+  var search;
+  if(item === ""){
+    //used for popular searchs in any given day of a week
+    var todayAndYesterday = utils.getDateTodayAndYesterday('-');
+    var today = todayAndYesterday.today + 'T00:00:00Z';
+    var yesterday = todayAndYesterday.yesterday + 'T00:00:00Z';
+    console.log(today, yesterday) 
+
+    search = {
+      url : youtube + '/search', 
+      qs : {part : 'snippet', type : 'video', videoEmbeddable : true, order: 'viewCount', publishedAfter: yesterday, publishedBefore: today, key : key.youtube},
+      method : 'GET'
+    }
+  }else{
+    search = {
+      url : youtube + '/search',
+      qs : {part : 'snippet', type : 'video', videoEmbeddable : true, q : item, key : key.youtube},
+      method : 'GET'
+    }
   }
   
   if (date === 'this week'){
@@ -78,7 +93,7 @@ function callYoutube(date, item, callback){
         obj[date].children.push({
           title : body.items[i].snippet.title,
           id : body.items[i].id.videoId,
-          thumbnail : body.items[i].snippet.thumbnails
+          thumbnail : body.items[i].snippet.thumbnails,
         })
         callback(200, obj);
       }

@@ -18,6 +18,21 @@ module.exports = {
     return simpleCorrectedDate.year + delimiter + simpleCorrectedDate.month + delimiter + simpleCorrectedDate.day;
   },
 
+  'getDateTodayAndYesterday': function(delimiter){
+    delimiter = delimiter || '';
+    var today = new Date();
+    var yesterday = new Date(today);
+    yesterday = yesterday.setDate(today.getDate() - 1);
+    
+    today = this.getSimpleDate(today);
+    yesterday = this.getSimpleDate(yesterday);
+
+    return {
+      today: today.year + delimiter + today.month + delimiter + today.day,
+      yesterday: yesterday.year + delimiter + today.month + delimiter + today,
+    }
+  },
+
   'getSimpleDate': function(date) {
     var date = new Date(date);
     return {

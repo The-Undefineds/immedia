@@ -6,6 +6,8 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var reactify = require('reactify');
 var streamify = require('gulp-streamify');
+var sftp = require('gulp-sftp');
+var replace = require('gulp-replace');
 
 //used for restarting the server upon change in our server file
 var nodemon = require('gulp-nodemon');
@@ -97,6 +99,33 @@ gulp.task('nodemon', function(){
   })
 });
 
+gulp.task('replace', function(){
+  gulp.src(__dirname + '/server/server.js')
+    .pipe(replace('127.0.0.1', '192.241.209.214'))
+    .pipe(replace('3000', '80'))
+    .pipe(gulp.dest(__dirname + '/server'))
+})
+
+gulp.task('deploy', function(){
+  function send(path, remotePath){
+    return gulp.src(path)
+      .pipe(sftp({
+        host: '192.241.209.214',
+        user: 'immedia',
+        pass: 'workhardplayhard',
+        remotePath: remotePath
+      }))
+      .on('error', function(error){
+        console.log(error)
+      })
+  };
+  send(__dirname + 'package.json', '/home/immedia/immedia');
+  send(__dirname + '/server', '/home/immedia/immedia/server');
+  send(__dirname + '/client', '/home/immedia/immedia/client');
+  send(__dirname + '/dist', '/home/immedia/immedia/dist');
+  send(__dirname + '/node_modules', '/home/immedia/immedia/node_modules')
+})
+
 gulp.task('finished', function(){
   console.log('Your production code was successfully built')
 })
@@ -105,4 +134,4 @@ gulp.task('finished', function(){
 gulp.task('default', ['copy', 'watch', 'nodemon']);
 
 //Run Production tasks
-gulp.task('production', ['copy', 'build', 'finished']);
+gulp.task('production', ['copy', 'build', 'replace', 'deploy', 'finished']);
