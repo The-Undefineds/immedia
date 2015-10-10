@@ -15,6 +15,16 @@ var months = {
   Dec: '12'
 };
 
+var parseQueryString = function(queryString){
+  queryString = queryString.split(' ');
+  var newQueryString = [];
+  queryString.forEach(function(item){
+    if (!(blackListedWords[item])) newQueryString.push(item); 
+  })
+  newQueryString = newQueryString.join(' ');
+  return newQueryString;
+}
+
 var parseText = function(tweet){
   //Removed ending text that consists of links
   var index = tweet.indexOf('http');
@@ -92,5 +102,6 @@ var getDate = function(date){
 
 module.exports = {
   parseText: parseText,
-  getDate : getDate
+  getDate : getDate,
+  parseQueryString : parseQueryString
 };
