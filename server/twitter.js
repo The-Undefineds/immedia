@@ -50,68 +50,30 @@ function findUser(baseUrl, queryString, callback){
       callback(404, error);
     } else {
       body = JSON.parse(body);
-
       //If the user is on the home page, a general search will populate the timeline with popular recent tweets.
       if (queryString === 'news') {
         if (body.statuses) {
+          processResponseData(body.statuses, 10, callback)
+      };
+     } else {
+        var id,
+            img;
 
-          var tweetIdsToSend = [];
-          var tweetsBySocialCount = {};
-          for (var i = 0; i < body.statuses.length; i++) {
-            var socialCount = body.statuses[i]['retweet_count'] + body.statuses[i]['favorite_count'] + body.statuses[i].id;
-            tweetsBySocialCount[socialCount] = body.statuses[i];
-          }
+        if (!('errors' in body)) { 
+          id = body[0].id;
+          img = body[0].profile_image_url;
 
-          var topTweetCounts = Object.keys(tweetsBySocialCount).sort(function(a, b) {
-            return b - a;
-          });
-
-          for(var j = 0; j < topTweetCounts.length; j++) {
-
-            var tweet = tweetsBySocialCount[topTweetCounts[j]];
-            var date = utils.getSimpleDate(tweet.created_at);
-
-            if (tweet.lang !== 'en') { continue; };
-
-            date = date.year + '-' + date.month + '-' + date.day;
-
-            tweetToSend = {
-              date: date,
-              url: tweet.user.url,
-              img: tweet.user.profile_image_url,
-              tweet_id: tweet.id,
-              tweet_id_str: tweet.id_str,
-              type: 'user'
-            };
-            console.log(tweetToSend);
-            responseObj[date] = responseObj[date] || { source: 'twitter', children: [] };
-            if (responseObj[date].children.length < 10) {
-              responseObj[date].children.push(tweetToSend);
-            }
-          }
-        callback(200, responseObj);
-      }
-
-    } else {
-      var id,
-          img;
-
-      if (!('errors' in body)) { 
-        id = body[0].id;
-        img = body[0].profile_image_url;
-
-        grabTimeline(newUrl, {'id': id, 'img': img}, callback);
-      }
-      else {
-        findUser(baseUrl, queryString, callback);
+          grabTimeline(newUrl, {'id': id, 'img': img}, callback);
+        }
+        else {
+          findUser(baseUrl, queryString, callback);
+        }
       }
     }
-  }
-})
+  })
 }
 
 function grabTimeline(newUrl, params, callback){
-  var responseObj = {};
 
   search.url = newUrl;
   search.qs = {user_id : params.id, include_rts : 'false'};
@@ -124,50 +86,52 @@ function grabTimeline(newUrl, params, callback){
       body = Array.prototype.slice.call(JSON.parse(body));
 
       if (body[0]) {
-        var tweetIdsToSend = [];
-        var tweetsBySocialCount = {};
-
-        for (var i = 0; i < body.length; i++) {
-          var socialCount = body[i]['retweet_count'] + body[i]['favorite_count'];
-          tweetsBySocialCount[socialCount] = body[i];
-        }
-
-        var topTweetCounts = Object.keys(tweetsBySocialCount).sort(function(a, b) {
-          return b - a;
-        }).slice(0, 20);
-
-        for(var j = 0; j < topTweetCounts.length; j++) {
-
-          var tweet = tweetsBySocialCount[topTweetCounts[j]];
-          var date = utils.getSimpleDate(tweet.created_at);
-
-          date = date.year + '-' + date.month + '-' + date.day;
-
-          tweetToSend = {
-            date: date,
-            url: tweet.user.url,
-            img: tweet.user.profile_image_url,
-            tweet_id: tweet.id,
-            tweet_id_str: tweet.id_str,
-            type: 'user'
-          };
-
-          var daysAgo = utils.getDateFromToday(0, '') - date.replace(/[-]/gi, '');
-
-          //If the tweets were dated within 28 days, aggregate the top three from any day therein
-          if (daysAgo <= 28) {
-            responseObj[date] = responseObj[date] || { source: 'twitter', children: [] };
-            if (responseObj[date].children.length < 2) {
-              responseObj[date].children.push(tweetToSend);
-            }
-          }
-        }
-
-        callback(200, responseObj);
+        processResponseData(body, 3, callback);
       } else {
         grabTimeline(newUrl, params, callback);
       }
     }
   })
+};
+
+function processResponseData(response, amountToDisplay, callback) {
+  
+  var responseObj = {};
+  var tweetIdsToSend = [];
+  var tweetsBySocialCount = {};
+
+  for (var i = 0; i < response.length; i++) {
+    var socialCount = response[i]['retweet_count'] + response[i]['favorite_count'] + response[i].id;
+    tweetsBySocialCount[socialCount] = response[i];
+  };
+
+  var topTweetCounts = Object.keys(tweetsBySocialCount).sort(function(a, b) {
+    return b - a;
+  });
+
+  for(var j = 0; j < topTweetCounts.length; j++) {
+
+    var tweet = tweetsBySocialCount[topTweetCounts[j]];
+    var date = utils.getSimpleDate(tweet.created_at);
+
+    if (tweet.lang !== 'en') { continue; };
+
+    date = date.year + '-' + date.month + '-' + date.day;
+
+    tweetToSend = {
+      date: date,
+      url: tweet.user.url,
+      img: tweet.user.profile_image_url,
+      tweet_id: tweet.id,
+      tweet_id_str: tweet.id_str,
+      type: 'news'
+    };
+ 
+    responseObj[date] = responseObj[date] || { source: 'twitter', children: [] };
+    if (responseObj[date].children.length < amountToDisplay) {
+      responseObj[date].children.push(tweetToSend);
+    }
+  }
+  callback(200, responseObj);
 };
 

@@ -28,6 +28,7 @@ var styles = StyleSheet.create({
   },
 });
 
+
 var Summary = React.createClass({
 
   getInitialState: function() {

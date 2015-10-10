@@ -31,7 +31,9 @@ var TwitterPreview = React.createClass({
       twttr.widgets.createTweet(
         tweetId,
         document.getElementById('tweet')
-        )
+        ).then(function(element) {
+          console.log(element);
+        })
   },
 
   componentDidMount: function() {

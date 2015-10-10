@@ -106,6 +106,10 @@ var TopBar = React.createClass({
       $('#topbar').val('');
     }
   },
+
+  goBackHome: function() {
+    this.props.searchInit('immediahomepage');
+  },
   
   componentDidMount : function() {
     var component = this;
