@@ -1,6 +1,5 @@
 var React = require('react');
 
-var HomePage = require('./homepage.jsx');
 var ResultsView = require('./results.jsx');
 
 var MainView = React.createClass({
