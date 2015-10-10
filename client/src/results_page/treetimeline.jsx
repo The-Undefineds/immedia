@@ -50,7 +50,7 @@ var TreeTimeLine = React.createClass({
   //Api's to be called are listed in this array
   apis: [
     'nyt',
-    'twitter',
+    // 'twitter',
     'youtube',
     // 'news'
   ],
@@ -354,7 +354,10 @@ var TreeTimeLine = React.createClass({
             d.y = 120 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
           };
           if (d.depth === 3) {
-            component.mouseOver(d);
+            if (!d.previewed && d.parent.children) {
+              component.mouseOver(d);
+              d.previewed = true;
+            }
             d.y = 240 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
 
             }
@@ -449,7 +452,6 @@ var TreeTimeLine = React.createClass({
 
       var nodeUpdate = node.transition()
           .duration(duration)
-          // .ease('linear')
           .attr('transform', function(d) { 
             if (d == root) {
               d.y = -1000;
@@ -520,6 +522,9 @@ var TreeTimeLine = React.createClass({
           .attr('d', function(d) {
             var origin = { x: source.x0, y: source.y0 };
             return diagonal({ source: origin, target: origin });
+          })
+          .style('stroke', function(d) {
+            if (d.x === root.y0) { return; }
           })
           .style({
             fill: 'none',

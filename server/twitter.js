@@ -126,7 +126,7 @@ function processResponseData(response, amountToDisplay, callback) {
       tweet_id_str: tweet.id_str,
       type: 'news'
     };
-    console.log(tweetToSend);
+ 
     responseObj[date] = responseObj[date] || { source: 'twitter', children: [] };
     if (responseObj[date].children.length < amountToDisplay) {
       responseObj[date].children.push(tweetToSend);

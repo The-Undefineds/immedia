@@ -38,10 +38,14 @@ var Summary = React.createClass({
 
   componentDidMount: function() {
     this.getDynamicStyles();
-    
-    $('.wikiLink').on('click', function() {
-      this.props.searchInit($(this).text());
-    }.bind(this));
+
+    var component = this;
+    $(function() {
+      $('.wikiLink').on('click', function() {
+        component.props.searchInit($(this).text());
+      });
+    })
+
   },
 
   componentWillReceiveProps: function(nextProps) {

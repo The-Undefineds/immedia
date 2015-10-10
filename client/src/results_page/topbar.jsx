@@ -98,6 +98,10 @@ var TopBar = React.createClass({
       this.setState({ searchTerm: '' });
     }
   },
+
+  goBackHome: function() {
+    this.props.searchInit('immediahomepage');
+  },
   
   componentDidMount : function() {
     var component = this;
