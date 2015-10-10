@@ -6,7 +6,7 @@ var PastSearch = require('./pastsearch.jsx');
 var styles = StyleSheet.create({
   container: {
     right: '0px',
-    position: 'absolute',
+    position: 'fixed',
     height: '130px',
     marginRight: '5px',
     paddingLeft: '15px',
