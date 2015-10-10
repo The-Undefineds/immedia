@@ -50,7 +50,7 @@ var TreeTimeLine = React.createClass({
   //Api's to be called are listed in this array
   apis: [
     'nyt',
-    // 'twitter',
+    'twitter',
     'youtube',
     // 'news'
   ],

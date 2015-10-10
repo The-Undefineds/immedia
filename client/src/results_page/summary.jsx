@@ -27,6 +27,7 @@ var styles = StyleSheet.create({
   },
 });
 
+
 var Summary = React.createClass({
 
   getInitialState: function() {
@@ -38,14 +39,6 @@ var Summary = React.createClass({
 
   componentDidMount: function() {
     this.getDynamicStyles();
-
-    var component = this;
-    $(function() {
-      $('.wikiLink').on('click', function() {
-        component.props.searchInit($(this).text());
-      });
-    })
-
   },
 
   componentWillReceiveProps: function(nextProps) {
