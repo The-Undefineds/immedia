@@ -80,32 +80,38 @@ module.exports = {
       });
   },
 
+  // 
   addTweet: function(tweet, text){
-    var topicStrings = help.parseText(text),
+    var topicStrings = help.parseText(text), // Separates tweet text into plausible search-term strings
         context = this,
-        tweetAsString = JSON.stringify(tweet);
+        tweetAsString = JSON.stringify(tweet);  // For saving later in Mongo db (for comparability)
+
+    // 'forEach' of our search-terms, we either (A) make a new table for it (if there isn't one already), 
+    // (B) decide whether to add it to an existing table. We only add the tweet if there is (C) no other tweet 
+    // already stored for that day, or (D) it has a higher retweet count than the tweet already stored for 
+    // that day. (The point is to only store the tweet with the most tweets for each search-term string per day)
     topicStrings.forEach(function(string){
       Search.findOne({ search_term: string })
         .then(function(topic){
-          if (topic.length !== 0 && topic.tweets.length !== 0) {
+          if (topic.length !== 0 && topic.tweets.length !== 0) {   // (B)
             var foundMatch = false;
             topic.tweets.forEach(function(item){
               var oldTweet = JSON.parse(item);
               if (oldTweet.created_at === tweet.created_at) {
                 foundMatch = true;
-                if (oldTweet.retweet_count < tweet.retweet_count) {
+                if (oldTweet.retweet_count < tweet.retweet_count) {  // (D)
                   topic.tweets.pull(item);
                   topic.tweets.addToSet(tweetAsString);
                   topic.save();
                 }
               }
             });
-            if (!foundMatch) {
+            if (!foundMatch) {   // (C)
               topic.tweets.addToSet(tweetAsString);
               topic.save();
             }
           } else {
-            context.addSearch(string, tweet);
+            context.addSearch(string, tweet); // (A)
           }
         });
     });

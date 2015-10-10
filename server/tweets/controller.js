@@ -93,7 +93,7 @@ var requestNewTweets = function(screenName, sinceID, maxID){
             return updateNextNewsOrg(screenName);
           }
           storeTweet(newTweet);
-          searches.addTweet(newTweet, tweet.text);
+          searches.addTweet(newTweet, tweet.text);  // Indexes search-terms parsed out of the tweet's text
         }
         setTimeout(function(){
           if (!maxID && body.length === 0) {      // (also) Handles case in which we exceed maximum tweets from a certain account
