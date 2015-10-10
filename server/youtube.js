@@ -7,6 +7,11 @@ var youtube = 'https://www.googleapis.com/youtube/v3';
 module.exports = {
   search : function(request, response) {
     var itemToSearch = request.body.searchTerm;
+
+    if (itemToSearch === 'immediahomepage') {
+      itemToSearch = '';
+    }
+
     var date = request.body.date || 'this week'
     callYoutube(date, itemToSearch, function(status, data){
       response.status(status).send(data);

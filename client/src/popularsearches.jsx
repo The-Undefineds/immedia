@@ -86,24 +86,6 @@ var PopularSearches = React.createClass({
 
       var nodes = flatten(root);
       var links = d3.layout.tree().links(nodes);
-      
-      // function findNodes(source) {
-
-      //   var nodes = [];
-      //   var idCounter = 0;
-
-      //   function recurse(node) {
-      //     node.id = idCounter++;
-      //     nodes.push(node);
-      //     if (node.children) {
-      //       for (var i = 0; i < node.children.length; i++) {
-      //         recurse(node.children[i]);
-      //       }
-      //     }
-      //     recurse(source);
-      //     return nodes;
-      //   }
-      // };
 
       force.nodes(nodes);
       force.links(links);
