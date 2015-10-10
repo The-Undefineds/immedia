@@ -6,13 +6,12 @@ var TweetsSchema = new mongoose.Schema({
     unique: true
   },
   created_at: String,
-  text: String,
   url: String,
   retweet_count: Number,
   tweeted_by: String,
-  topics: Array,
   profile_img: String,
-  background_img: String
+  background_img: String,
+  text: String
 });
 
 module.exports = mongoose.model('tweets', TweetsSchema);

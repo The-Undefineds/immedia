@@ -50,7 +50,7 @@ var WikiView = React.createClass({
     return (
       <div id='wikiview' style={styles.container}>
         { this.state.summaryView ? 
-          <Summary summary={this.state.summary} profileImage={this.state.profileImage} searchTerm={this.props.searchTerm} window={{width: this.state.width, height: this.state.height}}/> 
+          <Summary summary={this.state.summary} profileImage={this.state.profileImage} searchInit={this.props.searchInit} searchTerm={this.props.searchTerm} window={{width: this.state.width, height: this.state.height}}/> 
           : null }
       </div>
     );
@@ -102,18 +102,15 @@ var WikiView = React.createClass({
 
       var $summary = $wikiDOM.children('p').first();
       var summary = $summary.html().replace(/href=".*?"/g, 'class="wikiLink"');
-      
-      var profileImage = $($infobox[0].getElementsByTagName('img')[0]).attr('src').replace('//','https://') || '';  // Add fallback Google Image request here
-      profileImage ? this.loadHistoryView.call(this, profileImage) : this.loadHistoryView.call(this);
 
-      $.post('http://127.0.0.1:3000/searches/incrementSearchTerm', { searchTerm: searchTerm, img: profileImage });
-      
-      this.setState({
-        infobox: infobox,
-        profileImage: profileImage,
-        summary: summary,
-      });
+      var profileImage = $infobox[0].getElementsByTagName('img')[0];
 
+      if(profileImage) {
+        this.finishParse(infobox, searchTerm, summary, $(profileImage).attr('src').replace('//','https://'));
+      } else {
+        this.getGoogleImageResult(infobox, searchTerm, summary);
+      }
+      return;
     }.bind(this));  
   },
 
@@ -126,6 +123,29 @@ var WikiView = React.createClass({
       history[0].img = 'https://upload.wikimedia.org/wikipedia/commons/f/fc/No_picture_available.png';
     }
     localStorage['immedia'] = JSON.stringify(history);
+  },
+
+  getGoogleImageResult: function(infobox, searchTerm, summary) {
+    $.get('http://127.0.0.1:3000/api/googleImages?q=' + searchTerm.replace(/\s/g, '+'))
+      .done(function(response) {
+        this.finishParse.call(this, infobox, searchTerm, summary, response.image);
+      }.bind(this));
+  },
+
+  finishParse: function(infobox, searchTerm, summary, img) {
+    if(img) {
+      this.loadHistoryView.call(this, img);
+    } else {
+      this.loadHistoryView.call(this);
+    }
+
+    $.post('http://127.0.0.1:3000/searches/incrementSearchTerm', { searchTerm: searchTerm, img: img });
+      
+    this.setState({
+      infobox: infobox,
+      profileImage: img,
+      summary: summary,
+    });
   },
 
 });

@@ -1,6 +1,8 @@
 var Tweet = require('./model.js');
 var OAuth = require('../Oauth.js');
 var help  = require('./helpers.js');
+var searches = require('../searches/controller.js');
+
 
 var Q = require('q'),
     request = require('request');
@@ -8,7 +10,6 @@ var Q = require('q'),
 var newsOrgs = require('../assets/assets.js').newsOrgs;
 
 var apiUrl = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
-
 
 // These four lines create a string that holds a month ago's date from the present date, in order 
 // to later compare with tweet dates, and through this, set an age limit to the retrieval of tweets from twitter's API
@@ -40,7 +41,7 @@ var lastTweetStored = function(screenName){
         });
 };
 
-// Retrieves all the tweets for the organization that (A) have not been retrieved, or (B) are from more than a month ago
+// Retrieves all the tweets for the organization that (A) have not been retrieved, or (B) are from within the past month
 var requestNewTweets = function(screenName, sinceID, maxID){
   // If the argument 'maxID' is not defined, as it isn't the first time the function is called, we set the retrieval
   // to only ask for the very latest tweets. If 'maxID' is defined, as it is when the function is called recursively below,
@@ -78,13 +79,12 @@ var requestNewTweets = function(screenName, sinceID, maxID){
           var newTweet = {
             tweet_id: tweet_id,
             created_at: created_at,
-            text: tweet.text,
             url: help.extractUrl(tweet.text),
             retweet_count: tweet.retweet_count,
-            // topics: help.parseText(tweet.text),
             tweeted_by: screenName,
             profile_img: tweet.user.profile_image_url_https,
-            background_img: tweet.user.profile_background_image_url_https
+            background_img: tweet.user.profile_background_image_url_https,
+            text: tweet.text
           }
           if (i === body.length-1) {
             var maxID = tweet_id;
@@ -93,6 +93,7 @@ var requestNewTweets = function(screenName, sinceID, maxID){
             return updateNextNewsOrg(screenName);
           }
           storeTweet(newTweet);
+          searches.addTweet(newTweet, tweet.text);  // Indexes search-terms parsed out of the tweet's text
         }
         setTimeout(function(){
           if (!maxID && body.length === 0) {      // (also) Handles case in which we exceed maximum tweets from a certain account
@@ -122,3 +123,5 @@ var updateNextNewsOrg = function(screenName){
 var storeTweet = function(tweet){
   Tweet.create(tweet);
 };
+
+// module.exports();

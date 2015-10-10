@@ -187,6 +187,7 @@ module.exports = {
 
   'getArticles': function(req, res) {
     var searchTerm = req.body.searchTerm.replace(/\s/g, '+');   // Remove spaces in searchTerm and replace with '+'
+    if (searchTerm === 'immediahomepage') { searchTerm = 'news' }
     var days = req.body.days === undefined ? 7 : Number(req.body.days);
 
     // NYT Article Search parameters (note: CAN search by topic)
@@ -207,7 +208,7 @@ module.exports = {
       .then(createArticleSearchMap.bind(null, searchTerm, beginDate))   // Calculates how many different GET requests are needed based on search term
       .all()
       .then(addArticlesToArticleSearch)
-      .then(createMostPopularMap.bind(null, timePeriod))               // Send Most Popular GET request (20 results default)
+      .then(createMostPopularMap.bind(null, timePeriod)) // Send Most Popular GET request (20 results default)
       .all()
       .then(addArticlesToMostPopular)
       .then(compareArticleSearchToMostPopular)

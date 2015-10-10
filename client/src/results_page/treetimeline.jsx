@@ -72,6 +72,7 @@ var TreeTimeLine = React.createClass({
   componentDidMount: function(){
     var component = this;
     this.query(this.props.searchTerm);
+    // this.setTimeSpan(this.state.timeSpan);
 
     //When a user scrolls to the bottom of the document, a new timeline will be rendered that is 7 days longer.
     // $(window).scroll(function() {
@@ -127,7 +128,7 @@ var TreeTimeLine = React.createClass({
   handleQuery: function(searchQuery){
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
-
+        console.log(response);
         // Set State to initiate a re-rendering based on new API call data
         this.setState(function(previousState, currentProps) {
           // Make a copy of previous apiData to mutate and use to reset State
@@ -182,7 +183,7 @@ var TreeTimeLine = React.createClass({
   dates: [],
 
   setTimeSpan: function(timeSpan) {
-    this.setState({ height: timeSpan * 80 });
+    this.setState({ height: timeSpan * 120 });
     this.setState({ timeSpan: timeSpan });
   },
 
@@ -223,7 +224,7 @@ var TreeTimeLine = React.createClass({
   },
 
   mouseOver: function(item) {
-    if (this.mousedOver === item) {
+    if (this.mousedOver == item) {
       return;
     } else {
       this.mousedOver = item;
@@ -258,9 +259,7 @@ var TreeTimeLine = React.createClass({
     };
 
     var width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350),
-        height = this.state.height - 130;
-        // height = this.dates.length*80;
-
+        height = this.state.height;
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
                       this.state.apiData[this.state.apiData.length - 1] : null;
@@ -342,7 +341,6 @@ var TreeTimeLine = React.createClass({
         } else if (!d.rendered) {
           d.rendered = 1;
         }
-        // component.mouseOver(d);
         return 500;
       }
 
@@ -367,8 +365,6 @@ var TreeTimeLine = React.createClass({
         }
         else {
           if (d.depth === 2) {
-            //If Twitter has more than 3 tweets in a day, only one child node will appear on the canvas
-            //When this node is moused over, a timeline of tweets from the day will appear in the preview window
             d.y = 120 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
           };
           if (d.depth === 3) {

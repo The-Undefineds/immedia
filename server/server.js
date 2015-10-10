@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var youtube = require('./youtube');
 var nyt = require('./nyt.js');
 var twitter = require('./twitter');
+var googleImages = require('./googleImages.js');
 var searches = require('./searches/controller.js');
 var cors = require('express-cors');
 var mongoose = require('mongoose');
@@ -26,8 +27,8 @@ mongoose.connect('mongodb://localhost/local', function(error){
 });
 
 // Activates cron-jobs that update news-tweets every half-hour
-cron.job.start();
-cron.job2.start();
+// cron.job.start();
+// cron.job2.start();
 
 //app.use();
 app.use(cors({
@@ -51,9 +52,14 @@ app.post('/api/nyt', nyt.getArticles);
 
 app.post('/api/twitter', twitter.getTweetsPerson);
 
+// app.post('/api/news', twitter.getNewsTweets);
+
+app.get('/api/googleImages', googleImages.getImage);
+
 app.post('/searches/incrementSearchTerm', searches.incrementSearchTerm);
 
 app.get('/searches/popularSearches', searches.getPopularSearches);
+
 
 ///////////////////////////
 
