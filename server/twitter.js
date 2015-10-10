@@ -28,7 +28,7 @@ module.exports = {
   },
 
   getNewsTweets : function(request, response){
-    var queryString = request.body.searchTerm.toLowerCase();
+    var queryString = request.body.searchTerm;
     console.log('search term:', queryString);
     searches.retrieveTweets(queryString, response);
   }
