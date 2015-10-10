@@ -19,6 +19,14 @@ var styles = StyleSheet.create({
     color: '#00BFFF',
     cursor: 'pointer',
   },
+  searchBar: {
+    marginTop: '12px',
+    verticalAlign: 'middle',
+    height: '25px',
+    paddingLeft: '10px',
+    fontFamily: 'Nunito',
+    color: 'rgb(128,128,128)',
+  },
   searchButton: {
       verticalAlign: 'middle',
       marginLeft: '2px',
@@ -95,7 +103,7 @@ var TopBar = React.createClass({
           }
         });
       }
-      this.setState({ searchTerm: '' });
+      $('#topbar').val('');
     }
   },
 
@@ -149,7 +157,7 @@ var TopBar = React.createClass({
       <div id="navbar" style={styles.topBar}>
         <img src={'./immedia_logo.png'} height={40} width={40 * (167/137)} style={styles.logo} onClick={this.goBackHome} />
         <span style={styles.title} onClick={this.goBackHome}>immedia</span>
-        <input id='topbar' type='text' style={styles.searchBar} value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
+        <input id='topbar' type='text' style={styles.searchBar} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
         <input type='button' style={styles.searchButton} onClick={this.handleSubmit} value='immedia search'/>
       </div>
     );
@@ -163,13 +171,7 @@ var TopBar = React.createClass({
       textAlign: 'center',
     };
 
-    styles.searchBar = {
-      marginTop: '12px',
-      verticalAlign: 'middle',
-      width: this.state.width * (400 / 1378),
-      height: '25px',
-      paddingLeft: '10px',
-    };
+    styles.searchBar.width = this.state.width * (400 / 1378);
   },
 
 })
