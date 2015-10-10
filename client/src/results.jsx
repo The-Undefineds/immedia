@@ -2,7 +2,6 @@ var React = require('react');
 var StyleSheet = require('react-style');
 
 var TreeTimeLine = require('./results_page/treetimeline.jsx'),
-    ForceTimeLine = require('./results_page/forcetimeline.jsx'),
     WikiView = require('./results_page/wikiview.jsx'),
     Preview = require('./results_page/preview.jsx'),
     TopBar = require('./results_page/topbar.jsx'),

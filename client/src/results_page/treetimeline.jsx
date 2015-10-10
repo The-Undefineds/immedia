@@ -1,8 +1,6 @@
 var React = require('react');
 var StyleSheet = require('react-style');
 
-var TimeSpanSlider = require('./timespanslider.jsx');
-
 var i = 0;
 
 var styles = StyleSheet.create({
