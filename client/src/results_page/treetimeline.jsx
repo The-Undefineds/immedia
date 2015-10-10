@@ -8,29 +8,47 @@ var i = 0;
 var styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: '60px',
+    top: '50px',
     paddingRight: '10px',
     textAlign: 'center',
   },
   title: {
+    position: 'fixed',
     fontFamily: 'Nunito',
     fontSize: '24px',
     color: '#00BFFF',
-    backgroundColor: 'rgba(128, 128, 128, 0.1)',
+    backgroundColor: 'rgba(245, 245, 245, 1)',
+    marginTop: '10px',
     marginBottom: '5px',
     textAlign: 'left',
     paddingLeft: '10px',
+    width: '325px'
   },
   subhead: {
+    position: 'fixed',
     fontFamily: 'Nunito',
     fontSize: '14px',
     color: 'rgb(128, 128, 128)',
-    marginTop: '1px',
+    backgroundColor: 'rgba(255, 255, 255, 1)',
+    marginTop: '42px',
     marginBottom: '5px',
     textAlign: 'left',
     paddingLeft: '10px',
+    width: '325px'
   },
   d3: {
+    zIndex: -1,
+    marginTop: '55px',
+  },
+  block: {
+    position: 'fixed',
+    zIndex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 1)',
+    width: '325px',
+    height: '50px',
+    marginBottom: '5px',
+    textAlign: 'left',
+    paddingLeft: '10px',
   }
 });
 
@@ -193,9 +211,11 @@ var TreeTimeLine = React.createClass({
 
     return (
       <div id="d3container" style={styles.container}>
-        <div id="d3title" style={styles.title}>immedia: recent events</div>
-        <div id="d3subhead" style={styles.subhead}>hover over a bubble to preview</div>
-        <div id="d3canvas"></div>
+        <div id="d3cockblocker" style={styles.block}>
+          <div id="d3title" style={styles.title}>immedia: recent events</div>
+          <div id="d3subhead" style={styles.subhead}>hover over a bubble to preview</div>
+        </div>
+        <div id="d3canvas" style={styles.d3}></div>
       </div>
     );
   },

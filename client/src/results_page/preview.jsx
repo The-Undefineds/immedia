@@ -8,7 +8,7 @@ var EmptyPreview = require('./emptypreview.jsx');
 
 var styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: 'fixed',
     top: '60px',
     paddingRight: '10px',
     textAlign: 'center',
