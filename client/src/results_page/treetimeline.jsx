@@ -125,6 +125,7 @@ var TreeTimeLine = React.createClass({
       width: newProps.window.width,
       height: newProps.window.height,
     });
+
   },
 
   handleQuery: function(searchQuery){

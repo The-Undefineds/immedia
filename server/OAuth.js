@@ -1,5 +1,5 @@
 var crypto = require('crypto');
-var key = (process.env.NODE_ENV === 'production') ? require('../../keys.js') : require('./keys.js');
+var key = require('./keys.js');
 
 module.exports = function(baseURL, param, aParam){
   if (aParam !== undefined) aParam += '&';
