@@ -93,7 +93,7 @@ module.exports = {
     topicStrings.forEach(function(string){
       Search.findOne({ search_term: string })
         .then(function(topic){
-          if (topic.length !== 0 && topic.tweets.length !== 0) {   // (B)
+          if (topic !== null && topic.length !== 0 && topic.tweets.length !== 0) {   // (B)
             var foundMatch = false;
             topic.tweets.forEach(function(item){
               var oldTweet = JSON.parse(item);
