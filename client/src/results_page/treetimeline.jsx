@@ -101,7 +101,7 @@ var TreeTimeLine = React.createClass({
 
     //If the new search term matches the term queried for the current results, nothing will change.
     if (this.props.searchTerm !== newProps.searchTerm) {
-      this.query(newProps.searchTerm);
+      this.query(newProps.searchTerm.toLowerCase());
       this.setState({apiData: []});
     }
 

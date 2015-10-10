@@ -2,8 +2,7 @@ var React = require('react');
 var StyleSheet = require('react-style');
 
 var SearchBar = require('./home_page/searchbar.jsx'),
-    TopSearches = require('./home_page/topsearches.jsx'),
-    PopularSearches = require('./popularsearches.jsx');
+    TopSearches = require('./home_page/topsearches.jsx');
 
 var styles = StyleSheet.create({
   container: {
@@ -39,7 +38,6 @@ var HomePage = React.createClass({
         <img style={styles.logo} src={ './immedia_logo.png' } />
         <div style={styles.title}>immedia</div>
         <SearchBar searchInit={this.props.searchInit} atHome={this.props.atHome} />
-        <PopularSearches />
       </div>
     );
   }

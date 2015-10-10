@@ -32,7 +32,9 @@ var TwitterPreview = React.createClass({
         tweetId,
         document.getElementById('tweet')
         ).then(function(element) {
-          console.log(element);
+          var innerHTML = window.frames[0].document.body.innerHTML
+          var imgInd = innerHTML.search("img");
+          console.log(innerHTML.slice(imgInd, 100)); 
         })
   },
 
