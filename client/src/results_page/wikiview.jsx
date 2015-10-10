@@ -50,7 +50,7 @@ var WikiView = React.createClass({
     return (
       <div id='wikiview' style={styles.container}>
         { this.state.summaryView ? 
-          <Summary summary={this.state.summary} profileImage={this.state.profileImage} searchTerm={this.props.searchTerm} window={{width: this.state.width, height: this.state.height}}/> 
+          <Summary summary={this.state.summary} profileImage={this.state.profileImage} searchInit={this.props.searchInit} searchTerm={this.props.searchTerm} window={{width: this.state.width, height: this.state.height}}/> 
           : null }
       </div>
     );
@@ -128,7 +128,7 @@ var WikiView = React.createClass({
   getGoogleImageResult: function(infobox, searchTerm, summary) {
     $.get('http://127.0.0.1:3000/api/googleImages?q=' + searchTerm.replace(/\s/g, '+'))
       .done(function(response) {
-        this.finishParse(infobox, searchTerm, summary, response.image).bind(this);
+        this.finishParse.call(this, infobox, searchTerm, summary, response.image);
       }.bind(this));
   },
 
