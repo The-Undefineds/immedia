@@ -18,10 +18,10 @@ module.exports = {
     // Search.findOneAndUpdate({ search_term: searchTerm }, { $inc: { total: 1 }, { weeklyCount[0]: 1 } })
       .then (function(term) {
         if (term) {
+          if (term.rank !== 1) {
           Search.findOne({ rank: term.rank - 1 })
             .then(function(otherTerm) {
               if(otherTerm) {
-
                 //The total popularity count will be calculated with priority on the current week's search total
                 //(denoted by searchCountArr[0]).
                 var calcPopCount = function(searchCountArr) {
@@ -32,8 +32,8 @@ module.exports = {
                   return popCount;
                 }
 
-                termPopCount = calcPopCount(term.weeklyCount);
-                otherTermPopCount = calcPopCount(otherTerm.weeklyCount);
+                // termPopCount = calcPopCount(term.weeklyCount);
+                // otherTermPopCount = calcPopCount(otherTerm.weeklyCount);
 
                 //If the current search term's popularity count now exceeds the pop count of the next highest ranked
                 //term, the current term's rank will be incremented, the other decremented.
@@ -44,9 +44,12 @@ module.exports = {
                 }
               }
             })
+          }
         } else {
           //If the current search term is not found in the database, a new entry will be created with a ranking
           //equal to the number of search terms in the database.
+          console.log('term not found');
+          newSearchRank++;
           Search.create({
             rank: newSearchRank,
             count: [],
@@ -54,7 +57,6 @@ module.exports = {
             search_term: searchTerm,
             img: img,
           });
-          newSearchRank++;
       }
     })
   },

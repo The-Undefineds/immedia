@@ -7,8 +7,7 @@ var MainView = React.createClass({
 
   getInitialState: function(){
     return {
-      atHome : true,
-      searchTerm : '',
+      searchTerm : 'immediahomepage',
     }
   },
 
@@ -21,6 +20,7 @@ var MainView = React.createClass({
     }
     var homePlaceholder = { searchTerm: 0 };
     if (!history) {
+      //to-do: get most popular searches
       localStorage['immedia'] = JSON.stringify([homePlaceholder]);
     } else if (history[0].searchTerm !== 0) { 
       this.searchInit(history[0].searchTerm, true);
@@ -93,8 +93,7 @@ var MainView = React.createClass({
 
     return (
       <div>
-        { this.state.atHome ? <HomePage  searchInit={this.searchInit} atHome={this.state.atHome}/> : null }
-        { !this.state.atHome ? <ResultsView searchTerm={this.state.searchTerm} goBackHome={this.goBackHome} searchInit={this.searchInit} /> : null }
+        <ResultsView searchTerm={this.state.searchTerm} searchInit={this.searchInit} />
       </div>
       )
   },
