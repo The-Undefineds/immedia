@@ -15,14 +15,13 @@ var styles = StyleSheet.create({
     fontFamily: 'Nunito',
     fontSize: '24px',
     color: '#00BFFF',
-    marginTop: '5px',
-    marginBottom: '5px',
+    marginBottom: '10px',
     textAlign: 'left',
     paddingLeft: '5px',
-    right: '0px',
     position: 'absolute',
     top: '0px',
     height: '30px',
+    backgroundColor: 'rgba(128,128,128,0.1)',
   },
   searches: {
     position: 'absolute',
@@ -72,7 +71,7 @@ var SearchHistory = React.createClass({
 
     return (
       <div id="recentlyVisited" style={styles.container}>
-        <span style={styles.title}>recently visited</span>
+        <div style={styles.title}>immedia: recently visited</div>
         <div style={styles.searches}>{ history }</div>
       </div>
     );
@@ -90,6 +89,7 @@ var SearchHistory = React.createClass({
     styles.container.top = this.state.height - 130 + 'px';
     styles.container.width = (this.state.width - 1350 < 0 ? 365 * (this.state.width / 1350) : 365) + 'px';
     styles.container.right = (this.state.width < 1350 ? 0 : (this.state.width - 1350) / 2) + 'px';
+    styles.title.width = (this.state.width - 1350 < 0 ? 365 * (this.state.width / 1350) : 365) + 'px';
     styles.searches.width = (this.state.width - 1350 < 0 ? 365 * (this.state.width / 1350) : 365) + 'px';
   },
 });

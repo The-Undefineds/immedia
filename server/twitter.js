@@ -1,6 +1,7 @@
 var OAuth = require('./OAuth');
 var request = require('request');
 var utils = require('./utils.js');
+var searches = require('./searches/controller.js');
 
 var baseUrl = 'https://api.twitter.com/1.1/users/search.json';
 var newUrl = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
@@ -27,10 +28,15 @@ module.exports = {
       })
     } else {
       findUser(baseUrl, queryString, function(status, data){
-
         response.status(status).send(data);
       });
     }
+  },
+
+  getNewsTweets : function(request, response){
+    var queryString = request.body.searchTerm.toLowerCase();
+    console.log('search term:', queryString);
+    searches.retrieveTweets(queryString, response);
   }
 }
 
@@ -52,7 +58,7 @@ function findUser(baseUrl, queryString, callback){
           var tweetIdsToSend = [];
           var tweetsBySocialCount = {};
           for (var i = 0; i < body.statuses.length; i++) {
-            var socialCount = body.statuses[i]['retweet_count'] + body.statuses[i]['favorite_count'];
+            var socialCount = body.statuses[i]['retweet_count'] + body.statuses[i]['favorite_count'] + body.statuses[i].id;
             tweetsBySocialCount[socialCount] = body.statuses[i];
           }
 

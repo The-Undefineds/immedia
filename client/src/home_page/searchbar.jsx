@@ -116,7 +116,7 @@ var SearchBar = React.createClass({
           <input id='searchbox' type='text' style={styles.searchBar} value={this.state.searchTerm} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
         </div>
         <span>
-          <button type='button' style={styles.searchButton} onClick={this.handleSubmit} > immedia Search </button>
+          <button type='button' style={styles.searchButton} onClick={this.handleSubmit} >immedia search</button>
           <div style={styles.errorMsg}>{this.state.errorHandle ? this.state.errorHandle: null} </div>
         </span>
       </div>
