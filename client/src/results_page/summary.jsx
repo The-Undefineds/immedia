@@ -17,7 +17,8 @@ var styles = StyleSheet.create({
     paddingLeft: '5px',
   },
   image: {
-    width: 'auto',
+    maxWidth: '100%',
+    maxHeight: '100%',
   },
   body: {
     fontFamily: 'Nunito',
@@ -39,6 +40,14 @@ var Summary = React.createClass({
 
   componentDidMount: function() {
     this.getDynamicStyles();
+  },
+
+  componentDidUpdate: function() {
+    $(function() {
+      $('.wikiLink').on('click', function(event) {
+        this.props.searchInit($(event.target).text());
+      }.bind(this));
+    }.bind(this));
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -66,7 +75,8 @@ var Summary = React.createClass({
   getDynamicStyles: function() {
     var $wikiTitle = $('#wikiTitle');
     styles.summary.height = (this.state.height - 60 - 140) + 'px';
-    styles.image.height = (this.state.height * 0.4) + 'px';
+    // styles.image.height = (this.state.height * 0.4) + 'px';
+    // styles.image.maxWidth = (this.state.width < 1350 ? 365 * (this.state.width / 1350) : 365) + 'px';
     styles.body.height = (this.state.height - 60 - 140) - $wikiTitle.height() - (this.state.height * 0.4) + 'px';
     styles.title.width = (this.state.width < 1350 ? 365 * (this.state.width / 1350) : 365) + 'px';
   },
