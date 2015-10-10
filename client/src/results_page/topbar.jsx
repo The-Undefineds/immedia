@@ -165,9 +165,11 @@ var TopBar = React.createClass({
 
   getDynamicStyles: function() {
     styles.topBar = {
+      zIndex: 1,
+      position: 'fixed',
       width: this.state.width,
       height: '50px',
-      backgroundColor: 'rgba(128,128,128,0.1)',
+      backgroundColor: 'rgba(245,245,245,1)',
       textAlign: 'center',
     };
 
