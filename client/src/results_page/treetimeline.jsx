@@ -194,7 +194,7 @@ var TreeTimeLine = React.createClass({
   },
 
   render: function() {
-
+    // var searchTermClean = this.props.searchTerm.replace(/\s\(.*$/, '').toLowerCase();
     var component = this;
     var generateDates = function(timeSpan) {
         component.dates = [];
@@ -213,7 +213,7 @@ var TreeTimeLine = React.createClass({
     return (
       <div id="d3container" style={styles.container}>
         <div id="d3cockblocker" style={styles.block}>
-          <div id="d3title" style={styles.title}>immedia: recent events</div>
+          <div id="d3title" style={styles.title}>recent events</div>
           <div id="d3subhead" style={styles.subhead}>hover over a bubble to preview</div>
         </div>
         <div id="d3canvas" style={styles.d3}></div>

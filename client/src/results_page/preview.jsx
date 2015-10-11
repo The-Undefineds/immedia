@@ -41,11 +41,12 @@ var Preview = React.createClass({
   },
 
   render: function() {
+    var searchTermClean = this.props.searchTerm.replace(/\s\(.*$/, '').toLowerCase();
     this.getDynamicStyles();
 
     return (
       <div id="previewContent" style={styles.container}>
-        <div id="previewTitle" style={styles.title}>{ this.props.previewItem.source || 'immmedia' }: preview</div>
+        <div id="previewTitle" style={styles.title}>{ this.props.previewItem.source || 'immmedia' }</div>
         { this.props.previewItem.source === '' ? 
           <EmptyPreview window={this.state} /> : null }
         { this.props.previewItem.source === 'nyt' ? 

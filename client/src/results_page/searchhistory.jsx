@@ -71,7 +71,7 @@ var SearchHistory = React.createClass({
 
     return (
       <div id="recentlyVisited" style={styles.container}>
-        <div style={styles.title}>immedia: recently visited</div>
+        <div style={styles.title}>recently visited</div>
         <div style={styles.searches}>{ history }</div>
       </div>
     );
