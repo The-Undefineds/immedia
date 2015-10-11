@@ -6,7 +6,7 @@ var youtube = 'https://www.googleapis.com/youtube/v3';
 
 module.exports = {
   search : function(request, response) {
-    var itemToSearch = request.body.searchTerm;
+    var itemToSearch = request.body.searchTerm.toLowerCase();
 
     if (itemToSearch === 'immediahomepage') {
       itemToSearch = '';

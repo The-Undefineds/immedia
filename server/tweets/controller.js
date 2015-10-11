@@ -78,6 +78,7 @@ var requestNewTweets = function(screenName, sinceID, maxID){
           }
           var newTweet = {
             tweet_id: tweet_id,
+            tweet_id_str: tweet.id_str,
             created_at: created_at,
             url: help.extractUrl(tweet.text),
             retweet_count: tweet.retweet_count,

@@ -17,47 +17,49 @@ module.exports = {
     //The search term is then ranked based on its updated total
     Search.findOneAndUpdate({ search_term: searchTerm }, { $inc: { total: 1 }})
     // Search.findOneAndUpdate({ search_term: searchTerm }, { $inc: { total: 1 }, { weeklyCount[0]: 1 } })
-      .then (function(term) {
-        if (term) {
-          Search.findOne({ rank: term.rank - 1 })
-            .then(function(otherTerm) {
-              if(otherTerm) {
+    //   .then (function(term) {
+    //     if (term) {
+    //       if (term.rank && term.rank !== 1) {
+    //       Search.findOne({ rank: term.rank - 1 })
+    //         .then(function(otherTerm) {
+    //           if(otherTerm) {
 
-                //The total popularity count will be calculated with priority on the current week's search total
-                //(denoted by searchCountArr[0]).
-                var calcPopCount = function(searchCountArr) {
-                  var popCount = 0;
-                  for (var i = 0; i < searchCountArr; i++) {
-                    popCount = popCount + searchCountArr[i]*(4/i);
-                  }
-                  return popCount;
-                }
+    //             //The total popularity count will be calculated with priority on the current week's search total
+    //             //(denoted by searchCountArr[0]).
+    //             var calcPopCount = function(searchCountArr) {
+    //               var popCount = 0;
+    //               for (var i = 0; i < searchCountArr; i++) {
+    //                 popCount = popCount + searchCountArr[i]*(4/i);
+    //               }
+    //               return popCount;
+    //             }
 
-                termPopCount = calcPopCount(term.weeklyCount);
-                otherTermPopCount = calcPopCount(otherTerm.weeklyCount);
+    //             // termPopCount = calcPopCount(term.weeklyCount);
+    //             // otherTermPopCount = calcPopCount(otherTerm.weeklyCount);
 
-                //If the current search term's popularity count now exceeds the pop count of the next highest ranked
-                //term, the current term's rank will be incremented, the other decremented.
-                if (term.total > otherTerm.total) {
-                // if (termPopCount > otherTermPopCount) {
-                  Search.findOneAndUpdate({ search_term: term.search_term }, { $inc: { rank: 1 }});
-                  Search.findOneAndUpdate({ search_term: otherTerm.search_term }, { $inc: { rank: -1 }});
-                }
-              }
-            })
-        } else {
-          //If the current search term is not found in the database, a new entry will be created with a ranking
-          //equal to the number of search terms in the database.
-          Search.create({
-            rank: newSearchRank,
-            count: [],
-            total: 1,
-            search_term: searchTerm,
-            img: img,
-          });
-          newSearchRank++;
-      }
-    })
+    //             //If the current search term's popularity count now exceeds the pop count of the next highest ranked
+    //             //term, the current term's rank will be incremented, the other decremented.
+    //             if (term.total > otherTerm.total) {
+    //             // if (termPopCount > otherTermPopCount) {
+    //               Search.findOneAndUpdate({ search_term: term.search_term }, { $inc: { rank: 1 }});
+    //               Search.findOneAndUpdate({ search_term: otherTerm.search_term }, { $inc: { rank: -1 }});
+    //             }
+    //           }
+    //         })
+    //       }
+    //     } else {
+    //       //If the current search term is not found in the database, a new entry will be created with a ranking
+    //       //equal to the number of search terms in the database.
+    //       Search.create({
+    //         rank: newSearchRank,
+    //         count: [],
+    //         total: 1,
+    //         search_term: searchTerm,
+    //         img: img,
+    //       });
+    //       newSearchRank++;
+    //   }
+    // })
   },
 
   getPopularSearches: function(req, res, next) {
@@ -181,20 +183,23 @@ module.exports = {
   
         var objToSend = {};
         for (i = 0; i < highestRetweet.length; i++){
-          if (!(highestRetweet[i].created_at)) continue;
+          if (!highestRetweet[i].created_at) continue;
           var date = help.getDate(highestRetweet[i].created_at);
-          objToSend[date] = objToSend[date] || { source: 'twitter news', children: []};
+          objToSend[date] = objToSend[date] || { source: 'twitter', children: []};
+
           objToSend[date].children.push({
-            tweetId: highestRetweet[i].tweet_id,
+            date: date,
+            tweet_id: highestRetweet[i].tweet_id,
+            tweet_id_str: highestRetweet[i].tweet_id_str,
             url: highestRetweet[i].url || '',
             img: highestRetweet[i].profile_img || '',
             background: highestRetweet[i].background_img || '',
-            source: highestRetweet[i].tweeted_by || 'The Void'
+            newssource: highestRetweet[i].tweeted_by || 'The Void',
+            text: highestRetweet[i].text || ''
           })
         }
         
-        console.log(objToSend)
-        response.send(highestRetweet);
+        response.send(objToSend);
       }
     });
   }

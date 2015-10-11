@@ -21,7 +21,7 @@ var search = {
 module.exports = {
   
   getTweetsPerson : function(request, response){
-    var queryString = request.body.searchTerm;
+    var queryString = request.body.searchTerm.toLowerCase();
     if (queryString === 'immediahomepage') {
       findUser(searchTweetsUrl, 'news', function(status, data) {
         response.status(status).send(data);
@@ -86,7 +86,7 @@ function grabTimeline(newUrl, params, callback){
       body = Array.prototype.slice.call(JSON.parse(body));
 
       if (body[0]) {
-        processResponseData(body, 3, callback);
+        processResponseData(body, 2, callback);
       } else {
         grabTimeline(newUrl, params, callback);
       }
@@ -132,6 +132,7 @@ function processResponseData(response, amountToDisplay, callback) {
       responseObj[date].children.push(tweetToSend);
     }
   }
+
   callback(200, responseObj);
 };
 

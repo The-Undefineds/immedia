@@ -27,8 +27,8 @@ mongoose.connect('mongodb://localhost/local', function(error){
 });
 
 // Activates cron-jobs that update news-tweets every half-hour
-// cron.job.start();
-// cron.job2.start();
+cron.job.start();
+cron.job2.start();
 
 //app.use();
 app.use(cors({
@@ -52,7 +52,7 @@ app.post('/api/nyt', nyt.getArticles);
 
 app.post('/api/twitter', twitter.getTweetsPerson);
 
-// app.post('/api/news', twitter.getNewsTweets);
+app.post('/api/news', twitter.getNewsTweets);
 
 app.get('/api/googleImages', googleImages.getImage);
 
