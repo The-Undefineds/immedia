@@ -24,6 +24,19 @@ var styles = StyleSheet.create({
     paddingLeft: '15px',
     paddingRight: '15px',
   },
+  searchButton: {
+      verticalAlign: 'middle',
+      marginLeft: '2px',
+      marginTop: '10px',
+      width: '100px',
+      height: '25px',
+      fontFamily: 'Nunito',
+      fontSize: '12px',
+      color: 'white',
+      textAlign: 'center',
+      background: '#3498db',
+      cursor: 'pointer',
+  },
 });
 
 var NytPreview = React.createClass({
@@ -49,6 +62,7 @@ var NytPreview = React.createClass({
             null
           }
           <p style={styles.body}>{ this.props.previewItem.abstract }</p>
+          <button style={styles.searchButton}>read more</button>
         </div>
       </a>
     );

@@ -6,7 +6,7 @@ var Summary = require('./summary.jsx');
 
 var styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: 'fixed',
     top: '60px',
     paddingLeft: '15px',
     paddingRight: '5px',

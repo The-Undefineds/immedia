@@ -15,8 +15,8 @@ var cron = require('./cronjob.js');
 
 var app = express();
 var server = http.createServer(app);
-var port = process.env.PORT || 3000;
-var url = process.env.PORT ? 'http://immedia.xyz':'127.0.0.1'; //Change url as necessary
+var port = 3000;
+var url = '127.0.0.1'; //Change url as necessary
 
 mongoose.connect('mongodb://localhost/local', function(error){
   if (error) {
