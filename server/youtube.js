@@ -24,15 +24,10 @@ module.exports = {
 function callYoutube(date, item, callback){
   var search;
   if(item === ""){
-    //used for popular searchs in any given day of a week
-    var todayAndYesterday = utils.getDateTodayAndYesterday('-');
-    var today = todayAndYesterday.today + 'T00:00:00Z';
-    var yesterday = todayAndYesterday.yesterday + 'T00:00:00Z';
-    console.log(today, yesterday) 
-
+    //used for popular searchs in any given week
     search = {
       url : youtube + '/search', 
-      qs : {part : 'snippet', type : 'video', videoEmbeddable : true, order: 'viewCount', publishedAfter: yesterday, publishedBefore: today, key : key.youtube},
+      qs : {part : 'snippet', type : 'video', videoEmbeddable : true, order: 'viewCount', key : key.youtube},
       method : 'GET'
     }
   }else{
