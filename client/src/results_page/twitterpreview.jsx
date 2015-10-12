@@ -32,11 +32,12 @@ var TwitterPreview = React.createClass({
         tweetId,
         document.getElementById('tweet')
         )
-        // .then(function(element) {
-        //   var innerHTML = window.frames[0].document.body.innerHTML
-        //   var imgInd = innerHTML.search("img");
-        //   console.log(innerHTML.slice(imgInd, 100)); 
-        // })
+        .then(function(element) {
+          var innerHTML = window.frames[0].document.body.innerHTML;
+          console.log('tweet innerhtml:', innerHTML);
+          var imgInd = innerHTML.search("img");
+          console.log(innerHTML.slice(imgInd, 100)); 
+        })
   },
 
   componentDidMount: function() {

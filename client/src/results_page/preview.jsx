@@ -50,7 +50,7 @@ var Preview = React.createClass({
           <EmptyPreview window={this.state} /> : null }
         { this.props.previewItem.source === 'nyt' ? 
           <NytPreview previewItem={ this.props.previewItem } /> : null }
-        { this.props.previewItem.source === 'twitter' ? 
+        { this.props.previewItem.source === 'twitter' || this.props.previewItem.source === 'twitter news' ? 
           <TwitterPreview previewItem={ this.props.previewItem } /> : null }
         { this.props.previewItem.source === 'youtube' ? 
           <YouTubePreview previewItem={ this.props.previewItem } width={styles.container.width} height={styles.container.height} /> : null }

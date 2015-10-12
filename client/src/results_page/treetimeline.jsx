@@ -1,7 +1,7 @@
 var React = require('react');
 var StyleSheet = require('react-style');
 
-var i = 0;
+var idCounter = 0;
 
 var styles = StyleSheet.create({
   container: {
@@ -87,7 +87,7 @@ var TreeTimeLine = React.createClass({
 
   componentDidMount: function(){
     var component = this;
-    this.query(this.props.searchTerm);
+    this.query(this.props.searchTerm.toLowerCase());
     // this.setTimeSpan(this.state.timeSpan);
 
     //When a user scrolls to the bottom of the document, a new timeline will be rendered that is 7 days longer.
@@ -131,8 +131,10 @@ var TreeTimeLine = React.createClass({
 
   handleQuery: function(searchQuery){
     var component = this;
+
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
+        console.log('delivered to timeline:', response);
         component.renderCount++;
         // Set State to initiate a re-rendering based on new API call data
         this.setState(function(previousState, currentProps) {
@@ -231,12 +233,11 @@ var TreeTimeLine = React.createClass({
   },
 
   mouseOver: function(item) {
-    if (this.mousedOver == item) {
+    if (this.mousedOver === item) {
       return;
     } else {
       this.mousedOver = item;
     }
-
     this.props.mouseOver({
         title: item.title,
         date: item.date,
@@ -246,6 +247,7 @@ var TreeTimeLine = React.createClass({
         id: item.tweet_id,
         tweetId: item.tweet_id_str,
         byline: (item.hasOwnProperty('byline') ? item.byline : ''),
+        videoId: (item.hasOwnProperty('videoId') ? item.videoId : ''),
         abstract: (item.hasOwnProperty('abstract') ? item.abstract : ''),
         height: (item.hasOwnProperty('height') ? item.height : ''),
         width: (item.hasOwnProperty('width') ? item.width : ''),
@@ -304,12 +306,7 @@ var TreeTimeLine = React.createClass({
       })
       .call(yAxis);
 
-    // var timeLine = svg.selectAll('.timeLine')
-    //   .data({ 'name': 'data', 'children': this.state.apiData })
-    //   .attr('y', function(d) { return y(new Date(d.date)); })
-
-    svg.selectAll('g.node').remove();
-
+    // svg.selectAll('g.node').remove();
 
     //-----draw tree from each tick on yAxis timeline ------
 
@@ -379,10 +376,7 @@ var TreeTimeLine = React.createClass({
             d.y = 120 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
           };
           if (d.depth === 3) {
-            // if (!d.previewed && d.parent.children) {
-              component.mouseOver(d);
-            //   d.previewed = true;
-            // }
+            component.mouseOver(d);
             d.y = 240 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
 
             }
@@ -391,7 +385,7 @@ var TreeTimeLine = React.createClass({
 
       // Update the nodes…
       var node = svg.selectAll('g.node')
-          .data(nodes, function(d) { return d.id || (d.id = ++i); });
+          .data(nodes, function(d) { return d.id || (d.id = ++idCounter); });
 
       // Enter any new nodes at the parent's previous position.
       var nodeEnter = node.enter().append('svg:g')
@@ -402,7 +396,7 @@ var TreeTimeLine = React.createClass({
             window.open(d.url,'_blank');
             return;
           } else if (d.parent.source === 'youtube') {
-            window.open('https://www.youtube.com/watch?v=' + d.id, '_blank');
+            window.open('https://www.youtube.com/watch?v=' + d.videoId, '_blank');
             return;
           }
           toggle(d); 
@@ -463,7 +457,17 @@ var TreeTimeLine = React.createClass({
           .attr('x', 4)
           .attr('y', 5)
           .attr('width', 15)
-          .attr('height', 15);
+          .attr('height', 15)
+        defs.append('svg:pattern')
+          .attr('id', 'tile-twitternews')
+          .attr('width', '20')
+          .attr('height', '20')
+          .append('svg:image')
+          .attr('xlink:href', 'https://pbs.twimg.com/profile_images/3756363930/c96b2ab95a4149493229210abaf1f1fa_400x400.png')
+          .attr('x', -2)
+          .attr('y', -1)
+          .attr('width', 27)
+          .attr('height', 27)
 
       nodeEnter.append('svg:circle')
         .attr('r', 1e-6)
@@ -500,10 +504,12 @@ var TreeTimeLine = React.createClass({
             var dat = d;
             if (d.source == 'twitter') {
               return 'url(/#tile-twitter)';
-            } else if (d.source == 'nyt') {
+            } else if (d.source === 'nyt') {
               return 'url(/#tile-nyt)';
-            } else if (d.source == 'youtube') {
+            } else if (d.source === 'youtube') {
               return 'url(/#tile-youtube)';
+            } else if (d.source === 'twitter news') {
+              return 'url(/#tile-twitternews';
             } else if (d.img === '') {
               return colors(d.id);
             } else if (d.depth === 3) {
@@ -521,8 +527,8 @@ var TreeTimeLine = React.createClass({
                     return d.img;
                   }
                 })
-                .attr('x', 0)
-                .attr('y', 0)
+                .attr('x', -3)
+                .attr('y', -1)
                 .attr('width', 55)
                 .attr('height', 55)
               return 'url(/#tile-img' + d.id + ')'
@@ -552,13 +558,14 @@ var TreeTimeLine = React.createClass({
             var origin = { x: source.x0, y: source.y0 };
             return diagonal({ source: origin, target: origin });
           })
-          .style('stroke', function(d) {
-            if (d.x === root.y0) { return; }
-          })
           .style({
             fill: 'none',
-            stroke: '#ccc',
             strokeWidth: '1.5px',
+          })
+          //The links from the root node (hidden) to the nodes on the timeline will not show.
+          .style('stroke', function(d) {
+            if (d.target.depth === 1) { return 'white'; }
+            else { return '#ccc'; };
           })
         .transition()
           .duration(500)

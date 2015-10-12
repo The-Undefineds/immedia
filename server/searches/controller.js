@@ -185,7 +185,7 @@ module.exports = {
         for (i = 0; i < highestRetweet.length; i++){
           if (!highestRetweet[i].created_at) continue;
           var date = help.getDate(highestRetweet[i].created_at);
-          objToSend[date] = objToSend[date] || { source: 'twitter', children: []};
+          objToSend[date] = objToSend[date] || { source: 'twitter news', children: []};
 
           objToSend[date].children.push({
             date: date,
