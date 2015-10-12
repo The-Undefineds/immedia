@@ -181,6 +181,12 @@ var TopBar = React.createClass({
     console.log('downloading extension (fill me in)');
   },
 
+  componentDidUpdate: function(prevProps, prevState) {
+    if(prevProps.searchTerm !== this.props.searchTerm) {
+      $('#topbar').val(this.props.searchTerm.replace(/\s\(.*$/, '').toLowerCase());
+    }
+  },
+
   render: function(){
     this.getDynamicStyles();
 
