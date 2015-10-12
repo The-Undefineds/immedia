@@ -25,15 +25,18 @@ window.twttr = (function(d, s, id) {
 var TwitterPreview = React.createClass({
 
   embedTweet: function(tweetId) {
-
+    console.log('twitter preview embed tweet tweetId:', tweetId);
     //A new div with id "tweet" is created, and the embedded tweet is appended to it.
     $('<div id="tweet"></div>').hide().prependTo('#twitterPreview').fadeIn(800);
       twttr.widgets.createTweet(
         tweetId,
         document.getElementById('tweet')
-        ).then(function(element) {
-          console.log(element);
-        })
+        )
+        // .then(function(element) {
+        //   var innerHTML = window.frames[0].document.body.innerHTML
+        //   var imgInd = innerHTML.search("img");
+        //   console.log(innerHTML.slice(imgInd, 100)); 
+        // })
   },
 
   componentDidMount: function() {
@@ -45,6 +48,8 @@ var TwitterPreview = React.createClass({
     //moused over in the D3 timeline.
     $('#twitterPreview').empty();
     var twitterItem = this.props.previewItem;
+    console.log('twitter preview component preview item:', twitterItem);
+    console.log(twitterItem);
     this.embedTweet(twitterItem.tweetId);
   },
 

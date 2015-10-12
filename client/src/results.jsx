@@ -66,6 +66,7 @@ var ResultsView = React.createClass({
   },
 
   mouseOver: function(item){   
+    console.log('mousedover results item:', item);
     this.item = item;
     this.renderPreview(this.item);
   },
