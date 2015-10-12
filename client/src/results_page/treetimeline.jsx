@@ -15,12 +15,11 @@ var styles = StyleSheet.create({
     fontFamily: 'Nunito',
     fontSize: '24px',
     color: '#00BFFF',
-    backgroundColor: 'rgba(245, 245, 245, 1)',
+    backgroundColor: 'rgba(232, 232, 232, 1)',
     marginTop: '10px',
     marginBottom: '5px',
     textAlign: 'left',
     paddingLeft: '10px',
-    width: '325px'
   },
   subhead: {
     position: 'fixed',
@@ -32,21 +31,20 @@ var styles = StyleSheet.create({
     marginBottom: '5px',
     textAlign: 'left',
     paddingLeft: '10px',
-    width: '325px'
   },
   d3: {
     zIndex: -1,
-    marginTop: '55px',
+    marginTop: '60px',
+    overflow: 'scroll',
   },
   block: {
     position: 'fixed',
     zIndex: 1,
     backgroundColor: 'rgba(255, 255, 255, 1)',
-    width: '325px',
     height: '50px',
     marginBottom: '5px',
-    textAlign: 'left',
     paddingLeft: '10px',
+    textAlign: 'left',
   }
 });
 
@@ -134,6 +132,7 @@ var TreeTimeLine = React.createClass({
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
         component.renderCount++;
+
         // Set State to initiate a re-rendering based on new API call data
         this.setState(function(previousState, currentProps) {
           // Make a copy of previous apiData to mutate and use to reset State
@@ -194,7 +193,6 @@ var TreeTimeLine = React.createClass({
   },
 
   render: function() {
-    // var searchTermClean = this.props.searchTerm.replace(/\s\(.*$/, '').toLowerCase();
     var component = this;
     var generateDates = function(timeSpan) {
         component.dates = [];
@@ -212,7 +210,7 @@ var TreeTimeLine = React.createClass({
 
     return (
       <div id="d3container" style={styles.container}>
-        <div id="d3cockblocker" style={styles.block}>
+        <div id="d3blocker" style={styles.block}>
           <div id="d3title" style={styles.title}>recent events</div>
           <div id="d3subhead" style={styles.subhead}>hover over a bubble to preview</div>
         </div>
@@ -223,10 +221,13 @@ var TreeTimeLine = React.createClass({
 
   getDynamicStyles: function() {
     styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 0) + 'px';
-    styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
-    styles.container.height = (this.state.height - 60) + 'px';
-    // styles.container.height = this.dates.length * 80;
-    // styles.d3.height = this.state.height - 120 + 'px';
+    styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20 + 'px';
+    styles.container.height = (this.state.height - 50) + 'px';
+    styles.block.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 10 + 'px';
+    styles.title.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
+    styles.subhead.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
+    styles.d3.height = this.state.height - 110 + 'px';
+    styles.d3.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20 + 'px';
     return;
   },
 
@@ -266,7 +267,7 @@ var TreeTimeLine = React.createClass({
       left: 40
     };
 
-    var width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350),
+    var width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20,
         height = this.state.height;
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
@@ -397,7 +398,6 @@ var TreeTimeLine = React.createClass({
       var nodeEnter = node.enter().append('svg:g')
         .attr('class', 'node')
         .on('click', function(d) {
-          console.log(d);
           if (d.url) { 
             window.open(d.url,'_blank');
             return;
