@@ -6,7 +6,7 @@ var styles = StyleSheet.create({
       zIndex: 1,
       position: 'fixed',
       height: '50px',
-      backgroundColor: 'rgba(245,245,245,1)',
+      backgroundColor: 'rgba(232,232,232,1)',
       textAlign: 'center',      
   },
   logo: {
@@ -115,7 +115,6 @@ var TopBar = React.createClass({
             'search': this.state.searchTerm,
           },
           success: function( data ) {
-            console.log('wiki suggestions:', data);
             if (data[1].indexOf(this.state.searchTerm) !== -1) {
               this.props.searchInit(this.state.searchTerm)
             } else {
