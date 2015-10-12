@@ -28,18 +28,34 @@ var styles = StyleSheet.create({
     color: 'rgb(128,128,128)',
   },
   searchButton: {
-      verticalAlign: 'middle',
-      marginLeft: '2px',
-      marginTop: '10px',
-      width: '100px',
-      height: '25px',
-      fontFamily: 'Nunito',
-      fontSize: '12px',
-      color: 'white',
-      textAlign: 'center',
-      background: '#3498db',
-      cursor: 'pointer',
+    verticalAlign: 'middle',
+    marginLeft: '2px',
+    marginTop: '10px',
+    width: '100px',
+    height: '25px',
+    fontFamily: 'Nunito',
+    fontSize: '12px',
+    color: 'white',
+    textAlign: 'center',
+    background: '#3498db',
+    cursor: 'pointer',
   },
+  downloadButton: {
+    borderRadius: '50px',
+    position: 'absolute',
+    right: '20px',
+    marginTop: '8px',
+    marginLeft: '2px',
+    paddingTop: '2px',
+    color: '#fff',
+    fontWeight: 'normal',
+    fontSize: '25%',
+    background: '#44c31d',
+    padding: '5px',
+    cursor: 'pointer',
+    width: '200px',
+    height: '30px'
+  }
 });
 
 var TopBar = React.createClass({
@@ -150,6 +166,10 @@ var TopBar = React.createClass({
     }
   },
 
+  downloadExtension: function(){
+    console.log('downloading extension (fill me in)');
+  },
+
   render: function(){
     this.getDynamicStyles();
 
@@ -159,6 +179,7 @@ var TopBar = React.createClass({
         <span style={styles.title} onClick={this.goBackHome}>immedia</span>
         <input id='topbar' type='text' style={styles.searchBar} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
         <input type='button' style={styles.searchButton} onClick={this.handleSubmit} value='immedia search'/>
+        <input type='button' style={styles.downloadButton} value={"download chrome extension"} onClick={this.downloadExtension} />
       </div>
     );
   },
