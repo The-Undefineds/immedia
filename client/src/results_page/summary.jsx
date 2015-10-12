@@ -11,7 +11,7 @@ var styles = StyleSheet.create({
     fontFamily: 'Nunito',
     fontSize: '24px',
     color: '#00BFFF',
-    backgroundColor: 'rgba(128, 128, 128, 0.1)',
+    backgroundColor: 'rgb(232, 232, 232)',
     marginBottom: '10px',
     textAlign: 'left',
     paddingLeft: '5px',
@@ -42,25 +42,24 @@ var Summary = React.createClass({
     this.getDynamicStyles();
   },
 
-  componentDidUpdate: function() {
-    $(function() {
-      $('.wikiLink').on('click', function(event) {
-        this.props.searchInit($(event.target).text());
+  componentDidUpdate: function(prevProps, prevState) {
+    if(prevProps.searchTerm !== this.props.searchTerm) {
+      $(function() {
+        $('.wikiLink').on('click', function(event) {
+          this.props.searchInit($(event.target).text());
+        }.bind(this));
       }.bind(this));
-    }.bind(this));
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    if(!(this.state.width === nextProps.window.width && this.state.height === nextProps.window.height)) {
-      this.setState({
-        width: nextProps.window.width,
-        height: nextProps.window.height,
-      });
     }
   },
 
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      width: nextProps.window.width,
+      height: nextProps.window.height,
+    });
+  },
+
   render: function() {
-    // var searchTermClean = this.props.searchTerm.replace(/\s\(.*$/, '').toLowerCase();
     this.getDynamicStyles();
 
     return (
@@ -75,10 +74,9 @@ var Summary = React.createClass({
   getDynamicStyles: function() {
     var $wikiTitle = $('#wikiTitle');
     styles.summary.height = (this.state.height - 60 - 140) + 'px';
-    // styles.image.height = (this.state.height * 0.4) + 'px';
-    // styles.image.maxWidth = (this.state.width < 1350 ? 365 * (this.state.width / 1350) : 365) + 'px';
-    styles.body.height = (this.state.height - 60 - 140) - $wikiTitle.height() - (this.state.height * 0.4) + 'px';
     styles.title.width = (this.state.width < 1350 ? 365 * (this.state.width / 1350) : 365) + 'px';
+    styles.image.height = this.state.height * 0.4 + 'px';
+    styles.body.height = (this.state.height - 60 - 140) - 40 - (this.state.height * 0.4) + 'px';
   },
 
 });
