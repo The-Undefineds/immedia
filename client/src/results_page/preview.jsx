@@ -8,19 +8,29 @@ var EmptyPreview = require('./emptypreview.jsx');
 
 var styles = StyleSheet.create({
   container: {
-    position: 'fixed',
-    top: '60px',
+    position: 'absolute',
+    top: '50px',
     paddingRight: '10px',
     textAlign: 'center',
+  },
+  block: {
+    position: 'fixed',
+    zIndex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 1)',
+    marginBottom: '10px',
+    height: '40px',
   },
   title: {
     fontFamily: 'Nunito',
     fontSize: '24px',
     color: '#00BFFF',
-    backgroundColor: 'rgba(128, 128, 128, 0.1)',
+    backgroundColor: 'rgb(232,232,232)',
+    marginTop: '10px',
     marginBottom: '10px',
     textAlign: 'left',
     paddingLeft: '5px',
+    zIndex: '1',
+    position: 'fixed',
   },
 });
 
@@ -41,29 +51,31 @@ var Preview = React.createClass({
   },
 
   render: function() {
-    var searchTermClean = this.props.searchTerm.replace(/\s\(.*$/, '').toLowerCase();
     this.getDynamicStyles();
 
     return (
       <div id="previewContent" style={styles.container}>
-        <div id="previewTitle" style={styles.title}>{ this.props.previewItem.source || 'immmedia' }</div>
+        <div id="previewBlocker" style={styles.block} >
+          <div id="previewTitle" style={styles.title}>{ this.props.previewItem.source || 'immmedia' }</div>
+        </div>
         { this.props.previewItem.source === '' ? 
           <EmptyPreview window={this.state} /> : null }
         { this.props.previewItem.source === 'nyt' ? 
-          <NytPreview previewItem={ this.props.previewItem } /> : null }
+          <NytPreview previewItem={ this.props.previewItem } window={this.state} /> : null }
         { this.props.previewItem.source === 'twitter' ? 
-          <TwitterPreview previewItem={ this.props.previewItem } /> : null }
+          <TwitterPreview previewItem={ this.props.previewItem } window={this.state} /> : null }
         { this.props.previewItem.source === 'youtube' ? 
-          <YouTubePreview previewItem={ this.props.previewItem } width={styles.container.width} height={styles.container.height} /> : null }
+          <YouTubePreview previewItem={ this.props.previewItem } width={styles.container.width} height={styles.container.height} window={this.state} /> : null }
       </div>
     );
   },
 
   getDynamicStyles: function() {
-    var $d3title = $('#d3title');
     styles.container.left = (this.state.width / 2) - (this.state.width - 1350 < 0 ? 500 * (this.state.width / 1350) / 2 : 250) + 'px';
     styles.container.width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) + 'px';
-    styles.container.height = (this.state.height - 600 < 0 ? 600 * (this.state.height/783) : 600) + 'px';
+    styles.container.height = this.state.height - 60 + 'px';
+    styles.block.width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) + 'px';
+    styles.title.width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) + 'px';
   },
 });
 
