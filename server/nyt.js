@@ -186,7 +186,7 @@ var prepareDataForResponse = function() {
 module.exports = {
 
   'getArticles': function(req, res) {
-    var searchTerm = req.body.searchTerm.replace(/\s/g, '+');   // Remove spaces in searchTerm and replace with '+'
+    var searchTerm = req.body.searchTerm.replace(/\s/g, '+').toLowerCase();   // Remove spaces in searchTerm and replace with '+'
     if (searchTerm === 'immediahomepage') { searchTerm = 'news' }
     var days = req.body.days === undefined ? 7 : Number(req.body.days);
 

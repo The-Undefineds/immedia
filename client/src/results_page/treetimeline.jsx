@@ -68,7 +68,7 @@ var TreeTimeLine = React.createClass({
     'nyt',
     'twitter',
     'youtube',
-    // 'news'
+    'news'
   ],
 
   //Rendering the timeline will start a query for a search term passed down from the results page.
@@ -117,21 +117,23 @@ var TreeTimeLine = React.createClass({
 
     //If the new search term matches the term queried for the current results, nothing will change.
     if (this.props.searchTerm !== newProps.searchTerm) {
-      this.query(newProps.searchTerm);
+      this.query(newProps.searchTerm.toLowerCase());
       this.setState({apiData: []});
     }
 
-    this.setState({
-      width: newProps.window.width,
-      height: newProps.window.height,
-    });
-
+    // this.setState({
+    //   width: newProps.window.width,
+    //   height: newProps.window.height,
+    // });
   },
 
+  renderCount: 0,
+
   handleQuery: function(searchQuery){
+    var component = this;
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
-        console.log(response);
+        component.renderCount++;
         // Set State to initiate a re-rendering based on new API call data
         this.setState(function(previousState, currentProps) {
           // Make a copy of previous apiData to mutate and use to reset State
@@ -163,6 +165,7 @@ var TreeTimeLine = React.createClass({
             // If loop terminates fully, no content exists for date
             // so add content to the State array
             if(i === previousApiData.length) {
+              if (component.dates.indexOf(date) == -1) {continue;}
               previousApiData.push(
                 {
                   'date': date, 
@@ -186,14 +189,13 @@ var TreeTimeLine = React.createClass({
   dates: [],
 
   setTimeSpan: function(timeSpan) {
-    this.setState({ height: timeSpan * 120 });
+    // this.setState({ height: timeSpan * 120 });
     this.setState({ timeSpan: timeSpan });
   },
 
   render: function() {
 
     var component = this;
-
     var generateDates = function(timeSpan) {
         component.dates = [];
         for (var i = -1; i < timeSpan; i++) {
@@ -224,7 +226,7 @@ var TreeTimeLine = React.createClass({
     styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
     styles.container.height = (this.state.height - 60) + 'px';
     // styles.container.height = this.dates.length * 80;
-    styles.d3.height = this.state.height - 120 + 'px';
+    // styles.d3.height = this.state.height - 120 + 'px';
     return;
   },
 
@@ -234,13 +236,14 @@ var TreeTimeLine = React.createClass({
     } else {
       this.mousedOver = item;
     }
+
     this.props.mouseOver({
         title: item.title,
         date: item.date,
         url: item.url,
         img: item.img,
         source: item.parent.source,
-        id: item.id,
+        id: item.tweet_id,
         tweetId: item.tweet_id_str,
         byline: (item.hasOwnProperty('byline') ? item.byline : ''),
         abstract: (item.hasOwnProperty('abstract') ? item.abstract : ''),
@@ -330,9 +333,17 @@ var TreeTimeLine = React.createClass({
       }
 
       // Initialize the display to show a few nodes.
-      // root.children.forEach(toggleAll);
-      // toggle(root.children[0]);
-      // toggle(root.children[1]);
+      // if (this.renderCount === this.apis.length) {
+      //   root.children.forEach(toggleAll);
+      //   toggle(root.children[0]);
+      //   root.children[0].children.forEach(function(child) {
+      //     toggle(child);
+      //   })
+      //   toggle(root.children[1]);
+      //   root.children[1].children.forEach(function(child) {
+      //     toggle(child);
+      //   })
+      // }
 
       update(root);
 
@@ -361,11 +372,6 @@ var TreeTimeLine = React.createClass({
           }
           d.x = y(new Date(d.date)) - 20;
           d.y = 0;
-          // if (d.x > height) { 
-          //   d.outOfRange = true; 
-          // } else {
-          //   d.outOfRange = false;
-          // }
           d.fixed = true;
         }
         else {
@@ -373,10 +379,10 @@ var TreeTimeLine = React.createClass({
             d.y = 120 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
           };
           if (d.depth === 3) {
-            if (!d.previewed && d.parent.children) {
+            // if (!d.previewed && d.parent.children) {
               component.mouseOver(d);
-              d.previewed = true;
-            }
+            //   d.previewed = true;
+            // }
             d.y = 240 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
 
             }
@@ -532,6 +538,10 @@ var TreeTimeLine = React.createClass({
       nodeExit.select('circle')
           .attr('r', 1e-6);
 
+      nodes.forEach(function(d) {
+        d.x0 = d.x;
+        d.y0 = d.y;
+      });
 
       var link = svg.selectAll('path.link')
           .data(tree.links(nodes), function(d) { return d.target.id; })
@@ -567,10 +577,7 @@ var TreeTimeLine = React.createClass({
           })
           .remove();
 
-      nodes.forEach(function(d) {
-        d.x0 = d.x;
-        d.y0 = d.y;
-      });
+
     }
 
     function toggle(d) {
