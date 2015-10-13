@@ -80,6 +80,7 @@ var addArticlesToArticleSearch = function(responses) {
     var articles = Array.prototype.slice.call(JSON.parse(responses[i]['1']).response.docs);
     for(var j = 0; j < articles.length; j++) {
       articleSearch[articles[j]['web_url']] = articles[j];                                    // Add articles from parallel async requests to object from line 46
+      addArticleToArticleSearchDate(articles[j]);
     }
   }
   return;
@@ -186,7 +187,7 @@ var prepareDataForResponse = function() {
 module.exports = {
 
   'getArticles': function(req, res) {
-    var searchTerm = req.body.searchTerm.replace(/\s/g, '+');   // Remove spaces in searchTerm and replace with '+'
+    var searchTerm = req.body.searchTerm.replace(/\s/g, '+').toLowerCase();   // Remove spaces in searchTerm and replace with '+'
     if (searchTerm === 'immediahomepage') { searchTerm = 'news' }
     var days = req.body.days === undefined ? 7 : Number(req.body.days);
 

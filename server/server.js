@@ -32,7 +32,7 @@ mongoose.connect('mongodb://localhost/local', function(error){
 
 //app.use();
 app.use(cors({
-  allowedOrigins: ['localhost:3000', 'http://www.immedia.xyz', 'http://immedia.xyz']
+  allowedOrigins: ['localhost:80', 'http://www.immedia.xyz', 'http://immedia.xyz']
 }))
 
 app.use(express.static('dist'));
@@ -52,7 +52,7 @@ app.post('/api/nyt', nyt.getArticles);
 
 app.post('/api/twitter', twitter.getTweetsPerson);
 
-// app.post('/api/news', twitter.getNewsTweets);
+app.post('/api/news', twitter.getNewsTweets);
 
 app.get('/api/googleImages', googleImages.getImage);
 

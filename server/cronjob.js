@@ -13,7 +13,7 @@ var job = new CronJob({
 
 // Calls 'onTick' every hour (10:30AM, 11:30AM, and so on)
 var job2 = new CronJob({
-  cronTime: '00 30 * * * 1-7',
+  cronTime: '00 44 * * * 1-7',
   onTick: function() {
     updateNewsOrgTweets();
   },

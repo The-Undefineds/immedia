@@ -5,6 +5,7 @@ var TweetsSchema = new mongoose.Schema({
     type: Number,
     unique: true
   },
+  tweet_id_str: String,
   created_at: String,
   url: String,
   retweet_count: Number,

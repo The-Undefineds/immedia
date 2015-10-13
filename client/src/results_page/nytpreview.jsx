@@ -2,6 +2,13 @@ var React = require('react');
 var StyleSheet = require('react-style');
 
 var styles = StyleSheet.create({
+  preview: {
+    top: '45px',
+    paddingRight: '5px',
+    position: 'absolute',
+    overflow: 'scroll',
+    paddingBottom: '5px',
+  },
   anchor: {
     textDecoration: 'none',
     color: 'inherit',
@@ -10,19 +17,20 @@ var styles = StyleSheet.create({
     marginTop: '0px',
     marginBottom: '10px',
     textAlign: 'left',
+    paddingLeft: '10px',
   },
   byline: {
     marginTop: '5px',
     marginBottom: '5px',
     textAlign: 'left',
+    paddingLeft: '10px',
   },
   image: {
     textAlign: 'center',
   },
   body: {
     textAlign: 'left',
-    paddingLeft: '15px',
-    paddingRight: '15px',
+    paddingLeft: '10px',
   },
   searchButton: {
       verticalAlign: 'middle',
@@ -41,24 +49,30 @@ var styles = StyleSheet.create({
 
 var NytPreview = React.createClass({
 
-  render: function() {
-    var ratio = 1;
-    if(this.props.previewItem.height > this.props.previewItem.width) {
-      if((320 / this.props.previewItem.height) < 1) {
-        ratio = 320 / this.props.previewItem.height;
-      }
-    } else {
-      if((465 / this.props.previewItem.width) < 1) {
-        ratio = 465 / this.props.previewItem.width;
-      }
+  getInitialState: function() {
+    return {
+      width: this.props.window.width,
+      height: this.props.window.height,
     }
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      width: nextProps.window.width,
+      height: nextProps.window.height,
+    });
+  },
+
+  render: function() {
+    this.getDynamicStyles();
+
     return (
       <a style={styles.anchor} href={ this.props.previewItem.url } target="_blank">
-        <div>
+        <div style={styles.preview}>
           <h1 style={styles.headline}>{ this.props.previewItem.title }</h1>
           <h3 style={styles.byline}>{ this.props.previewItem.byline }</h3>
           { this.props.previewItem.img !== '' ? 
-            <img src={ this.props.previewItem.img } style={styles.image} height={ this.props.previewItem.height * ratio } width= { this.props.previewItem.width * ratio }></img> :
+            <img src={ this.props.previewItem.img } style={styles.image} ></img> :
             null
           }
           <p style={styles.body}>{ this.props.previewItem.abstract }</p>
@@ -66,6 +80,26 @@ var NytPreview = React.createClass({
         </div>
       </a>
     );
+  },
+
+  getDynamicStyles: function() {
+    var ratio = 1;
+    if(this.props.previewItem.height > this.props.previewItem.width) {
+      if((320 / this.props.previewItem.height) < 1) {
+        ratio = 320 / this.props.previewItem.height;
+      }
+    } else {
+      var width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) - 20;
+      if((width / this.props.previewItem.width) < 1) {
+        ratio = width / this.props.previewItem.width;
+      }
+    }
+
+    styles.image.height = this.props.previewItem.height * ratio;
+    styles.image.width = this.props.previewItem.width * ratio;
+
+    styles.preview.width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) + 'px';
+    styles.preview.height = this.state.height - 100 + 'px';
   },
 
 });

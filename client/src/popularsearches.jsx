@@ -12,7 +12,6 @@ var PopularSearches = React.createClass({
   componentDidMount: function() {
     var component = this;
     $.get('http://127.0.0.1:3000/searches/popularSearches/', function(data, status) {
-      console.log('popular searches:', data);
       component.setState({
         popularSearches: data,
       })

@@ -1,4 +1,5 @@
 var OAuth = require('./OAuth');
+var keys = require('./keys.js');
 var request = require('request');
 var utils = require('./utils.js');
 var searches = require('./searches/controller.js');
@@ -21,7 +22,7 @@ var search = {
 module.exports = {
   
   getTweetsPerson : function(request, response){
-    var queryString = request.body.searchTerm;
+    var queryString = request.body.searchTerm.toLowerCase();
     if (queryString === 'immediahomepage') {
       findUser(baseUrl, 'immediaHQ', function(status, data) {
         response.status(status).send(data);
@@ -35,7 +36,6 @@ module.exports = {
 
   getNewsTweets : function(request, response){
     var queryString = request.body.searchTerm;
-    console.log('search term:', queryString);
     searches.retrieveTweets(queryString, response);
   }
 }
@@ -78,7 +78,7 @@ function grabTimeline(newUrl, params, callback){
 
   search.url = newUrl;
   search.qs = {user_id : params.id, include_rts : 'false'};
-  search.headers.Authorization = OAuth(newUrl, 'user_id=' + params.id, 'include_rts=false');
+  search.headers.Authorization = 'Bearer ' + keys.twitterBearerToken;
 
   request(search, function(error, response, body){
     if(error) {
@@ -87,7 +87,7 @@ function grabTimeline(newUrl, params, callback){
       body = Array.prototype.slice.call(JSON.parse(body));
 
       if (body[0]) {
-        processResponseData(body, 3, callback);
+        processResponseData(body, 2, callback);
       } else {
         grabTimeline(newUrl, params, callback);
       }
@@ -133,6 +133,7 @@ function processResponseData(response, amountToDisplay, callback) {
       responseObj[date].children.push(tweetToSend);
     }
   }
+
   callback(200, responseObj);
 };
 

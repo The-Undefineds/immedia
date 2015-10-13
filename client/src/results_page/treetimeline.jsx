@@ -15,12 +15,11 @@ var styles = StyleSheet.create({
     fontFamily: 'Nunito',
     fontSize: '24px',
     color: '#00BFFF',
-    backgroundColor: 'rgba(245, 245, 245, 1)',
+    backgroundColor: 'rgba(232, 232, 232, 1)',
     marginTop: '10px',
     marginBottom: '5px',
     textAlign: 'left',
     paddingLeft: '10px',
-    width: '325px'
   },
   subhead: {
     position: 'fixed',
@@ -32,21 +31,20 @@ var styles = StyleSheet.create({
     marginBottom: '5px',
     textAlign: 'left',
     paddingLeft: '10px',
-    width: '325px'
   },
   d3: {
     zIndex: -1,
-    marginTop: '55px',
+    marginTop: '60px',
+    overflow: 'scroll',
   },
   block: {
     position: 'fixed',
     zIndex: 1,
     backgroundColor: 'rgba(255, 255, 255, 1)',
-    width: '325px',
     height: '50px',
     marginBottom: '5px',
-    textAlign: 'left',
     paddingLeft: '10px',
+    textAlign: 'left',
   }
 });
 
@@ -68,7 +66,7 @@ var TreeTimeLine = React.createClass({
     'nyt',
     'twitter',
     'youtube',
-    // 'news'
+    'news'
   ],
 
   //Rendering the timeline will start a query for a search term passed down from the results page.
@@ -117,7 +115,7 @@ var TreeTimeLine = React.createClass({
 
     //If the new search term matches the term queried for the current results, nothing will change.
     if (this.props.searchTerm !== newProps.searchTerm) {
-      this.query(newProps.searchTerm);
+      this.query(newProps.searchTerm.toLowerCase());
       this.setState({apiData: []});
     }
 
@@ -125,13 +123,16 @@ var TreeTimeLine = React.createClass({
       width: newProps.window.width,
       height: newProps.window.height,
     });
-
   },
 
+  renderCount: 0,
+
   handleQuery: function(searchQuery){
+    var component = this;
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
-        console.log(response);
+        component.renderCount++;
+
         // Set State to initiate a re-rendering based on new API call data
         this.setState(function(previousState, currentProps) {
           // Make a copy of previous apiData to mutate and use to reset State
@@ -163,6 +164,7 @@ var TreeTimeLine = React.createClass({
             // If loop terminates fully, no content exists for date
             // so add content to the State array
             if(i === previousApiData.length) {
+              if (component.dates.indexOf(date) == -1) {continue;}
               previousApiData.push(
                 {
                   'date': date, 
@@ -186,14 +188,12 @@ var TreeTimeLine = React.createClass({
   dates: [],
 
   setTimeSpan: function(timeSpan) {
-    this.setState({ height: timeSpan * 120 });
+    // this.setState({ height: timeSpan * 120 });
     this.setState({ timeSpan: timeSpan });
   },
 
   render: function() {
-
     var component = this;
-
     var generateDates = function(timeSpan) {
         component.dates = [];
         for (var i = -1; i < timeSpan; i++) {
@@ -210,8 +210,8 @@ var TreeTimeLine = React.createClass({
 
     return (
       <div id="d3container" style={styles.container}>
-        <div id="d3cockblocker" style={styles.block}>
-          <div id="d3title" style={styles.title}>immedia: recent events</div>
+        <div id="d3blocker" style={styles.block}>
+          <div id="d3title" style={styles.title}>recent events</div>
           <div id="d3subhead" style={styles.subhead}>hover over a bubble to preview</div>
         </div>
         <div id="d3canvas" style={styles.d3}></div>
@@ -221,19 +221,23 @@ var TreeTimeLine = React.createClass({
 
   getDynamicStyles: function() {
     styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 0) + 'px';
-    styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
-    styles.container.height = (this.state.height - 60) + 'px';
-    // styles.container.height = this.dates.length * 80;
-    styles.d3.height = this.state.height - 120 + 'px';
+    styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20 + 'px';
+    styles.container.height = (this.state.height - 50) + 'px';
+    styles.block.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 10 + 'px';
+    styles.title.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
+    styles.subhead.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
+    styles.d3.height = this.state.height - 110 + 'px';
+    styles.d3.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20 + 'px';
     return;
   },
 
   mouseOver: function(item) {
-    if (this.mousedOver == item) {
+    if (this.mousedOver === item) {
       return;
     } else {
       this.mousedOver = item;
     }
+
     this.props.mouseOver({
         title: item.title,
         date: item.date,
@@ -263,7 +267,7 @@ var TreeTimeLine = React.createClass({
       left: 40
     };
 
-    var width = (this.state.width - 1350 < 0 ? this.state.width * (350/1350) : 350),
+    var width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20,
         height = this.state.height;
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
@@ -330,9 +334,17 @@ var TreeTimeLine = React.createClass({
       }
 
       // Initialize the display to show a few nodes.
-      // root.children.forEach(toggleAll);
-      // toggle(root.children[0]);
-      // toggle(root.children[1]);
+      // if (this.renderCount === this.apis.length) {
+      //   root.children.forEach(toggleAll);
+      //   toggle(root.children[0]);
+      //   root.children[0].children.forEach(function(child) {
+      //     toggle(child);
+      //   })
+      //   toggle(root.children[1]);
+      //   root.children[1].children.forEach(function(child) {
+      //     toggle(child);
+      //   })
+      // }
 
       update(root);
 
@@ -361,11 +373,6 @@ var TreeTimeLine = React.createClass({
           }
           d.x = y(new Date(d.date)) - 20;
           d.y = 0;
-          // if (d.x > height) { 
-          //   d.outOfRange = true; 
-          // } else {
-          //   d.outOfRange = false;
-          // }
           d.fixed = true;
         }
         else {
@@ -373,10 +380,10 @@ var TreeTimeLine = React.createClass({
             d.y = 120 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
           };
           if (d.depth === 3) {
-            if (!d.previewed && d.parent.children) {
+            // if (!d.previewed && d.parent.children) {
               component.mouseOver(d);
-              d.previewed = true;
-            }
+            //   d.previewed = true;
+            // }
             d.y = 240 * (component.state.width > 1350 ? 1 : (component.state.width / 1350));
 
             }
@@ -391,7 +398,6 @@ var TreeTimeLine = React.createClass({
       var nodeEnter = node.enter().append('svg:g')
         .attr('class', 'node')
         .on('click', function(d) {
-          console.log(d);
           if (d.url) { 
             window.open(d.url,'_blank');
             return;
@@ -532,6 +538,10 @@ var TreeTimeLine = React.createClass({
       nodeExit.select('circle')
           .attr('r', 1e-6);
 
+      nodes.forEach(function(d) {
+        d.x0 = d.x;
+        d.y0 = d.y;
+      });
 
       var link = svg.selectAll('path.link')
           .data(tree.links(nodes), function(d) { return d.target.id; })
@@ -567,10 +577,7 @@ var TreeTimeLine = React.createClass({
           })
           .remove();
 
-      nodes.forEach(function(d) {
-        d.x0 = d.x;
-        d.y0 = d.y;
-      });
+
     }
 
     function toggle(d) {
