@@ -32,7 +32,7 @@ mongoose.connect('mongodb://localhost/local', function(error){
 
 //app.use();
 app.use(cors({
-  allowedOrigins: ['localhost:3000', 'http://www.immedia.xyz', 'http://immedia.xyz']
+  allowedOrigins: ['localhost:80', 'http://www.immedia.xyz', 'http://immedia.xyz']
 }))
 
 app.use(express.static('dist'));

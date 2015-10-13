@@ -4,8 +4,8 @@ var YouTubePreview = React.createClass({
 
   getInitialState: function() {
     return {
-      width: this.props.width,
-      height: this.props.height,
+      width: this.props.window.width,
+      height: this.props.window.height,
     };
   },
 
@@ -15,8 +15,8 @@ var YouTubePreview = React.createClass({
 
   componentWillReceiveProps: function(nextProps) {
     this.setState({
-      width: nextProps.width,
-      height: nextProps.height,
+      width: nextProps.window.width,
+      height: nextProps.window.height,
     });
   },
 
@@ -38,9 +38,12 @@ var YouTubePreview = React.createClass({
   },
 
   mountYouTubeVideo: function(videoId){
+    var width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500);
+    var height = this.state.height - 100 - 5;
+
     var player = new YT.Player('youtube', { // The 'player' refers to an id attached to an element
-      height: this.state.height,
-      width: this.state.width,
+      height: height,
+      width: width,
       videoId: videoId,
       events: {
         'onReady': onPlayerReady,

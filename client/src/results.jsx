@@ -33,7 +33,7 @@ var ResultsView = React.createClass({
   render: function(){
     return (
       <div id="results">
-        <TopBar searchInit={this.props.searchInit} goBackHome={this.props.goBackHome} window={this.state} />
+        <TopBar searchInit={this.props.searchInit} goBackHome={this.props.goBackHome} window={this.state} searchTerm={this.props.searchTerm} />
         <WikiView searchTerm={this.props.searchTerm} searchInit={this.props.searchInit} window={this.state} />
         <TreeTimeLine searchTerm={this.props.searchTerm} mouseOver={this.mouseOver} window={this.state}/>
         <div id="preview"></div>

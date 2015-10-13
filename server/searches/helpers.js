@@ -47,7 +47,6 @@ var parseText = function(tweet){
     var MacCarthy = fixedTweet[i].indexOf('Mac');
     
     for (var z = 1; z < fixedTweet[i].length; z++){
-      console.log(fixedTweet[i]);
       if (fixedTweet[i][z].match(/\d/g)) continue;
       if (fixedTweet[i][z] === fixedTweet[i][z].toUpperCase()){
         indexes.push(z);

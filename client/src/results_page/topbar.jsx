@@ -2,6 +2,13 @@ var React = require('react');
 var StyleSheet = require('react-style');
 
 var styles = StyleSheet.create({
+  topBar: {
+      zIndex: 1,
+      position: 'fixed',
+      height: '50px',
+      backgroundColor: 'rgba(232,232,232,1)',
+      textAlign: 'center',      
+  },
   logo: {
     position: 'absolute',
     left: '15px',
@@ -25,21 +32,38 @@ var styles = StyleSheet.create({
     height: '25px',
     paddingLeft: '10px',
     fontFamily: 'Nunito',
+    fontSize: '18px',
     color: 'rgb(128,128,128)',
   },
   searchButton: {
-      verticalAlign: 'middle',
-      marginLeft: '2px',
-      marginTop: '10px',
-      width: '100px',
-      height: '25px',
-      fontFamily: 'Nunito',
-      fontSize: '12px',
-      color: 'white',
-      textAlign: 'center',
-      background: '#3498db',
-      cursor: 'pointer',
+    verticalAlign: 'middle',
+    marginLeft: '2px',
+    marginTop: '10px',
+    width: '100px',
+    height: '25px',
+    fontFamily: 'Nunito',
+    fontSize: '12px',
+    color: 'white',
+    textAlign: 'center',
+    background: '#3498db',
+    cursor: 'pointer',
   },
+  downloadButton: {
+    borderRadius: '50px',
+    position: 'absolute',
+    right: '20px',
+    marginTop: '8px',
+    marginLeft: '2px',
+    paddingTop: '2px',
+    color: '#fff',
+    fontWeight: 'normal',
+    fontSize: '25%',
+    background: '#44c31d',
+    padding: '5px',
+    cursor: 'pointer',
+    width: '200px',
+    height: '30px'
+  }
 });
 
 var TopBar = React.createClass({
@@ -91,7 +115,6 @@ var TopBar = React.createClass({
             'search': this.state.searchTerm,
           },
           success: function( data ) {
-            console.log('wiki suggestions:', data);
             if (data[1].indexOf(this.state.searchTerm) !== -1) {
               this.props.searchInit(this.state.searchTerm)
             } else {
@@ -103,7 +126,8 @@ var TopBar = React.createClass({
           }
         });
       }
-      $('#topbar').val('');
+
+      $('#topbar').val(this.state.searchTerm.replace(/\s\(.*$/, '').toLowerCase());
     }
   },
 
@@ -113,32 +137,35 @@ var TopBar = React.createClass({
   
   componentDidMount : function() {
     var component = this;
-      $(function() {
-        $( "#topbar" ).autocomplete({
-          source: function( request, response ) {
-            $.ajax({
-              url: "http://en.wikipedia.org/w/api.php",
-              dataType: "jsonp",
-              data: {
-                'action': "opensearch",
-                'format': "json",
-                'search': request.term
-              },
-              success: function( data ) {
-                  component.setState({ suggestedSearchTerm: data[1][0], suggestedSearchTerms: data[1] })
-                  response(data[1]);
-              }
-            });
-          },
-          minLength: 3,
-          open: function() {
-            $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-          },
-          close: function() {
-            $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-          }
-        });
+    
+    $(function() {
+      $( "#topbar" ).autocomplete({
+        source: function( request, response ) {
+          $.ajax({
+            url: "http://en.wikipedia.org/w/api.php",
+            dataType: "jsonp",
+            data: {
+              'action': "opensearch",
+              'format': "json",
+              'search': request.term
+            },
+            success: function( data ) {
+                component.setState({ suggestedSearchTerm: data[1][0], suggestedSearchTerms: data[1] })
+                response(data[1]);
+            }
+          });
+        },
+        minLength: 3,
+        open: function() {
+          $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+        },
+        close: function() {
+          $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+        }
       });
+    });
+
+    $('#topbar').val(this.props.searchTerm.replace(/\s\(.*$/, '').toLowerCase());
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -147,6 +174,16 @@ var TopBar = React.createClass({
         width: nextProps.window.width,
         height: nextProps.window.height,
       });
+    }
+  },
+
+  downloadExtension: function(){
+    console.log('downloading extension (fill me in)');
+  },
+
+  componentDidUpdate: function(prevProps, prevState) {
+    if(prevProps.searchTerm !== this.props.searchTerm) {
+      $('#topbar').val(this.props.searchTerm.replace(/\s\(.*$/, '').toLowerCase());
     }
   },
 
@@ -159,20 +196,13 @@ var TopBar = React.createClass({
         <span style={styles.title} onClick={this.goBackHome}>immedia</span>
         <input id='topbar' type='text' style={styles.searchBar} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
         <input type='button' style={styles.searchButton} onClick={this.handleSubmit} value='immedia search'/>
+        <input type='button' style={styles.downloadButton} value={"download chrome extension"} onClick={this.downloadExtension} />
       </div>
     );
   },
 
   getDynamicStyles: function() {
-    styles.topBar = {
-      zIndex: 1,
-      position: 'fixed',
-      width: this.state.width,
-      height: '50px',
-      backgroundColor: 'rgba(245,245,245,1)',
-      textAlign: 'center',
-    };
-
+    styles.topBar.width = this.state.width;
     styles.searchBar.width = this.state.width * (400 / 1378);
   },
 

@@ -1,4 +1,5 @@
 var React = require('react');
+var StyleSheet = require('react-style');
 
 //This is code supplied by the Twitter API documentation
 //Exposes several methods, including .createTweet, which can be used to embed tweets asynchronously
@@ -21,8 +22,17 @@ window.twttr = (function(d, s, id) {
   return t;
 }(document, "script", "twitter-wjs"));
 
+var styles = StyleSheet.create({
+  preview: {
+    top: '40px',
+    paddingRight: '5px',
+    position: 'absolute',
+    overflow: 'scroll',
+  },
+});
 
 var TwitterPreview = React.createClass({
+
 
   embedTweet: function(tweetId) {
     //A new div with id "tweet" is created, and the embedded tweet is appended to it.
@@ -31,27 +41,57 @@ var TwitterPreview = React.createClass({
         tweetId,
         document.getElementById('tweet')
         )
+    },
+
+  getInitialState: function() {
+    return {
+      width: this.props.window.width,
+      height: this.props.window.height,
+    }
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      width: nextProps.window.width,
+      height: nextProps.window.height,
+    });
   },
 
   componentDidMount: function() {
-    this.componentDidUpdate();
-},
+    this.embedTweet(this.props.previewItem.tweetId);
+  },
 
-  componentDidUpdate: function() {
+  componentDidUpdate: function(prevProps, prevState) {
     //Empties the current contents of the preview window and embeds a new tweet that has been
     //moused over in the D3 timeline.
-    $('#twitterPreview').empty();
-    var twitterItem = this.props.previewItem;
-    this.embedTweet(twitterItem.tweetId);
+    if(prevProps.previewItem !== this.props.previewItem) {
+      $('#previewTwitter').empty();
+      this.embedTweet(this.props.previewItem.tweetId);
+    }
   },
 
   render: function() {
+    this.getDynamicStyles();
+
     return (
-      <div id='twitterPreview'></div>
-      )
+      <div id='previewTwitter' style={styles.preview}></div>
+    );
+  },
 
-  }
+  getDynamicStyles: function() {
+    styles.preview.width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) + 'px';
+    styles.preview.height = this.state.height - 100 + 'px';
+  },
 
+  embedTweet: function(tweetId) {
+
+    //A new div with id "tweet" is created, and the embedded tweet is appended to it.
+    $('<div id="tweet"></div>').hide().prependTo('#previewTwitter').fadeIn(800);
+      twttr.widgets.createTweet(
+        tweetId,
+        document.getElementById('tweet')
+      );
+  },
 });
 
 module.exports = TwitterPreview;
