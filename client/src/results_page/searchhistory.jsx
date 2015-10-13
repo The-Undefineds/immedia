@@ -39,15 +39,21 @@ var SearchHistory = React.createClass({
   getInitialState: function() {
     return {
       pastSearches: [],
+      history: [],
       width: this.props.window.width,
       height: this.props.window.height,
     };
   },
 
   componentWillMount: function() {
+    this.compileHistory();
     this.setState({
       pastSearches: JSON.parse(localStorage['immedia']).slice(1),
     });
+  },
+
+  componentDidUpdate: function() {
+    this.compileHistory();
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -66,23 +72,36 @@ var SearchHistory = React.createClass({
   },
 
   render: function(){
-    var history = this.compileHistory();
+
     this.getDynamicStyles();
 
     return (
       <div id="recentlyVisited" style={styles.container}>
-        <div style={styles.title}>recently visited</div>
-        <div style={styles.searches}>{ history }</div>
+      { this.props.searchTerm === 'immediahomepage' ? <div style={styles.title}>immedia: popular searches</div> :
+        <div style={styles.title}>immedia: recently visited</div> }
+        <div style={styles.searches}>{ this.state.history }</div>
       </div>
     );
   },
 
   compileHistory: function() {
     var history = [];
-    for (var i = 0; i < this.state.pastSearches.length; i++) {
-      history.push(<PastSearch page={this.state.pastSearches[i]} searchInit={this.props.searchInit} />)
+    var component = this;
+    if (this.props.searchTerm === 'immediahomepage') {
+      $.get('http://127.0.0.1:3000/searches/popularSearches', function(data) {
+        for (var term in data) {
+          var page = { searchTerm: term, img: data[term].img };
+          history.push(<PastSearch page={ page } searchInit={component.props.searchInit} />);
+        }
+        component.setState({ history: history });
+      })
+    } else {
+      for (var i = 0; i < this.state.pastSearches.length; i++) {
+        history.push(<PastSearch page={this.state.pastSearches[i]} searchInit={this.props.searchInit} />)
+      }
+      component.setState({ history: history });
     }
-    return history;
+      
   },
 
   getDynamicStyles: function() {

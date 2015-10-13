@@ -99,12 +99,12 @@ gulp.task('nodemon', function(){
   })
 });
 
-gulp.task('replace', function(){
-  gulp.src(__dirname + '/server/server.js')
-    .pipe(replace('127.0.0.1', '192.241.209.214'))
-    .pipe(replace('3000', '80'))
-    .pipe(gulp.dest(__dirname + '/server'))
-})
+// gulp.task('replace', function(){
+//   gulp.src(__dirname + '/server/server.js')
+    // .pipe(replace('127.0.0.1', '192.241.209.214'))
+    // .pipe(replace('3000', '80'))
+//     .pipe(gulp.dest(__dirname + '/server'))
+// })
 
 gulp.task('deploy', function(){
   function send(path, remotePath){
@@ -134,4 +134,4 @@ gulp.task('finished', function(){
 gulp.task('default', ['copy', 'watch', 'nodemon']);
 
 //Run Production tasks
-gulp.task('production', ['copy', 'build', 'replace', 'deploy', 'finished']);
+gulp.task('production', ['copy', 'build', 'deploy', 'finished']);

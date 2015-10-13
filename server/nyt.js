@@ -76,7 +76,7 @@ var createMostPopularMap = function(timePeriod) {
 
 var addArticlesToArticleSearch = function(responses) {
   for(var i = 0; i < responses.length; i++) {
-    if(!responses[i]['1']) continue;
+    if(!responses[i] || !responses[i]['1']) continue;
     var articles = Array.prototype.slice.call(JSON.parse(responses[i]['1']).response.docs);
     for(var j = 0; j < articles.length; j++) {
       articleSearch[articles[j]['web_url']] = articles[j];                                    // Add articles from parallel async requests to object from line 46
