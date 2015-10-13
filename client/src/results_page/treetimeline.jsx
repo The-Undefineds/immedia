@@ -125,7 +125,7 @@ var TreeTimeLine = React.createClass({
 
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
-        console.log(response);
+
         component.renderCount++;
 
         // Set State to initiate a re-rendering based on new API call data
@@ -561,7 +561,7 @@ var TreeTimeLine = React.createClass({
       link.exit().transition()
           .duration(500)
           .attr('d', function(d) {
-            var origin = {x: d.source.x0, y: d.source.y0};
+            var origin = {x: d.source.x, y: d.source.y};
             return diagonal({source: origin, target: origin});
           })
           .remove();
@@ -571,7 +571,7 @@ var TreeTimeLine = React.createClass({
         d.y0 = d.y;
       });
 
-      if (canvasData[0]) {component.mouseOver(canvasData[0].children[0].children[0])}
+      if (canvasData[0] && canvasData[0].children[0]) {component.mouseOver(canvasData[0].children[0].children[0])}
     }
 
     function toggle(d) {

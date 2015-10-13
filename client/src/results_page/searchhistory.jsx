@@ -46,7 +46,6 @@ var SearchHistory = React.createClass({
   },
 
   componentWillMount: function() {
-    this.compileHistory();
     this.setState({
       pastSearches: JSON.parse(localStorage['immedia']).slice(1),
     });
@@ -65,6 +64,8 @@ var SearchHistory = React.createClass({
         height: nextProps.window.height,
       });
     }
+
+    this.compileHistory();
   },
 
   render: function(){
@@ -83,12 +84,14 @@ var SearchHistory = React.createClass({
   compileHistory: function() {
     var history = [];
     var component = this;
+
     if (this.props.searchTerm === 'immediahomepage') {
       $.get('http://127.0.0.1:3000/searches/popularSearches', function(data) {
         for (var term in data) {
-          var page = { searchTerm: term, img: data[term].img };
-          history.push(<PastSearch page={ page } searchInit={component.props.searchInit} />);
+          var popSearch = { searchTerm: term, img: data[term].img };
+          history.push(<PastSearch page={ popSearch } searchInit={component.props.searchInit} />);
         }
+        console.log(history);
         component.setState({ history: history });
       })
     } else {

@@ -58,7 +58,6 @@ var TwitterPreview = React.createClass({
   },
 
   componentDidMount: function() {
-    console.log(this.props.previewItem.tweetId);
     this.embedTweet(this.props.previewItem.tweetId);
   },
 

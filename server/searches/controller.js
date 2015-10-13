@@ -41,8 +41,10 @@ module.exports = {
                 //term, the current term's rank will be incremented, the other decremented.
                 if (term.total > otherTerm.total) {
                 // if (termPopCount > otherTermPopCount) {
-                  Search.findOneAndUpdate({ search_term: term.search_term }, { $inc: { rank: 1 }});
-                  Search.findOneAndUpdate({ search_term: otherTerm.search_term }, { $inc: { rank: -1 }});
+                  term.rank--;
+                  otherTerm.rank++;
+                  term.save();
+                  otherTerm.save();
                 }
               }
             })
