@@ -184,7 +184,7 @@ var TreeTimeLine = React.createClass({
 
   generateDates: function(startTime, endTime, canvas) {
       this.dates[canvas] = [];
-      for (var i = startTime - 1; i <= endTime; i++) {
+      for (var i = startTime; i <= endTime; i++) {
       var date = new Date();
       date.setDate(date.getDate() - i);
       this.dates[canvas].push(date.toJSON().slice(0, 10));
@@ -271,9 +271,12 @@ var TreeTimeLine = React.createClass({
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
                       this.state.apiData[this.state.apiData.length - 1] : null;
 
+    // var top = 0;
+    // if (canvas === 1) { top = 80 }
+
     var y = d3.time.scale()
-      .domain([new Date(this.dates[canvas][this.dates[canvas].length - 1]), new Date(this.dates[canvas][0])])
-      .rangeRound([height - margin.bottom, 0])
+      .domain([new Date(this.dates[canvas][this.dates[canvas].length - 1]), d3.time.day.offset(new Date(this.dates[canvas][0]), 1)])
+      .rangeRound([height - margin.bottom, canvas === 1 ? 80 : 0])
 
     var yAxis = d3.svg.axis()
       .scale(y)
