@@ -52,10 +52,6 @@ var SearchHistory = React.createClass({
     });
   },
 
-  componentDidUpdate: function() {
-    this.compileHistory();
-  },
-
   componentWillReceiveProps: function(nextProps) {
     if(this.props.searchTerm !== nextProps.searchTerm) {
       this.setState({

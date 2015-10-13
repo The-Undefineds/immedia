@@ -35,7 +35,7 @@ var styles = StyleSheet.create({
   d3: {
     zIndex: -1,
     marginTop: '60px',
-    overflow: 'scroll',
+    // overflow: 'scroll',
   },
   block: {
     position: 'fixed',
@@ -65,7 +65,7 @@ var TreeTimeLine = React.createClass({
   //Api's to be called are listed in this array
   apis: [
     'nyt',
-    'twitter',
+    // 'twitter',
     'youtube',
     'news'
   ],
@@ -85,7 +85,7 @@ var TreeTimeLine = React.createClass({
   breakPoint: null,
 
   componentDidMount: function(){
-    var component = this;
+    // var component = this;
     this.query(this.props.searchTerm.toLowerCase());
     // this.setTimeSpan(this.state.timeSpan);
 
@@ -112,6 +112,11 @@ var TreeTimeLine = React.createClass({
       this.query(newProps.searchTerm.toLowerCase());
       this.setState({apiData: []});
     }
+
+    this.setState({
+      width: newProps.window.width,
+      height: newProps.window.height,
+    });
   },
 
   renderCount: 0,
@@ -121,7 +126,7 @@ var TreeTimeLine = React.createClass({
 
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
-
+        console.log(response);
         component.renderCount++;
 
         // Set State to initiate a re-rendering based on new API call data
@@ -177,11 +182,6 @@ var TreeTimeLine = React.createClass({
 
   dates: [],
 
-  setTimeSpan: function(startTime, endTime) {
-    // this.setState({ height: timeSpan * 120 });
-    this.setState({ startTime: startTime, endTime: endTime });
-  },
-
   generateDates: function(startTime, endTime, canvas) {
       this.dates[canvas] = [];
       for (var i = startTime - 1; i <= endTime; i++) {
@@ -216,14 +216,14 @@ var TreeTimeLine = React.createClass({
   },
 
   getDynamicStyles: function() {
-    styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 0) + 'px';
-    styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20 + 'px';
-    styles.container.height = (this.state.height - 50) + 'px';
-    styles.block.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 10 + 'px';
-    styles.title.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
-    styles.subhead.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
-    styles.d3.height = this.state.height - 110 + 'px';
-    styles.d3.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20 + 'px';
+    // styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 0) + 'px';
+    // styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20 + 'px';
+    // styles.container.height = (this.state.height - 50) + 'px';
+    // styles.block.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 10 + 'px';
+    // styles.title.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
+    // styles.subhead.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
+    // styles.d3.height = this.state.height - 110 + 'px';
+    // styles.d3.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20 + 'px';
     return;
   },
 
@@ -308,8 +308,6 @@ var TreeTimeLine = React.createClass({
 
     //-----draw tree from each tick on yAxis timeline ------
 
-    var root;
-
     var canvasData = [];
     for (var i = 0; i < this.state.apiData.length; i++) {
       if (i === startDay - 1) { continue; }
@@ -324,9 +322,9 @@ var TreeTimeLine = React.createClass({
     var diagonal = d3.svg.diagonal()
         .projection(function(d) { return [d.y, d.x]; });
 
-      root = { 'name': 'data', 'children': canvasData };
-      // root.x0 = height / 1.5;
-      // root.y0 = 0;
+    var root = { 'name': 'data', 'children': canvasData };
+      root.x0 = height/1.5;
+      root.y0 = -1000;
 
     function toggleAll(d) {
         if (d.children) {
