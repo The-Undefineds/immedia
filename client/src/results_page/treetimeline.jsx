@@ -119,10 +119,10 @@ var TreeTimeLine = React.createClass({
       this.setState({apiData: []});
     }
 
-    // this.setState({
-    //   width: newProps.window.width,
-    //   height: newProps.window.height,
-    // });
+    this.setState({
+      width: newProps.window.width,
+      height: newProps.window.height,
+    });
   },
 
   renderCount: 0,
