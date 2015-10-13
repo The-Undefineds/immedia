@@ -59,7 +59,7 @@ function findUser(baseUrl, queryString, callback){
         var id,
             img;
 
-        if (!('errors' in body)) { 
+        if (!('errors' in body) && body[0]) { 
           id = body[0].id;
           img = body[0].profile_image_url;
 

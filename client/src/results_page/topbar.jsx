@@ -99,9 +99,9 @@ var TopBar = React.createClass({
       };
       if (this.state.suggestedSearchTerm !== '') {
         if (this.state.suggestedSearchTerms.indexOf(this.state.searchTerm) !== -1) {
-          this.props.searchInit(this.state.searchTerm.toLowerCase())
+          this.props.searchInit(this.state.searchTerm)
         } else {
-          this.props.searchInit(this.state.suggestedSearchTerms[0].toLowerCase());
+          this.props.searchInit(this.state.suggestedSearchTerms[0]);
         }
       } else {
         //If Wikipedia has not responded with a suggested search term, one more GET request will be attempted
@@ -118,11 +118,11 @@ var TopBar = React.createClass({
             if (data[1].indexOf(this.state.searchTerm) !== -1) {
               this.props.searchInit(this.state.searchTerm)
             } else {
-              this.props.searchInit(data[1][0].toLowerCase());
+              this.props.searchInit(data[1][0]);
             }
           },
           error: function( data ) {
-            this.props.searchInit(this.state.searchTerm.toLowerCase());
+            this.props.searchInit(this.state.searchTerm);
           }
         });
       }

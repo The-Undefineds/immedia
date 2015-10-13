@@ -10,7 +10,7 @@ var YouTubePreview = React.createClass({
   },
 
   componentDidMount: function() {
-    this.mountYouTubeVideo(this.props.previewItem.id);
+    this.mountYouTubeVideo(this.props.previewItem.videoId);
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -28,7 +28,7 @@ var YouTubePreview = React.createClass({
   },
 
   componentDidUpdate: function() {
-    this.mountYouTubeVideo(this.props.previewItem.id);
+    this.mountYouTubeVideo(this.props.previewItem.videoId);
   },
 
   render: function() {

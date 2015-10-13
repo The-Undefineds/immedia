@@ -8,7 +8,7 @@ var EmptyPreview = require('./emptypreview.jsx');
 
 var styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: 'fixed',
     top: '50px',
     paddingRight: '10px',
     textAlign: 'center',
@@ -59,11 +59,11 @@ var Preview = React.createClass({
           <div id="previewTitle" style={styles.title}>{ this.props.previewItem.source || 'immmedia' }</div>
         </div>
         { this.props.previewItem.source === '' ? 
-          <EmptyPreview window={this.state} /> : null }
+          <EmptyPreview window={this.state} width={styles.container.width} height={styles.container.height} window={this.state}/> : null }
         { this.props.previewItem.source === 'nyt' ? 
-          <NytPreview previewItem={ this.props.previewItem } window={this.state} /> : null }
-        { this.props.previewItem.source === 'twitter' ? 
-          <TwitterPreview previewItem={ this.props.previewItem } window={this.state} /> : null }
+          <NytPreview previewItem={ this.props.previewItem } width={styles.container.width} height={styles.container.height} window={this.state}/> : null }
+        { this.props.previewItem.source === 'twitter' || this.props.previewItem.source === 'twitter news' ? 
+          <TwitterPreview previewItem={ this.props.previewItem } width={styles.container.width} height={styles.container.height} window={this.state}/> : null }
         { this.props.previewItem.source === 'youtube' ? 
           <YouTubePreview previewItem={ this.props.previewItem } width={styles.container.width} height={styles.container.height} window={this.state} /> : null }
       </div>
