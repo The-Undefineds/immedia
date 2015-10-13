@@ -17,19 +17,20 @@ var styles = StyleSheet.create({
     marginTop: '0px',
     marginBottom: '10px',
     textAlign: 'left',
+    paddingLeft: '10px',
   },
   byline: {
     marginTop: '5px',
     marginBottom: '5px',
     textAlign: 'left',
+    paddingLeft: '10px',
   },
   image: {
     textAlign: 'center',
   },
   body: {
     textAlign: 'left',
-    paddingLeft: '15px',
-    paddingRight: '15px',
+    paddingLeft: '10px',
   },
   searchButton: {
       verticalAlign: 'middle',

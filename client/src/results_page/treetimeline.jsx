@@ -232,7 +232,7 @@ var TreeTimeLine = React.createClass({
   },
 
   mouseOver: function(item) {
-    if (this.mousedOver == item) {
+    if (this.mousedOver === item) {
       return;
     } else {
       this.mousedOver = item;
@@ -244,7 +244,7 @@ var TreeTimeLine = React.createClass({
         url: item.url,
         img: item.img,
         source: item.parent.source,
-        id: item.tweet_id,
+        id: item.id,
         tweetId: item.tweet_id_str,
         byline: (item.hasOwnProperty('byline') ? item.byline : ''),
         abstract: (item.hasOwnProperty('abstract') ? item.abstract : ''),

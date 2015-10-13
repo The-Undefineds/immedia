@@ -36,7 +36,6 @@ var lastTweetStored = function(screenName){
           var lastTweetID = tweets.length > 0 ? tweets.sort(function(b, a){
             return b.tweet_id - a.tweet_id;
           })[tweets.length-1].tweet_id : 0;
-          console.log('lastTweetID: ', lastTweetID);
           requestNewTweets(screenName, lastTweetID);
         });
 };

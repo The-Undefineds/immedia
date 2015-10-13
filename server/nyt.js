@@ -80,6 +80,7 @@ var addArticlesToArticleSearch = function(responses) {
     var articles = Array.prototype.slice.call(JSON.parse(responses[i]['1']).response.docs);
     for(var j = 0; j < articles.length; j++) {
       articleSearch[articles[j]['web_url']] = articles[j];                                    // Add articles from parallel async requests to object from line 46
+      addArticleToArticleSearchDate(articles[j]);
     }
   }
   return;
