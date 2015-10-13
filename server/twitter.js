@@ -23,7 +23,7 @@ module.exports = {
   getTweetsPerson : function(request, response){
     var queryString = request.body.searchTerm;
     if (queryString === 'immediahomepage') {
-      findUser(searchTweetsUrl, 'news', function(status, data) {
+      findUser(baseUrl, 'immediaHQ', function(status, data) {
         response.status(status).send(data);
       })
     } else {
@@ -51,11 +51,12 @@ function findUser(baseUrl, queryString, callback){
     } else {
       body = JSON.parse(body);
       //If the user is on the home page, a general search will populate the timeline with popular recent tweets.
-      if (queryString === 'news') {
-        if (body.statuses) {
-          processResponseData(body.statuses, 10, callback)
-      };
-     } else {
+     //  if (queryString === 'news') {
+     //    if (body.statuses) {
+     //      console.log(body);
+     //      processResponseData(body.statuses, 10, callback)
+     //  };
+     // } else {
         var id,
             img;
 
@@ -68,7 +69,7 @@ function findUser(baseUrl, queryString, callback){
         else {
           findUser(baseUrl, queryString, callback);
         }
-      }
+      // }
     }
   })
 }
