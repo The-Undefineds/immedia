@@ -2,6 +2,13 @@ var React = require('react');
 var StyleSheet = require('react-style');
 
 var styles = StyleSheet.create({
+  topBar: {
+      zIndex: 1,
+      position: 'fixed',
+      height: '50px',
+      backgroundColor: 'rgba(232,232,232,1)',
+      textAlign: 'center',      
+  },
   logo: {
     position: 'absolute',
     left: '15px',
@@ -25,6 +32,7 @@ var styles = StyleSheet.create({
     height: '25px',
     paddingLeft: '10px',
     fontFamily: 'Nunito',
+    fontSize: '18px',
     color: 'rgb(128,128,128)',
   },
   searchButton: {
@@ -107,7 +115,6 @@ var TopBar = React.createClass({
             'search': this.state.searchTerm,
           },
           success: function( data ) {
-            console.log('wiki suggestions:', data);
             if (data[1].indexOf(this.state.searchTerm) !== -1) {
               this.props.searchInit(this.state.searchTerm)
             } else {
@@ -119,7 +126,8 @@ var TopBar = React.createClass({
           }
         });
       }
-      $('#topbar').val('');
+
+      $('#topbar').val(this.state.searchTerm.replace(/\s\(.*$/, '').toLowerCase());
     }
   },
 
@@ -129,32 +137,35 @@ var TopBar = React.createClass({
   
   componentDidMount : function() {
     var component = this;
-      $(function() {
-        $( "#topbar" ).autocomplete({
-          source: function( request, response ) {
-            $.ajax({
-              url: "http://en.wikipedia.org/w/api.php",
-              dataType: "jsonp",
-              data: {
-                'action': "opensearch",
-                'format': "json",
-                'search': request.term
-              },
-              success: function( data ) {
-                  component.setState({ suggestedSearchTerm: data[1][0], suggestedSearchTerms: data[1] })
-                  response(data[1]);
-              }
-            });
-          },
-          minLength: 3,
-          open: function() {
-            $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-          },
-          close: function() {
-            $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-          }
-        });
+    
+    $(function() {
+      $( "#topbar" ).autocomplete({
+        source: function( request, response ) {
+          $.ajax({
+            url: "http://en.wikipedia.org/w/api.php",
+            dataType: "jsonp",
+            data: {
+              'action': "opensearch",
+              'format': "json",
+              'search': request.term
+            },
+            success: function( data ) {
+                component.setState({ suggestedSearchTerm: data[1][0], suggestedSearchTerms: data[1] })
+                response(data[1]);
+            }
+          });
+        },
+        minLength: 3,
+        open: function() {
+          $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+        },
+        close: function() {
+          $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+        }
       });
+    });
+
+    $('#topbar').val(this.props.searchTerm.replace(/\s\(.*$/, '').toLowerCase());
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -168,6 +179,12 @@ var TopBar = React.createClass({
 
   downloadExtension: function(){
     console.log('downloading extension (fill me in)');
+  },
+
+  componentDidUpdate: function(prevProps, prevState) {
+    if(prevProps.searchTerm !== this.props.searchTerm) {
+      $('#topbar').val(this.props.searchTerm.replace(/\s\(.*$/, '').toLowerCase());
+    }
   },
 
   render: function(){
@@ -185,15 +202,7 @@ var TopBar = React.createClass({
   },
 
   getDynamicStyles: function() {
-    styles.topBar = {
-      zIndex: 1,
-      position: 'fixed',
-      width: this.state.width,
-      height: '50px',
-      backgroundColor: 'rgba(245,245,245,1)',
-      textAlign: 'center',
-    };
-
+    styles.topBar.width = this.state.width;
     styles.searchBar.width = this.state.width * (400 / 1378);
   },
 

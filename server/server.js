@@ -27,12 +27,12 @@ mongoose.connect('mongodb://localhost/local', function(error){
 });
 
 // Activates cron-jobs that update news-tweets every half-hour
-cron.job.start();
-cron.job2.start();
+// cron.job.start();
+// cron.job2.start();
 
 //app.use();
 app.use(cors({
-  allowedOrigins: ['localhost:3000', 'http://www.immedia.xyz', 'http://immedia.xyz']
+  allowedOrigins: ['localhost:80', 'http://www.immedia.xyz', 'http://immedia.xyz']
 }))
 
 app.use(express.static('dist'));

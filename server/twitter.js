@@ -1,4 +1,5 @@
 var OAuth = require('./OAuth');
+var keys = require('./keys.js');
 var request = require('request');
 var utils = require('./utils.js');
 var searches = require('./searches/controller.js');
@@ -35,7 +36,6 @@ module.exports = {
 
   getNewsTweets : function(request, response){
     var queryString = request.body.searchTerm;
-    console.log('search term:', queryString);
     searches.retrieveTweets(queryString, response);
   }
 }
@@ -77,7 +77,7 @@ function grabTimeline(newUrl, params, callback){
 
   search.url = newUrl;
   search.qs = {user_id : params.id, include_rts : 'false'};
-  search.headers.Authorization = OAuth(newUrl, 'user_id=' + params.id, 'include_rts=false');
+  search.headers.Authorization = 'Bearer ' + keys.twitterBearerToken;
 
   request(search, function(error, response, body){
     if(error) {
