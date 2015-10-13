@@ -56,7 +56,8 @@ var TreeTimeLine = React.createClass({
     
   //Initial timespan set at one week
   return {
-      timeSpan: 7,
+      startTime: 0,
+      endTime: 7,
       apiData: [],
       width: this.props.window.width,
       height: this.props.window.height,
@@ -91,16 +92,19 @@ var TreeTimeLine = React.createClass({
     // this.setTimeSpan(this.state.timeSpan);
 
     //When a user scrolls to the bottom of the document, a new timeline will be rendered that is 7 days longer.
+    // $('svg').on('click', function() {
+    //   component.setState({ startTime: this.state.startTime + 7, endTime: this.state.endTime + 7 });
+    // })
     // $(window).scroll(function() {
 
     //   var scrollPoint = $(window).scrollTop() + $(window).height();
-    //   if (scrollPoint >= $(document).height() - 20) {
+    //   if (scrollPoint >= $(document).height() - 100) {
     //        //An upper limit for the timeline's span is set at 30 days.
     //        if (component.dates.length > 27) {
     //         return;
     //        }
     //        component.breakPoint = scrollPoint;
-    //        component.setTimeSpan(component.dates.length + 6);
+    //        component.setState({ startTime: this.state.startTime + 7, endTime: this.state.endTime + 7 });
     //    }
 
     //   if ($(window).scrollTop() + component.props.window.height < component.breakPoint) {
@@ -108,7 +112,7 @@ var TreeTimeLine = React.createClass({
     //       return;
     //     }
     //     component.breakPoint = component.breakPoint - component.props.window.height;
-    //     component.setTimeSpan(component.dates.length - 8);
+    //     // component.setTimeSpan(component.dates.length - 8);
     //    }
     // });
   },
@@ -134,7 +138,7 @@ var TreeTimeLine = React.createClass({
 
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
-        console.log('delivered to timeline:', response);
+
         component.renderCount++;
         // Set State to initiate a re-rendering based on new API call data
         this.setState(function(previousState, currentProps) {
@@ -167,7 +171,6 @@ var TreeTimeLine = React.createClass({
             // If loop terminates fully, no content exists for date
             // so add content to the State array
             if(i === previousApiData.length) {
-              if (component.dates.indexOf(date) == -1) {continue;}
               previousApiData.push(
                 {
                   'date': date, 
@@ -190,26 +193,28 @@ var TreeTimeLine = React.createClass({
 
   dates: [],
 
-  setTimeSpan: function(timeSpan) {
+  setTimeSpan: function(startTime, endTime) {
     // this.setState({ height: timeSpan * 120 });
-    this.setState({ timeSpan: timeSpan });
+    this.setState({ startTime: startTime, endTime: endTime });
+  },
+
+  generateDates: function(startTime, endTime, canvas) {
+      this.dates[canvas] = [];
+      for (var i = startTime - 1; i < endTime; i++) {
+      var date = new Date();
+      date.setDate(date.getDate() - i);
+      this.dates[canvas].push(date.toJSON().slice(0, 10));
+    }
   },
 
   render: function() {
 
     var component = this;
-    var generateDates = function(timeSpan) {
-        component.dates = [];
-        for (var i = -1; i < timeSpan; i++) {
-        var date = new Date();
-        date.setDate(date.getDate() - i);
-        component.dates.push(date.toJSON().slice(0, 10));
-      }
-    }
 
-    generateDates(this.state.timeSpan);
-
-    this.renderCanvas();    // Crucial step that (re-)renders D3 canvas
+    this.renderCanvas(0, 7, 1);    // Crucial step that (re-)renders D3 canvas
+    this.renderCanvas(7, 14, 2);
+    this.renderCanvas(14, 21, 3);
+    this.renderCanvas(21, 28, 4);
     this.getDynamicStyles();
 
     return (
@@ -218,7 +223,10 @@ var TreeTimeLine = React.createClass({
           <div id="d3title" style={styles.title}>immedia: recent events</div>
           <div id="d3subhead" style={styles.subhead}>hover over a bubble to preview</div>
         </div>
-        <div id="d3canvas" style={styles.d3}></div>
+        <div id="d3canvas1" style={styles.d3}></div>
+        <div id="d3canvas2" style={styles.d3}></div>
+        <div id="d3canvas3" style={styles.d3}></div>
+        <div id="d3canvas4" style={styles.d3}></div>
       </div>
     );
   },
@@ -254,10 +262,12 @@ var TreeTimeLine = React.createClass({
       });
   },
 
-  renderCanvas: function() {
+  renderCanvas: function(startDay, endDay, canvas) {
 
+    this.generateDates(startDay, endDay, canvas);
+    
     var component = this;
-    d3.select('svg').remove();
+    d3.select('#d3canvas' + canvas).selectAll('svg').remove();
 
     var colors = d3.scale.category20c();
 
@@ -275,7 +285,7 @@ var TreeTimeLine = React.createClass({
                       this.state.apiData[this.state.apiData.length - 1] : null;
 
     var y = d3.time.scale()
-      .domain([new Date(this.dates[this.dates.length - 1]), new Date(this.dates[0])])
+      .domain([new Date(this.dates[canvas][this.dates[canvas].length - 1]), new Date(this.dates[canvas][0])])
       .rangeRound([height - 4*(margin.top) - margin.bottom, 0])
 
     var yAxis = d3.svg.axis()
@@ -286,7 +296,8 @@ var TreeTimeLine = React.createClass({
       .tickSize(0)
       .tickPadding(10);
 
-    var svg = d3.select('#d3canvas').append('svg')
+    var svg = d3.select('#d3canvas' + canvas).append('svg')
+      .attr('class', 'svgclass' + canvas)
       .attr('class', 'timeLine')
       .attr('width', width)
       .attr('height', this.state.height)
@@ -312,13 +323,21 @@ var TreeTimeLine = React.createClass({
 
     var root;
 
+    var canvasData = [];
+    for (var i = 0; i < this.state.apiData.length; i++) {
+      if (this.state.apiData[i].rendered === true) { continue; }
+      if (this.dates[canvas].indexOf(this.state.apiData[i].date) !== -1) {
+        canvasData.push(this.state.apiData[i]);
+      }
+    };
+
     var tree = d3.layout.tree()
         .size([height, width])
 
     var diagonal = d3.svg.diagonal()
         .projection(function(d) { return [d.y, d.x]; });
 
-      root = { 'name': 'data', 'children': this.state.apiData };
+      root = { 'name': 'data', 'children': canvasData };
       root.x0 = height / 1.5;
       root.y0 = 0;
 
@@ -330,21 +349,21 @@ var TreeTimeLine = React.createClass({
       }
 
       // Initialize the display to show a few nodes.
-      // if (this.renderCount === this.apis.length) {
-      //   root.children.forEach(toggleAll);
-      //   toggle(root.children[0]);
-      //   root.children[0].children.forEach(function(child) {
-      //     toggle(child);
-      //   })
-      //   toggle(root.children[1]);
-      //   root.children[1].children.forEach(function(child) {
-      //     toggle(child);
-      //   })
-      // }
+      if (this.renderCount === this.apis.length) {
+        root.children.forEach(toggleAll);
+        toggle(root.children[0]);
+        root.children[0].children.forEach(function(child) {
+          toggle(child);
+        })
+        toggle(root.children[1]);
+        root.children[1].children.forEach(function(child) {
+          toggle(child);
+        })
+      }
 
-      update(root);
+      update(root, canvas);
 
-    function update(source) {
+    function update(source, canvas) {
 
       // var duration = 500;
       var duration = function(d) {
@@ -391,6 +410,7 @@ var TreeTimeLine = React.createClass({
       var nodeEnter = node.enter().append('svg:g')
         .attr('class', 'node')
         .on('click', function(d) {
+          // component.setState({ startTime: component.state.startTime + 7, endTime: component.state.endTime + 7 });
           console.log(d);
           if (d.url) { 
             window.open(d.url,'_blank');
@@ -400,7 +420,7 @@ var TreeTimeLine = React.createClass({
             return;
           }
           toggle(d); 
-          update(d); 
+          update(root, canvas); 
         })
         .on('mouseenter', function(d) {
           if (d.depth === 3) {
@@ -595,7 +615,7 @@ var TreeTimeLine = React.createClass({
         d.children = d._children;
         d._children = null;
       }
-      update(root);
+      update(root, canvas);
     }
   },
 
