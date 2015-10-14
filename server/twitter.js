@@ -38,7 +38,7 @@ var handleUserSearch = function(queryString, callback, cachedUser) {
 
 var handleTimelineSearch = function(callback, params, cachedTweets) {
   if(cachedTweets && !params.since_id) {
-    processResponseData(cachedTweets, 3, callback);
+    processResponseData(cachedTweets, 10, callback);
     return;
   }
 
@@ -67,7 +67,7 @@ var findTwitterUser = function(queryString, callback) {
         var img = body[0].profile_image_url;
 
         User.insertUser({
-          'search_term': queryString,
+          'search_term': queryString.toLowerCase(),
           'user_id': user_id,
           'img': img
         });
@@ -83,28 +83,30 @@ var findTwitterUser = function(queryString, callback) {
 var grabTimeline = function(params, callback, cachedTweets){
   search.url = userStatusUrl;
   search.headers.Authorization = 'Bearer ' + keys.twitterBearerToken;
-  search.qs = {user_id : params.user_id, include_rts : 1, exclude_replies: 0};
+  search.qs = {user_id : params.user_id, include_rts : 1, exclude_replies: 0, count: 200};
   params.since_id !== undefined ? search.qs.since_id = params.since_id : null;
 
   request(search, function(error, response, body){
     if(error) callback(404, error);
-    
-    body = Array.prototype.slice.call(JSON.parse(body));
 
-    if (!('errors' in body)) {
-      if(!body[0]) {
-        processResponseData(cachedTweets, 3, callback);
+    var tweets = JSON.parse(body);
+
+    if (!('errors' in tweets)) {
+      var tweetsArray = Array.prototype.slice.call(tweets);
+
+      if(!tweetsArray[0]) {
+        processResponseData(cachedTweets, 10, callback);
         return;
       }
 
       if(cachedTweets) {
-        Timeline.updateTimeline(body, cachedTweets);
-        processResponseData(body.concat(cachedTweets), 3, callback);
+        Timeline.updateTimeline(tweetsArray, cachedTweets);
+        processResponseData(tweetsArray.concat(cachedTweets), 10, callback);
         return;
       }
 
-      Timeline.insertTimeline(body);
-      processResponseData(body, 3, callback);
+      Timeline.insertTimeline(tweetsArray);
+      processResponseData(tweetsArray, 10, callback);
       return;
 
     } else {
@@ -115,7 +117,6 @@ var grabTimeline = function(params, callback, cachedTweets){
 
 var processResponseData = function(response, amountToDisplay, callback) {
   var responseObj = {};
-  var tweetIdsToSend = [];
   var tweetsBySocialCount = {};
 
   for (var i = 0; i < response.length; i++) {
@@ -127,24 +128,21 @@ var processResponseData = function(response, amountToDisplay, callback) {
     return b - a;
   });
 
-  for(var j = 0; j < topTweetCounts.length; j++) {
+  for(var j = 0; j < amountToDisplay; j++) {
     var tweet = tweetsBySocialCount[topTweetCounts[j]];
     var date = homepage ? utils.getSimpleDate(new Date()) : utils.getSimpleDate(tweet.timestamp);
     date = date.year + '-' + date.month + '-' + date.day;
-
-    // if (tweet.lang !== 'en') { continue; };
 
     tweetToSend = {
       date: date,
       img: tweet.profile_img,
       tweet_id: tweet.tweet_id,
       tweet_id_str: String(tweet.tweet_id),
+      timestamp: tweet.timestamp,
     };
 
     responseObj[date] = responseObj[date] || { source: 'twitter', children: [] };
-    if (responseObj[date].children.length < amountToDisplay) {
-      responseObj[date].children.push(tweetToSend);
-    }
+    responseObj[date].children.push(tweetToSend);
   }
   callback(200, responseObj);
   return;
@@ -160,7 +158,7 @@ module.exports = {
       return;
     }
     
-    User.findUser(queryString, handleUserSearch.bind(null, queryString, sendResponse.bind(null, response)));
+    User.findUser(queryString.toLowerCase(), handleUserSearch.bind(null, queryString, sendResponse.bind(null, response)));
     return;
   },
 
