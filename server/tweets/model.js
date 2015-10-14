@@ -1,11 +1,11 @@
 var mongoose  = require('mongoose');
 
 var TweetsSchema = new mongoose.Schema({
-  tweet_id: {
-    type: Number,
+  tweet_id: Number,                     
+  tweet_id_str: {
+    type: String,
     unique: true
   },
-  tweet_id_str: String,
   created_at: String,
   url: String,
   retweet_count: Number,

@@ -194,7 +194,7 @@ module.exports = {
     // NYT Article Search parameters (note: CAN search by topic)
     var beginDate = utils.getDateFromToday(-days);
     var today = utils.getDateFromToday(0);
-    var queryStringArticleSearch = articleSearchURI + 'q=' + searchTerm + '&fq=body:("' + searchTerm + '")&' + 'begin_date=' + beginDate + '&' + 'page=' + 0 + '&' + 'api-key=' + keys.nytArticleSearch;
+    var queryStringArticleSearch = articleSearchURI + 'q=' + searchTerm + '&fq=headline:("' + searchTerm + '")&' + 'begin_date=' + beginDate + '&' + 'page=' + 0 + '&' + 'api-key=' + keys.nytArticleSearch;
 
     // Most-Popular NYT article parameters (note: cannot search by topic)
     var timePeriod = days;
