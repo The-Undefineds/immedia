@@ -10,6 +10,7 @@ var searches = require('./searches/controller.js');
 var cors = require('express-cors');
 var mongoose = require('mongoose');
 var cron = require('./cronjob.js');
+var twitterStreamingConnection = require('./streamServer.js');
 
 // var news = require('./news.js');
 
@@ -18,13 +19,15 @@ var server = http.createServer(app);
 var port = 3000;
 var url = '127.0.0.1'; //Change url as necessary
 
-// mongoose.connect('mongodb://localhost/local', function(error){
-//   if (error) {
-//     console.error(error);
-//   } else {
-//     console.log('mongo connected');
-//   }
-// });
+//twitterStreamingConnection(); //Streaming API for Twitter
+
+mongoose.connect('mongodb://localhost/local', function(error){
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('mongo connected');
+  }
+});
 
 // Activates cron-jobs that update news-tweets every half-hour
 // cron.job.start();
