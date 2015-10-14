@@ -1,13 +1,14 @@
 var OAuth = require('./OAuth');
 var request = require('request');
 var utils = require('./utils.js');
-var searches = require('./searches/controller.js');
 
-var baseUrl = 'https://api.twitter.com/1.1/users/search.json';
-var newUrl = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
+var Search = require('./searches/controller.js');
+var User = require('./users_twitter/controller.js');
+var Timeline = require('./timelines/controller.js');
+
+var userSearchUrl = 'https://api.twitter.com/1.1/users/search.json';
+var userStatusUrl = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
 var searchTweetsUrl = 'https://api.twitter.com/1.1/search/tweets.json';
-
-var tweets = {};
 
 var search = {
   url : '',
@@ -20,83 +21,105 @@ var search = {
 
 var homepage = false;
 
-module.exports = {
-  
-  getTweetsPerson : function(request, response){
-    var queryString = request.body.searchTerm;
-    if (queryString === 'immediahomepage') {
-      homepage = true;
-      findUser(baseUrl, 'immediaHQ', function(status, data) {
-        response.status(status).send(data);
-      })
-    } else {
-      findUser(baseUrl, queryString, function(status, data){
-        response.status(status).send(data);
-      });
-    }
-  },
 
-  getNewsTweets : function(request, response){
-    var queryString = request.body.searchTerm;
-    searches.retrieveTweets(queryString, response);
-  }
-}
-
-function findUser(baseUrl, queryString, callback){
-  var responseObj = {};
-  search.url = baseUrl;
-  search.qs = {q : queryString};
-  search.headers.Authorization = OAuth(baseUrl, 'q=' + queryString);
-  request(search, function(error, response, body){
-    if(error) {
-      callback(404, error);
-    } else {
-      body = JSON.parse(body);
-        var id,
-            img;
-
-        if (!('errors' in body) && body[0]) { 
-          id = body[0].id;
-          img = body[0].profile_image_url;
-
-          grabTimeline(newUrl, {'id': id, 'img': img}, callback);
-        }
-        else {
-          findUser(baseUrl, queryString, callback);
-        }
-    }
-  })
-}
-
-function grabTimeline(newUrl, params, callback){
-
-  search.url = newUrl;
-  search.qs = {user_id : params.id, include_rts : 'false'};
-  search.headers.Authorization = OAuth(newUrl, 'user_id=' + params.id, 'include_rts=false');
-
-  request(search, function(error, response, body){
-    if(error) {
-      callback(404, error);
-    } else {
-      body = Array.prototype.slice.call(JSON.parse(body));
-
-      if (body[0]) {
-        processResponseData(body, 3, callback);
-      } else {
-        grabTimeline(newUrl, params, callback);
-      }
-    }
-  })
+var sendResponse = function(response, status, data) {
+  response.status(status).send(data);
 };
 
-function processResponseData(response, amountToDisplay, callback) {
+var handleUserSearch = function(queryString, callback, cachedUser) {
+  if(cachedUser) {
+    Timeline.findTimeline(cachedUser.user_id, handleTimelineSearch.bind(null, callback));
+    return;
+  }
   
+  findTwitterUser(queryString, callback);
+  return;
+};
+
+var handleTimelineSearch = function(callback, params, cachedTweets) {
+  if(cachedTweets && !params.since_id) {
+    processResponseData(cachedTweets, 3, callback);
+    return;
+  }
+
+  grabTimeline(params, callback, cachedTweets);
+  return;
+};
+
+var findTwitterUser = function(queryString, callback) {
+  search.url = userSearchUrl;
+  search.qs = {q : queryString};
+  search.headers.Authorization = OAuth(userSearchUrl, 'q=' + queryString);
+  
+  request(search, function(error, response, body) {
+    if(error) callback(404, error);
+    
+    body = JSON.parse(body);
+    //If the user is on the home page, a general search will populate the timeline with popular recent tweets.
+    if (queryString === 'news') {
+      if (body.statuses) {
+        processResponseData(body.statuses, 10, callback)
+      }
+    } else {
+
+      if (!('errors' in body)) { 
+        var user_id = body[0].id_str;
+        var img = body[0].profile_image_url;
+
+        User.insertUser({
+          'search_term': queryString,
+          'user_id': user_id,
+          'img': img
+        });
+
+        grabTimeline({'user_id': user_id, 'since_id': undefined}, callback);
+      } else {
+        findTwitterUser(queryString, callback);
+      }
+    }
+  });
+};
+
+var grabTimeline = function(params, callback, cachedTweets){
+  search.url = userStatusUrl;
+  search.headers.Authorization = 'Bearer ' + keys.twitterBearerToken;
+  search.qs = {user_id : params.user_id, include_rts : 1, exclude_replies: 0};
+  params.since_id !== undefined ? search.qs.since_id = params.since_id : null;
+
+  request(search, function(error, response, body){
+    if(error) callback(404, error);
+    
+    body = Array.prototype.slice.call(JSON.parse(body));
+
+    if (!('errors' in body)) {
+      if(!body[0]) {
+        processResponseData(cachedTweets, 3, callback);
+        return;
+      }
+
+      if(cachedTweets) {
+        Timeline.updateTimeline(body, cachedTweets);
+        processResponseData(body.concat(cachedTweets), 3, callback);
+        return;
+      }
+
+      Timeline.insertTimeline(body);
+      processResponseData(body, 3, callback);
+      return;
+
+    } else {
+      grabTimeline(params, callback);
+    }
+  });
+};
+
+var processResponseData = function(response, amountToDisplay, callback) {
   var responseObj = {};
   var tweetIdsToSend = [];
   var tweetsBySocialCount = {};
 
   for (var i = 0; i < response.length; i++) {
-    var socialCount = response[i]['retweet_count'] + response[i]['favorite_count'] + response[i].id;
+    var socialCount = response[i]['retweet_count'] + response[i]['favorite_count'];
     tweetsBySocialCount[socialCount] = response[i];
   };
 
@@ -105,28 +128,17 @@ function processResponseData(response, amountToDisplay, callback) {
   });
 
   for(var j = 0; j < topTweetCounts.length; j++) {
-
     var tweet = tweetsBySocialCount[topTweetCounts[j]];
-  
-    var date;
-      if(homepage === true){
-        date = utils.getSimpleDate(new Date())
-      }
-      else{
-        date = utils.getSimpleDate(tweet.created_at);
-      }
-
-    if (tweet.lang !== 'en') { continue; };
-
+    var date = homepage ? utils.getSimpleDate(new Date()) : utils.getSimpleDate(tweet.timestamp);
     date = date.year + '-' + date.month + '-' + date.day;
+
+    // if (tweet.lang !== 'en') { continue; };
 
     tweetToSend = {
       date: date,
-      url: tweet.user.url,
-      img: tweet.user.profile_image_url,
-      tweet_id: tweet.id,
-      tweet_id_str: tweet.id_str,
-      type: 'news'
+      img: tweet.profile_img,
+      tweet_id: tweet.tweet_id,
+      tweet_id_str: String(tweet.tweet_id),
     };
 
     responseObj[date] = responseObj[date] || { source: 'twitter', children: [] };
@@ -135,5 +147,26 @@ function processResponseData(response, amountToDisplay, callback) {
     }
   }
   callback(200, responseObj);
+  return;
+};
+
+module.exports = {
+  
+  getTweetsPerson : function(request, response){
+    var queryString = request.body.searchTerm;
+    if (queryString === 'immediahomepage') {
+      homepage = true;
+      User.findUser('immediaHQ', handleUserSearch.bind(null, queryString, sendResponse.bind(null, response)));
+      return;
+    }
+    
+    User.findUser(queryString, handleUserSearch.bind(null, queryString, sendResponse.bind(null, response)));
+    return;
+  },
+
+  getNewsTweets : function(request, response){
+    var queryString = request.body.searchTerm;
+    Search.retrieveTweets(queryString, response);
+  }
 };
 
