@@ -16,7 +16,7 @@ var twitterStreamingConnection = require('./streamServer.js');
 
 var app = express();
 var server = http.createServer(app);
-var port = 3000;
+var port = 80;
 var url = '192.241.209.214'; //Change url as necessary
 
 //twitterStreamingConnection(); //Streaming API for Twitter
@@ -35,7 +35,7 @@ mongoose.connect('mongodb://localhost/local', function(error){
 
 //app.use();
 app.use(cors({
-  allowedOrigins: ['localhost:3000', 'http://www.immedia.xyz', 'http://immedia.xyz', '127.0.0.1:3000']
+  allowedOrigins: ['http://www.immedia.xyz', 'http://immedia.xyz', '192.241.209.214:80']
 }))
 
 app.use(express.static('dist'));
