@@ -1,6 +1,7 @@
 var OAuth = require('./OAuth');
 var request = require('request');
 var utils = require('./utils.js');
+var keys = require('./keys.js');
 
 var Search = require('./searches/controller.js');
 var User = require('./users_twitter/controller.js');
@@ -137,7 +138,7 @@ var processResponseData = function(response, amountToDisplay, callback) {
       date: date,
       img: tweet.profile_img,
       tweet_id: tweet.tweet_id,
-      tweet_id_str: String(tweet.tweet_id),
+      tweet_id_str: tweet.tweet_id_str,
       timestamp: tweet.timestamp,
     };
 
