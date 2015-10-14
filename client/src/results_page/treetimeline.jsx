@@ -191,12 +191,11 @@ var TreeTimeLine = React.createClass({
   },
 
   render: function() {
-    var component = this;
 
     this.renderCanvas(0, 6, 1);    // Crucial step that (re-)renders D3 canvas
-    component.renderCanvas(7, 13, 2);
-    component.renderCanvas(14, 20, 3);
-    component.renderCanvas(21, 28, 4);
+    this.renderCanvas(7, 13, 2);
+    this.renderCanvas(14, 20, 3);
+    this.renderCanvas(21, 28, 4);
 
     this.getDynamicStyles();
 
@@ -215,14 +214,14 @@ var TreeTimeLine = React.createClass({
   },
 
   getDynamicStyles: function() {
-    // styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 0) + 'px';
-    // styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20 + 'px';
+    styles.container.left = (this.state.width - 1350 > 0 ? (this.state.width - 1350) / 2 : 0) + 'px';
+    styles.container.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20 + 'px';
     // styles.container.height = (this.state.height - 50) + 'px';
-    // styles.block.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 10 + 'px';
-    // styles.title.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
-    // styles.subhead.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
+    styles.block.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 10 + 'px';
+    styles.title.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
+    styles.subhead.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
     // styles.d3.height = this.state.height - 110 + 'px';
-    // styles.d3.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20 + 'px';
+    styles.d3.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20 + 'px';
     return;
   },
 

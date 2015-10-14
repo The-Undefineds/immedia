@@ -49,6 +49,7 @@ var SearchHistory = React.createClass({
     this.setState({
       pastSearches: JSON.parse(localStorage['immedia']).slice(1),
     });
+    this.compileHistory();
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -91,7 +92,6 @@ var SearchHistory = React.createClass({
           var popSearch = { searchTerm: term, img: data[term].img };
           history.push(<PastSearch page={ popSearch } searchInit={component.props.searchInit} />);
         }
-        console.log(history);
         component.setState({ history: history });
       })
     } else {
