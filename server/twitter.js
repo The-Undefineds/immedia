@@ -1,5 +1,4 @@
 var OAuth = require('./OAuth');
-var keys = require('./keys.js');
 var request = require('request');
 var utils = require('./utils.js');
 var searches = require('./searches/controller.js');
@@ -19,12 +18,15 @@ var search = {
   }
 }
 
+var homepage = false;
+
 module.exports = {
   
   getTweetsPerson : function(request, response){
-    var queryString = request.body.searchTerm.toLowerCase();
+    var queryString = request.body.searchTerm;
     if (queryString === 'immediahomepage') {
-      findUser(searchTweetsUrl, 'news', function(status, data) {
+      homepage = true;
+      findUser(baseUrl, 'immediaHQ', function(status, data) {
         response.status(status).send(data);
       })
     } else {
@@ -50,12 +52,6 @@ function findUser(baseUrl, queryString, callback){
       callback(404, error);
     } else {
       body = JSON.parse(body);
-      //If the user is on the home page, a general search will populate the timeline with popular recent tweets.
-      if (queryString === 'news') {
-        if (body.statuses) {
-          processResponseData(body.statuses, 10, callback)
-      };
-     } else {
         var id,
             img;
 
@@ -68,7 +64,6 @@ function findUser(baseUrl, queryString, callback){
         else {
           findUser(baseUrl, queryString, callback);
         }
-      }
     }
   })
 }
@@ -77,7 +72,7 @@ function grabTimeline(newUrl, params, callback){
 
   search.url = newUrl;
   search.qs = {user_id : params.id, include_rts : 'false'};
-  search.headers.Authorization = 'Bearer ' + keys.twitterBearerToken;
+  search.headers.Authorization = OAuth(newUrl, 'user_id=' + params.id, 'include_rts=false');
 
   request(search, function(error, response, body){
     if(error) {
@@ -86,7 +81,7 @@ function grabTimeline(newUrl, params, callback){
       body = Array.prototype.slice.call(JSON.parse(body));
 
       if (body[0]) {
-        processResponseData(body, 2, callback);
+        processResponseData(body, 3, callback);
       } else {
         grabTimeline(newUrl, params, callback);
       }
@@ -112,7 +107,14 @@ function processResponseData(response, amountToDisplay, callback) {
   for(var j = 0; j < topTweetCounts.length; j++) {
 
     var tweet = tweetsBySocialCount[topTweetCounts[j]];
-    var date = utils.getSimpleDate(tweet.created_at);
+  
+    var date;
+      if(homepage === true){
+        date = utils.getSimpleDate(new Date())
+      }
+      else{
+        date = utils.getSimpleDate(tweet.created_at);
+      }
 
     if (tweet.lang !== 'en') { continue; };
 
@@ -126,13 +128,12 @@ function processResponseData(response, amountToDisplay, callback) {
       tweet_id_str: tweet.id_str,
       type: 'news'
     };
- 
+
     responseObj[date] = responseObj[date] || { source: 'twitter', children: [] };
     if (responseObj[date].children.length < amountToDisplay) {
       responseObj[date].children.push(tweetToSend);
     }
   }
-
   callback(200, responseObj);
 };
 

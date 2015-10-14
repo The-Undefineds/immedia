@@ -30,11 +30,32 @@ var WikiView = React.createClass({
   },
   
   componentDidMount: function(){
-    this.query(this.props.searchTerm);
+    if(this.props.searchTerm === 'immediahomepage'){
+      this.setState({
+        summary: 'View recent tweets, videos and articles on any topical subject '+
+        'in one simple and visually pleasing format.The Immedia Team: <a href="https://github.com/jacksonsierra" target="_blank">Jackson Sierra</a>, ' + 
+        '<a href="https://github.com/SlackingPalico" target="_blank">John Joel</a>, <a href="https://github.com/deeparcher" target="_blank">OJ Haugan</a>, ' +
+        '<a href="https://github.com/mtcrushmore">Ryan Smith</a>, and <a href="https://github.com/Way2nnadi" target="_blank">Uche Nnadi</a>',
+        profileImage: './immedia.png',
+      })
+
+      this.forceUpdate()
+    }else{
+      this.query(this.props.searchTerm);
+    } 
   },
 
   componentWillReceiveProps: function(nextProps){
-    if (this.props.searchTerm !== nextProps.searchTerm) {
+    if (nextProps.searchTerm === 'immediahomepage'){
+      this.setState({
+        summary: 'View recent tweets, videos and articles on any topical subject '+
+        'in one simple and visually pleasing format.The Immedia Team: <a href="https://github.com/jacksonsierra" target="_blank">Jackson Sierra</a>, ' + 
+        '<a href="https://github.com/SlackingPalico" target="_blank">John Joel</a>, <a href="https://github.com/deeparcher" target="_blank">OJ Haugan</a>, ' +
+        '<a href="https://github.com/mtcrushmore">Ryan Smith</a>, and <a href="https://github.com/Way2nnadi" target="_blank">Uche Nnadi</a>',
+        profileImage: './immedia.png'
+      })
+    }
+    else if (this.props.searchTerm !== nextProps.searchTerm) {
       this.query(nextProps.searchTerm);
     }
 
@@ -43,6 +64,7 @@ var WikiView = React.createClass({
       height: nextProps.window.height,
     });
   },
+
 
   render: function(){
     this.getDynamicStyles();

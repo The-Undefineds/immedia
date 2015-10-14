@@ -18,13 +18,13 @@ var server = http.createServer(app);
 var port = 3000;
 var url = '127.0.0.1'; //Change url as necessary
 
-mongoose.connect('mongodb://localhost/local', function(error){
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('mongo connected');
-  }
-});
+// mongoose.connect('mongodb://localhost/local', function(error){
+//   if (error) {
+//     console.error(error);
+//   } else {
+//     console.log('mongo connected');
+//   }
+// });
 
 // Activates cron-jobs that update news-tweets every half-hour
 // cron.job.start();
@@ -32,7 +32,7 @@ mongoose.connect('mongodb://localhost/local', function(error){
 
 //app.use();
 app.use(cors({
-  allowedOrigins: ['localhost:3000', 'http://www.immedia.xyz', 'http://immedia.xyz']
+  allowedOrigins: ['localhost:3000', 'http://www.immedia.xyz', 'http://immedia.xyz', '127.0.0.1:3000']
 }))
 
 app.use(express.static('dist'));
