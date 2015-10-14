@@ -12,6 +12,9 @@ var articleSearchDate = {};
 var mostPopular = {};
 var results = {};
 
+var homepage = false;
+
+
 var getPictureArticleSearch = function(article) {
   var baseURL = 'http://www.nytimes.com/';
   var pictures = article['multimedia'];
@@ -184,11 +187,38 @@ var prepareDataForResponse = function() {
   return;
 };
 
+var prepareMostPopularForResponse = function(){
+  var counter = 0;
+  var result = {};
+  for(article in mostPopular){
+    var date = mostPopular[article]['published_date'];
+    if(result[date] && result[date]['children'].length <= 3){
+      result[date]['children'].push(createMostPopularArticle(article, date))
+    }
+    else{
+      result[date] = {};
+      result[date]['source'] = 'nyt';
+      result[date]['children'] = [];
+      result[date]['children'].push(createMostPopularArticle(article, date))
+    }
+    counter++;
+    console.log(mostPopular[article]);
+    if(counter > 19){
+      break
+    }
+  }
+
+
+  return result;
+  console.log('Total Most Popular Articles:----------', counter);
+  
+};
+
 module.exports = {
 
   'getArticles': function(req, res) {
     var searchTerm = req.body.searchTerm.replace(/\s/g, '+').toLowerCase();   // Remove spaces in searchTerm and replace with '+'
-    if (searchTerm === 'immediahomepage') { searchTerm = 'news' }
+    if (searchTerm === 'immediahomepage') { searchTerm = 'news'; homepage = true; }
     var days = req.body.days === undefined ? 7 : Number(req.body.days);
 
     // NYT Article Search parameters (note: CAN search by topic)
@@ -215,7 +245,17 @@ module.exports = {
       .then(compareArticleSearchToMostPopular)
       .then(prepareDataForResponse)
       .then(function() {
-        res.send(results);
+        if(homepage === true){
+          res.send(prepareMostPopularForResponse())
+        }
+        else{
+          res.send(results);
+        }
+        // prepareMostPopularForResponse()
+        // console.log('this is the prepared results:------------', results)
+        // res.send(results);
+      })
+      .then(function(){
         articleSearch = {};
         articleSearchDate = {};
         mostPopular = {};
