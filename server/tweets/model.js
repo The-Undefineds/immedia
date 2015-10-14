@@ -14,7 +14,8 @@ var TweetsSchema = new mongoose.Schema({
   profile_img: String,
   background_img: String,
   text: String,
-  user_id: String
+  user_id: String,
+  timestamp: Date
 });
 
 module.exports = {
