@@ -1,5 +1,5 @@
 var Tweet = require('./model.js');
-var OAuth = require('../Oauth.js');
+var OAuth = require('../OAuth.js');
 var help  = require('./helpers.js');
 var searches = require('../searches/controller.js');
 
