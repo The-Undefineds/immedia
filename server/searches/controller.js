@@ -126,7 +126,7 @@ module.exports = {
 
   //Called from /api/news
   //Retrieve 3 tweets with the highest retweet count for each week for 1 month 
-  //from the database base on the search term
+  //from the database based on the search term
   retrieveTweets: function(queryString, response){
     queryString = help.parseQueryString(queryString);
 

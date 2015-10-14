@@ -345,7 +345,7 @@ var TreeTimeLine = React.createClass({
       }
     }
 
-    function update(source, canvas) {
+    function update(root, canvas) {
 
       var duration = 500;
       // var duration = function(d) {
