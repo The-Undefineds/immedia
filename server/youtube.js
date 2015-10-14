@@ -68,7 +68,7 @@ function callYoutube(date, item, callback){
         }
         obj[date].children.push({
           title : videos[i].snippet.title,
-          id : videos[i].id.videoId,
+          videoId : videos[i].id.videoId,
           thumbnail : videos[i].snippet.thumbnails
         })        
       }
@@ -85,9 +85,10 @@ function callYoutube(date, item, callback){
           source : 'youtube',
           children : []
         }
+
         obj[date].children.push({
           title : body.items[i].snippet.title,
-          id : body.items[i].id.videoId,
+          videoId : body.items[i].id.videoId,
           thumbnail : body.items[i].snippet.thumbnails,
         })
         callback(200, obj);
