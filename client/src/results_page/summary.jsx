@@ -43,13 +43,14 @@ var Summary = React.createClass({
   },
 
   componentDidUpdate: function(prevProps, prevState) {
-    if(prevProps.searchTerm !== this.props.searchTerm) {
+    // if(prevProps.searchTerm !== this.props.searchTerm) {
       $(function() {
         $('.wikiLink').on('click', function(event) {
+          console.log('wikilink clicked');
           this.props.searchInit($(event.target).text());
         }.bind(this));
       }.bind(this));
-    }
+    // }
   },
 
   componentWillReceiveProps: function(nextProps) {
