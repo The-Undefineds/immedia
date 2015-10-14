@@ -55,7 +55,7 @@ var createArticleSearchMap = function(searchTerm, beginDate, response) {
   }
 
   for(var i = 1; i < numRequests ; i++) {
-    var queryString = articleSearchURI + 'q=' + searchTerm + '&fq=headline:("' + searchTerm + '")&' + 'begin_date=' + beginDate + '&' + 'page=' + i + '&' + 'api-key=' + keys.nytArticleSearch;
+    var queryString = articleSearchURI + 'q=' + searchTerm + '&fq=headline:("' + searchTerm + '") AND source:("New York Times")&' + 'begin_date=' + beginDate + '&' + 'page=' + i + '&' + 'api-key=' + keys.nytArticleSearch;
     
     getRequestURIs.push(    // Create an array to carry-out parallel async requests
       request(queryString)
@@ -221,7 +221,7 @@ module.exports = {
     // NYT Article Search parameters (note: CAN search by topic)
     var beginDate = utils.getDateFromToday(-days);
     var today = utils.getDateFromToday(0);
-    var queryStringArticleSearch = articleSearchURI + 'q=' + searchTerm + '&fq=headline:("' + searchTerm + '")&' + 'begin_date=' + beginDate + '&' + 'page=' + 0 + '&' + 'api-key=' + keys.nytArticleSearch;
+    var queryStringArticleSearch = articleSearchURI + 'q=' + searchTerm + '&fq=headline:("' + searchTerm + '") AND source:("New York Times")&' + 'begin_date=' + beginDate + '&' + 'page=' + 0 + '&' + 'api-key=' + keys.nytArticleSearch;
 
     // Most-Popular NYT article parameters (note: cannot search by topic)
     var timePeriod = days;
