@@ -17,7 +17,7 @@ var twitterStreamingConnection = require('./streamServer.js');
 var app = express();
 var server = http.createServer(app);
 var port = 3000;
-var url = '127.0.0.1'; //Change url as necessary
+var url = '192.241.209.214'; //Change url as necessary
 
 //twitterStreamingConnection(); //Streaming API for Twitter
 
