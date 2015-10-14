@@ -33,16 +33,6 @@ var styles = StyleSheet.create({
 
 var TwitterPreview = React.createClass({
 
-
-  embedTweet: function(tweetId) {
-    //A new div with id "tweet" is created, and the embedded tweet is appended to it.
-    $('<div id="tweet"></div>').hide().prependTo('#twitterPreview').fadeIn(800);
-      twttr.widgets.createTweet(
-        tweetId,
-        document.getElementById('tweet')
-        )
-    },
-
   getInitialState: function() {
     return {
       width: this.props.window.width,

@@ -49,7 +49,10 @@ var SearchHistory = React.createClass({
     this.setState({
       pastSearches: JSON.parse(localStorage['immedia']).slice(1),
     });
-    this.compileHistory();
+    this.compileHistory(function(history) {
+      this.setState({ history: history })
+    }.bind(this));
+
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -57,6 +60,9 @@ var SearchHistory = React.createClass({
       this.setState({
         pastSearches: JSON.parse(localStorage['immedia']).slice(1),
       });
+      this.compileHistory(function(history) {
+        this.setState({ history: history })
+      }.bind(this));
     }
 
     if(!(this.state.width === nextProps.window.width && this.state.height === nextProps.window.height)) {
@@ -65,13 +71,12 @@ var SearchHistory = React.createClass({
         height: nextProps.window.height,
       });
     }
-
-    this.compileHistory();
   },
 
   render: function(){
 
     this.getDynamicStyles();
+
 
     return (
       <div id="recentlyVisited" style={styles.container}>
@@ -82,7 +87,7 @@ var SearchHistory = React.createClass({
     );
   },
 
-  compileHistory: function() {
+  compileHistory: function(callback) {
     var history = [];
     var component = this;
 
@@ -92,15 +97,15 @@ var SearchHistory = React.createClass({
           var popSearch = { searchTerm: term, img: data[term].img };
           history.push(<PastSearch page={ popSearch } searchInit={component.props.searchInit} />);
         }
-        component.setState({ history: history });
+        callback(history);
+        return;
       })
     } else {
       for (var i = 0; i < this.state.pastSearches.length; i++) {
         history.push(<PastSearch page={this.state.pastSearches[i]} searchInit={this.props.searchInit} />)
       }
-      component.setState({ history: history });
+      callback(history);
     }
-      
   },
 
   getDynamicStyles: function() {
