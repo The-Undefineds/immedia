@@ -57,7 +57,7 @@ var styles = StyleSheet.create({
     paddingTop: '2px',
     color: '#fff',
     fontWeight: 'normal',
-    fontSize: '25%',
+    fontSize: '80%',
     background: '#44c31d',
     padding: '5px',
     cursor: 'pointer',
@@ -196,7 +196,7 @@ var TopBar = React.createClass({
         <span style={styles.title} onClick={this.goBackHome}>immedia</span>
         <input id='topbar' type='text' style={styles.searchBar} onChange={this.handleChange} onKeyDown={this.enterPressed} onSelect={this.handleChange}/>
         <input type='button' style={styles.searchButton} onClick={this.handleSubmit} value='immedia search'/>
-        <input type='button' style={styles.downloadButton} value={"download chrome extension"} onClick={this.downloadExtension} />
+        <input type='button' style={styles.downloadButton} value={"Get chrome extension"} onClick={this.downloadExtension} />
       </div>
     );
   },
