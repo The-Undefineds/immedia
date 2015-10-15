@@ -62,6 +62,7 @@ module.exports = {
           newSearchRank++;
       }
     })
+    res.sendStatus(200);
   },
 
   getPopularSearches: function(req, res, next) {
