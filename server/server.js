@@ -4,7 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var youtube = require('./youtube');
 var nyt = require('./nyt.js');
-var twitter = require('./twitter');
+var twitter = require('./twitter.js');
 var googleImages = require('./googleImages.js');
 var searches = require('./searches/controller.js');
 var cors = require('express-cors');
@@ -19,7 +19,7 @@ var server = http.createServer(app);
 var port = 3000;
 var url = '127.0.0.1'; //Change url as necessary
 
-//twitterStreamingConnection(); //Streaming API for Twitter
+// twitterStreamingConnection(); //Streaming API for Twitter
 
 mongoose.connect('mongodb://localhost/local', function(error){
   if (error) {
