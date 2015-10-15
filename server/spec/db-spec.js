@@ -9,11 +9,11 @@ var Tweet = require('../tweets/model.js');
 var server = require('../server.js');
 
 
-describe('database', function() {
+describe('popular searches', function() {
 
   //The beforeEach function executes before each test in this test block. A test database is created.
   beforeEach(function(done) {
-    mongoose.connect('mongodb://localhost/test', function(error){
+    mongoose.createConnection('mongodb://localhost/test', function(error){
       if (error) {
         console.error(error);
       } else {
@@ -23,7 +23,8 @@ describe('database', function() {
     done();
   });
 
-  //After each test in this test block, the connection is closed so that each test's database connection does
+  //After each test in this test block, test data is removed from the database so it does not interfere with other tests.
+  //The connection is closed so that each test's database connection does
   //not interfere with the others in the test block.
   afterEach(function(done) {
     Search.findOneAndRemove({ search_term: 'donald trump' })
@@ -34,9 +35,9 @@ describe('database', function() {
         Search.findOneAndRemove({ search_term: 'bernie sanders' })
        })
       .then(function() {
-        mongoose.disconnect();
-        done();
+        mongoose.connection.close();
       })
+      done();
   });
 
   it('should store search terms and corresponding image urls', function(done) {
@@ -57,12 +58,14 @@ describe('database', function() {
   });
 
   it('should increment search total after search term is searched', function(done) {
+
+    //The term 'donald trump' is searched three times, so a search count of 3 is expected.
     request(server)
-      .post('searches/incrementSearchTerm')
+      .post('/searches/incrementSearchTerm')
       .send({ searchTerm: 'donald trump' })
 
     request(server)
-      .post('searches/incrementSearchTerm')
+      .post('/searches/incrementSearchTerm')
       .send({ searchTerm: 'donald trump' })
 
     request(server)
@@ -79,9 +82,11 @@ describe('database', function() {
       .end(done);
   });
 
-  it('should properly rank search terms based on total searches', function() {
+  it('should properly rank search terms based on total searches', function(done) {
+
+    //The term 'hillary clinton' is searched once, and should have a ranking of 1.
     request(server)
-      .post('searches/incrementSearchTerm')
+      .post('/searches/incrementSearchTerm')
       .send({ searchTerm: 'hillary clinton' })
       .expect(function(res) {
         Search.findOne({ search_term: 'hillary clinton' })
@@ -90,8 +95,9 @@ describe('database', function() {
           })
       })
 
+    //After 'bernie sanders' is searched twice, the term should overtake 'hillary clinton' as the number 1 ranked term.
     request(server)
-      .post('searches/incrementSearchTerm')
+      .post('/searches/incrementSearchTerm')
       .send({ searchTerm: 'bernie sanders' })
 
     request(server)
@@ -109,11 +115,77 @@ describe('database', function() {
             }
           })
       })
+      .end(done);
   });
 
-  // it('should retrieve the most popular search terms', function() {});
+  it('should retrieve the most popular search terms', function(done) {
 
-  // it('should retrieve news tweets with search term in title or text', function() {});
+    request(server)
+      .post('/searches/incrementSearchTerm')
+      .send({ searchTerm: 'bernie sanders' })
+    request(server)
+      .post('/searches/incrementSearchTerm')
+      .send({ searchTerm: 'hillary clinton' })
+    request(server)
+      .post('/searches/incrementSearchTerm')
+      .send({ searchTerm: 'donald trump' })
+      .expect(function(res) {
+
+        request(server)
+          .get('/searches/popularSearches')
+          .expect(200)
+          .expect(function(res) {
+            expect(res.body).to.be.an('object');
+            expect(res.body['bernie sanders'].rank).to.equal(1);
+            expect(res.body['hillary clinton'].rank).to.equal(2);
+            expect(res.body['donald trump'].rank).to.equal(3);
+          })
+
+      })
+
+      .end(done);
+  });
+});
+
+describe('news tweets', function() {
+
+
+  //Before each test, connect to the test database and create a test tweet (based on real Twitter News results)
+  beforeEach(function(done) {
+    mongoose.createConnection('mongodb://localhost/test', function(error){
+      if (error) {
+        console.error(error);
+      } else {
+        console.log('mongo connected');
+      }
+    });
+    Tweet.create({ date: '2015-09-23',
+      tweet_id: 646673231139733500,
+      tweet_id_str: '646673231139733504',
+      url: 'http://t.co/i4MdoyusW7',
+      img: 'https://pbs.twimg.com/profile_images/461499742950678528/2JnpHjUo_normal.png',
+      background: 'https://pbs.twimg.com/profile_background_images/845392952/963b46728d3607fe369457e527b9d62e.png',
+      newssource: 'TheEconomist',
+      text: 'Hillary Clinton challenged drugmakers over “outrageous” price increases. It may have worked.' })
+    done();
+  });
+
+  afterEach(function(done) {
+    Tweet.findOneAndRemove({ tweet_id_str: '646673231139733504' })
+    mongoose.connection.close();
+    done();
+  })
+
+  it('should retrieve news tweets with search term in title or text', function(done) {
+    request(server)
+      .post('/api/news')
+      .send({ searchTerm: 'hillary clinton' })
+      .expect(function(res) {
+        console.log(res.body);
+        expect(res.body['2015-09-23'].text.includes('Hillary Clinton')).to.equal(true);
+      })
+      .end(done);
+  });
 
   // it('should not retrieve news tweets without search term in title or text', function() {});
 

@@ -201,8 +201,7 @@ module.exports = {
             text: highestRetweet[i].text || ''
           })
         }
-        
-        response.send(objToSend);
+        response.status(200).send(objToSend);
       }
     });
   }
