@@ -62,6 +62,7 @@ module.exports = {
           newSearchRank++;
       }
     })
+    res.sendStatus(200);
   },
 
   getPopularSearches: function(req, res, next) {
@@ -126,7 +127,7 @@ module.exports = {
 
   //Called from /api/news
   //Retrieve 3 tweets with the highest retweet count for each week for 1 month 
-  //from the database base on the search term
+  //from the database based on the search term
   retrieveTweets: function(queryString, response){
     queryString = help.parseQueryString(queryString);
 
@@ -200,8 +201,7 @@ module.exports = {
             text: highestRetweet[i].text || ''
           })
         }
-        
-        response.send(objToSend);
+        response.status(200).send(objToSend);
       }
     });
   }

@@ -90,14 +90,16 @@ module.exports = {
     Tweet.collection.insert(tweetArray, function(err, data) {
       if(err) console.error(err);
 
-      data = Array.prototype.slice.call(data.ops);
+      if (data.ops) data = Array.prototype.slice.call(data.ops);
       var since_id = getSinceId(data);
 
-      Timeline.create({
-        'user_id': data[0].user_id,
-        'since_id': since_id,
-        'tweets': data
-      }, function(err) { console.error(err); });
+      if (data[0]) {
+        Timeline.create({
+          'user_id': data[0].user_id,
+          'since_id': since_id,
+          'tweets': data
+        }, function(err) { console.error(err); });
+      }
 
       return;
     });
