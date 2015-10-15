@@ -235,6 +235,7 @@ var TreeTimeLine = React.createClass({
     } else {
       this.mousedOver = item;
     }
+
     this.props.mouseOver({
         title: item.title,
         date: item.date,
@@ -242,7 +243,7 @@ var TreeTimeLine = React.createClass({
         img: item.img,
         source: item.parent.source,
         id: item.id,
-        tweetId: (item.hasOwnProperty('tweet_id_str') ? item.tweet_id_str : ''),
+        tweetId: (item.hasOwnProperty('tweet_id') ? item.tweet_id : ''),
         byline: (item.hasOwnProperty('byline') ? item.byline : ''),
         videoId: (item.hasOwnProperty('videoId') ? item.videoId : ''),
         abstract: (item.hasOwnProperty('abstract') ? item.abstract : ''),
