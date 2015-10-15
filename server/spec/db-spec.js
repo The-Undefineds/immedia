@@ -159,13 +159,8 @@ describe('news tweets', function() {
         console.log('mongo connected');
       }
     });
-    Tweet.create({ date: '2015-09-23',
-      tweet_id: 646673231139733500,
+    Tweet.create({ date: 'Wed Sep 23 13:08:45 +0000 2008',
       tweet_id_str: '646673231139733504',
-      url: 'http://t.co/i4MdoyusW7',
-      img: 'https://pbs.twimg.com/profile_images/461499742950678528/2JnpHjUo_normal.png',
-      background: 'https://pbs.twimg.com/profile_background_images/845392952/963b46728d3607fe369457e527b9d62e.png',
-      newssource: 'TheEconomist',
       text: 'Hillary Clinton challenged drugmakers over “outrageous” price increases. It may have worked.' })
     done();
   });
@@ -181,8 +176,7 @@ describe('news tweets', function() {
       .post('/api/news')
       .send({ searchTerm: 'hillary clinton' })
       .expect(function(res) {
-        console.log(res.body);
-        expect(res.body['2015-09-23'].text.includes('Hillary Clinton')).to.equal(true);
+        expect(res.body['2015-09-23'].children[0].text.includes('Hillary Clinton')).to.equal(true);
       })
       .end(done);
   });
