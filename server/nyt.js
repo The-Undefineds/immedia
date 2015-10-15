@@ -208,7 +208,6 @@ var prepareMostPopularForResponse = function(){
   }
 
   return result;
-  
 };
 
 module.exports = {
