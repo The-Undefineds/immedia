@@ -120,7 +120,7 @@ gulp.task('replace', function(){
     .pipe(replace('3000', '80'))
     .pipe(gulp.dest(__dirname + '/client/src/results_page/searchhistory.jsx'))
 
-);
+});
 
 gulp.task('deploy', function(){
   function send(path, remotePath){
