@@ -202,15 +202,12 @@ var prepareMostPopularForResponse = function(){
       result[date]['children'].push(createMostPopularArticle(article, date))
     }
     counter++;
-    console.log(mostPopular[article]);
-    if(counter > 19){
+    if(counter > 49){
       break
     }
   }
 
-
   return result;
-  console.log('Total Most Popular Articles:----------', counter);
   
 };
 
@@ -251,9 +248,6 @@ module.exports = {
         else{
           res.send(results);
         }
-        // prepareMostPopularForResponse()
-        // console.log('this is the prepared results:------------', results)
-        // res.send(results);
       })
       .then(function(){
         articleSearch = {};

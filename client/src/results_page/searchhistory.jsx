@@ -80,8 +80,8 @@ var SearchHistory = React.createClass({
 
     return (
       <div id="recentlyVisited" style={styles.container}>
-      { this.props.searchTerm === 'immediahomepage' ? <div style={styles.title}>immedia: popular searches</div> :
-        <div style={styles.title}>immedia: recently visited</div> }
+      { this.props.searchTerm === 'immediahomepage' ? <div style={styles.title}>popular searches</div> :
+        <div style={styles.title}>recently visited</div> }
         <div style={styles.searches}>{ this.state.history }</div>
       </div>
     );
