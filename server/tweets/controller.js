@@ -112,9 +112,9 @@ var requestNewTweets = function(screenName, sinceID, maxID){
 // Finds the next news organization in line, then updates it with 'lastTweetStored'
 var updateNextNewsOrg = function(screenName){
   var index = newsOrgs.indexOf(screenName);
-  if (index !== newsOrgs.length-1) {
+  if (index !== newsOrgs.length - 1) {
     setTimeout(function(){
-      lastTweetStored(newsOrgs[index+1]);
+      lastTweetStored(newsOrgs[index + 1]);
     }, 5500);
   }
 };
