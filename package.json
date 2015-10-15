@@ -9,6 +9,7 @@
     "cron": "^1.0.9",
     "express": "4.13.3",
     "express-cors": "0.0.3",
+    "fuzzyset.js": "0.0.1",
     "gulp": "3.9.0",
     "mongodb-uri": "^0.9.7",
     "mongoose": "^4.1.10",

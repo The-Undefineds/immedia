@@ -21,7 +21,7 @@ var styles = StyleSheet.create({
     position: 'absolute',
     top: '0px',
     height: '30px',
-    backgroundColor: 'rgba(128,128,128,0.1)',
+    backgroundColor: 'rgba(232,232,232,1)',
   },
   searches: {
     position: 'absolute',
@@ -38,21 +38,15 @@ var SearchHistory = React.createClass({
 
   getInitialState: function() {
     return {
-      pastSearches: [],
+      pastSearches: JSON.parse(localStorage['immedia']).slice(1),
       history: [],
       width: this.props.window.width,
       height: this.props.window.height,
     };
   },
 
-  componentWillMount: function() {
-    this.setState({
-      pastSearches: JSON.parse(localStorage['immedia']).slice(1),
-    });
-    this.compileHistory(function(history) {
-      this.setState({ history: history })
-    }.bind(this));
-
+  componentDidMount: function() {
+    this.compileHistory();
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -73,8 +67,13 @@ var SearchHistory = React.createClass({
     }
   },
 
-  render: function(){
+  componentDidUpdate: function(prevProps, prevState) {
+    if(prevProps.searchTerm !== this.props.searchTerm) {
+      this.compileHistory();
+    }
+  },
 
+  render: function(){
     this.getDynamicStyles();
 
 
@@ -97,15 +96,16 @@ var SearchHistory = React.createClass({
           var popSearch = { searchTerm: term, img: data[term].img };
           history.push(<PastSearch page={ popSearch } searchInit={component.props.searchInit} />);
         }
-        callback(history);
-        return;
-      })
-    } else {
-      for (var i = 0; i < this.state.pastSearches.length; i++) {
-        history.push(<PastSearch page={this.state.pastSearches[i]} searchInit={this.props.searchInit} />)
-      }
-      callback(history);
+        component.setState({ history: history });
+      });
+      return;
     }
+    
+    for (var i = 0; i < this.state.pastSearches.length; i++) {
+      history.push(<PastSearch page={this.state.pastSearches[i]} searchInit={this.props.searchInit} />)
+    }
+    component.setState({ history: history });
+    return;
   },
 
   getDynamicStyles: function() {

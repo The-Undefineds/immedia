@@ -1,4 +1,4 @@
-var Tweet = require('./model.js');
+var Tweet = require('./model.js').model;
 var OAuth = require('../Oauth.js');
 var help  = require('./helpers.js');
 var searches = require('../searches/controller.js');
@@ -70,14 +70,13 @@ var requestNewTweets = function(screenName, sinceID, maxID){
         for (var i = 0; i < body.length; i++) {
           var tweet = body[i];
           var created_at = tweet.created_at.slice(4, 10) + tweet.created_at.slice(25);
-          var tweet_id = tweet.id;
+          var tweet_id = tweet.id_str;
           if (tweet_id < sinceID || help.convertDateToInteger(created_at) < monthAgo) {         // Ends recursion
             updateNextNewsOrg(screenName);
             return; 
           }
           var newTweet = {
             tweet_id: tweet_id,
-            tweet_id_str: tweet.id_str,
             created_at: created_at,
             url: help.extractUrl(tweet.text),
             retweet_count: tweet.retweet_count,
