@@ -46,7 +46,6 @@ var Summary = React.createClass({
     // if(prevProps.searchTerm !== this.props.searchTerm) {
       $(function() {
         $('.wikiLink').on('click', function(event) {
-          console.log('wikilink clicked');
           this.props.searchInit($(event.target).text());
         }.bind(this));
       }.bind(this));

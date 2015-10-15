@@ -29,6 +29,7 @@ var prepareTweetsForInsertion = function(tweetArray) {
 
     var newTweet = {
       tweet_id: tweet.id_str,
+      tweet_id_str: tweet.id_str,
       created_at: created_at.year + '-' + created_at.month + '-' + created_at.day,
       url: undefined,
       retweet_count: tweet.retweet_count,
