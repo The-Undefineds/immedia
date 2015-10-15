@@ -86,25 +86,7 @@ var TreeTimeLine = React.createClass({
   breakPoint: null,
 
   componentDidMount: function(){
-    // var component = this;
     this.query(this.props.searchTerm.toLowerCase());
-    // this.setTimeSpan(this.state.timeSpan);
-
-    //When a user scrolls to the bottom of the document, a new timeline will be rendered that is 7 days longer.
-    // $(window).scroll(function() {
-
-    //   var scrollPoint = $(window).scrollTop() + $(window).height();
-    //   if (scrollPoint >= $(document).height()) {
-    //        //An upper limit for the timeline's span is set at 30 days.
-    //        if (component.dates.length > 27) {
-    //         return;
-    //        }
-    //        component.breakPoint = scrollPoint;
-    //        component.renderCanvas(7, 14, 2);
-    //        component.renderCanvas(14, 21, 3);
-    //        component.renderCanvas(21, 28, 4);
-    //    }
-    // });
   },
 
   componentWillReceiveProps: function(newProps){
@@ -129,8 +111,6 @@ var TreeTimeLine = React.createClass({
 
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
-
-        console.log(response);
 
         component.renderCount++;
 
@@ -547,6 +527,11 @@ var TreeTimeLine = React.createClass({
       nodeExit.select('circle')
           .attr('r', 1e-6);
 
+      nodes.forEach(function(d) {
+        d.x0 = d.x;
+        d.y0 = d.y;
+      });
+
       var link = svg.selectAll('path.link')
           .data(tree.links(nodes), function(d) { return d.target.id; })
 
@@ -578,12 +563,7 @@ var TreeTimeLine = React.createClass({
           })
           .remove();
 
-      nodes.forEach(function(d) {
-        d.x0 = d.x;
-        d.y0 = d.y;
-      });
-
-      if (canvasData[0] && canvasData[0].children[0]) {component.mouseOver(canvasData[0].children[0].children[0])}
+      if (canvas === 1 && canvasData[0] && canvasData[0].children[0]) {component.mouseOver(canvasData[0].children[0].children[0])}
     }
 
     function toggle(d) {
