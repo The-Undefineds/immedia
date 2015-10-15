@@ -39,7 +39,7 @@ var handleUserSearch = function(queryString, callback, cachedUser) {
 
 var handleTimelineSearch = function(callback, params, cachedTweets) {
   if(cachedTweets && !params.since_id) {
-    processResponseData(cachedTweets, 10, callback);
+    processResponseData(cachedTweets, 5, callback);
     return;
   }
 
@@ -59,7 +59,7 @@ var findTwitterUser = function(queryString, callback) {
     //If the user is on the home page, a general search will populate the timeline with popular recent tweets.
     if (queryString === 'news') {
       if (body.statuses) {
-        processResponseData(body.statuses, 10, callback)
+        processResponseData(body.statuses, 5, callback)
       }
     } else {
 
@@ -96,18 +96,18 @@ var grabTimeline = function(params, callback, cachedTweets){
       var tweetsArray = Array.prototype.slice.call(tweets);
 
       if(!tweetsArray[0]) {
-        processResponseData(cachedTweets, 10, callback);
+        processResponseData(cachedTweets, 5, callback);
         return;
       }
 
       if(cachedTweets) {
         Timeline.updateTimeline(tweetsArray, cachedTweets);
-        processResponseData(tweetsArray.concat(cachedTweets), 10, callback);
+        processResponseData(tweetsArray.concat(cachedTweets), 5, callback);
         return;
       }
 
       Timeline.insertTimeline(tweetsArray);
-      processResponseData(tweetsArray, 10, callback);
+      processResponseData(tweetsArray, 5, callback);
       return;
 
     } else {
@@ -118,21 +118,42 @@ var grabTimeline = function(params, callback, cachedTweets){
 
 var processResponseData = function(response, amountToDisplay, callback) {
   var responseObj = {};
-  var tweetsBySocialCount = {};
+  var tweetsByWeek = [0, 0, 0, 0];
 
-  for (var i = 0; i < response.length; i++) {
-    var socialCount = response[i]['retweet_count'] + response[i]['favorite_count'];
-    tweetsBySocialCount[socialCount] = response[i];
-  };
-
-  var topTweetCounts = Object.keys(tweetsBySocialCount).sort(function(a, b) {
-    return b - a;
+  response.sort(function(a, b) {
+    return (b['retweet_count'] + b['favorite_count']) - (a['retweet_count'] + a['favorite_count']);
   });
 
-  for(var j = 0; j < amountToDisplay; j++) {
-    var tweet = tweetsBySocialCount[topTweetCounts[j]];
+  for(var i = 0; i < response.length; i++) {
+    var tweet = response[i];
     var date = homepage ? utils.getSimpleDate(new Date()) : utils.getSimpleDate(tweet.timestamp);
     date = date.year + '-' + date.month + '-' + date.day;
+
+    if(date > utils.getDateFromToday(-7, '-')) {
+      if(tweetsByWeek[0] <= amountToDisplay) {
+        tweetsByWeek[0]++;
+      } else {
+        continue;
+      }
+    } else if(date > utils.getDateFromToday(-14, '-')) {
+      if(tweetsByWeek[1] <= amountToDisplay) {
+        tweetsByWeek[1]++;
+      } else {
+        continue;
+      }
+    } else if(date > utils.getDateFromToday(-21, '-')) {
+      if(tweetsByWeek[2] <= amountToDisplay) {
+        tweetsByWeek[2]++;
+      } else {
+        continue;
+      }
+    } else if(date > utils.getDateFromToday(-28, '-')) {
+      if(tweetsByWeek[3] <= amountToDisplay) {
+        tweetsByWeek[3]++;
+      } else {
+        continue;
+      }
+    }
 
     tweetToSend = {
       date: date,
