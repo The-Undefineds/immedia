@@ -66,8 +66,8 @@ var TreeTimeLine = React.createClass({
   apis: [
     'nyt',
     'twitter',
-    'youtube'
-    // 'news'
+    'youtube',
+    'news'
   ],
 
   //Rendering the timeline will start a query for a search term passed down from the results page.
