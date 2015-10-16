@@ -10,6 +10,7 @@ var Timeline = require('./timelines/controller.js');
 var userSearchUrl = 'https://api.twitter.com/1.1/users/search.json';
 var userStatusUrl = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
 var searchTweetsUrl = 'https://api.twitter.com/1.1/search/tweets.json';
+var immediaUserId = '3752256737';
 
 var search = {
   url : '',
@@ -123,7 +124,7 @@ var processResponseData = function(response, amountToDisplay, callback) {
 
   for(var i = 0; i < response.length; i++) {
     var tweet = response[i];
-    var date = homepage ? utils.getSimpleDate(new Date()) : utils.getSimpleDate(tweet.timestamp);
+    var date = tweet['user_id'] === immediaUserId ? utils.getSimpleDate(new Date()) : utils.getSimpleDate(tweet.timestamp);
     date = date.year + '-' + date.month + '-' + date.day;
 
     if(date > utils.getDateFromToday(-7, '-')) {
