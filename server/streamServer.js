@@ -27,7 +27,7 @@ function releaseTheKraken(){
     stream.on('data', function(tweet) {
       if (!('friends' in tweet)){
         var created_at = tweet.created_at.slice(4, 10) + tweet.created_at.slice(25);
-        var tweet_id = tweet.id;
+        var tweet_id = tweet.id_str;
         var newTweet = {
           tweet_id: tweet_id,
           tweet_id_str: tweet.id_str,
