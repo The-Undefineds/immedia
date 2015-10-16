@@ -51,7 +51,7 @@ var getSinceId = function(tweetArray) {
   var since_id;
 
   for(var i = 0; i < tweetArray.length; i++) {
-    if(since_id === undefined || Number(tweetArray[i].tweet_id) > Number(since_id)) {
+    if(since_id === undefined || tweetArray[i].tweet_id > since_id) {
       since_id = tweetArray[i].tweet_id;
     }
   }
