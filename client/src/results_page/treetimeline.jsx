@@ -582,7 +582,7 @@ var TreeTimeLine = React.createClass({
         d.y0 = d.y;
       });
 
-      if (canvasData[0] && canvasData[0].children[0]) {component.mouseOver(canvasData[0].children[0].children[0])}
+      if (canvas === 1 && canvasData[0] && canvasData[0].children[0]) {component.mouseOver(canvasData[0].children[0].children[0])}
     }
 
     function toggle(d) {
