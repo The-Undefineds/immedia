@@ -20,9 +20,6 @@ var search = {
   }
 }
 
-var homepage = false;
-
-
 var sendResponse = function(response, status, data) {
   response.status(status).send(data);
 };
@@ -175,8 +172,7 @@ module.exports = {
   getTweetsPerson : function(request, response){
     var queryString = request.body.searchTerm;
     if (queryString === 'immediahomepage') {
-      homepage = true;
-      User.findUser('immediaHQ', handleUserSearch.bind(null, queryString, sendResponse.bind(null, response)));
+      User.findUser(queryString, handleUserSearch.bind(null, queryString, sendResponse.bind(null, response)));
       return;
     }
     
