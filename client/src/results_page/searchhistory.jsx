@@ -25,7 +25,8 @@ var styles = StyleSheet.create({
   },
   searches: {
     position: 'absolute',
-    overflow: 'scroll',
+    'overflow-x': 'scroll',
+    'overflow-y': 'hidden',
     display: 'inline-block',
     whiteSpace: 'nowrap',
     right: '0px',

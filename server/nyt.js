@@ -13,9 +13,6 @@ var articleSearchDate = {};
 var mostPopular = {};
 var results = {};
 
-var homepage = false;
-
-
 var getPictureArticleSearch = function(article) {
   var baseURL = 'http://www.nytimes.com/';
   var pictures = article['multimedia'];
@@ -46,8 +43,8 @@ var searchTermListedAsKeyword = function(article, searchTerm) {
     var searchCheck = keywordCheck.get(searchTerm);
     var personCheck = keywordCheck.get(personTerm);
 
-    if( (searchCheck !== null && searchCheck[0][0] > 0.8) || 
-        (personCheck !== null && personCheck[0][0] > 0.8)) {
+    if( (searchCheck !== null && searchCheck[0][0] > 0.65) || 
+        (personCheck !== null && personCheck[0][0] > 0.65)) {
       return true;
     }
   }
@@ -248,8 +245,6 @@ module.exports = {
     var searchTerm = req.body.searchTerm;   // Remove spaces in searchTerm and replace with '+'
     var personTerm = req.body.searchTerm.replace(/^(.+?) ([^\s,]+)(,? (?:[JS]r\.?|III?|IV))?$/i,"$2, $1$3");
     var days = req.body.days === undefined ? 7 : Number(req.body.days);
-    
-    if (searchTerm === 'immediahomepage') { searchTerm = 'news'; homepage = true; }
 
     // NYT Article Search parameters (note: CAN search by topic)
     var beginDate = utils.getDateFromToday(-days);
@@ -276,11 +271,10 @@ module.exports = {
       .then(compareArticleSearchToMostPopular)
       .then(prepareDataForResponse)
       .then(function() {
-        if(homepage === true){
+        if(searchTerm === 'immediahomepage'){
           res.send(prepareMostPopularForResponse())
           return;
         }
-
         res.send(results);
       })
       .then(function(){

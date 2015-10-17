@@ -28,7 +28,7 @@ var prepareTweetsForInsertion = function(tweetArray) {
     var timestamp = new Date(tweet.created_at);
 
     var newTweet = {
-      tweet_id: tweet.id_str,
+      tweet_id_str: tweet.id_str,
       created_at: created_at.year + '-' + created_at.month + '-' + created_at.day,
       url: undefined,
       retweet_count: tweet.retweet_count,
@@ -88,7 +88,7 @@ module.exports = {
     prepareTweetsForInsertion(tweetArray);
 
     Tweet.collection.insert(tweetArray, function(err, data) {
-      if(err) console.error(err);
+      if(err) console.error('insert timeline', err);
 
       if (data.ops) data = Array.prototype.slice.call(data.ops);
       var since_id = getSinceId(data);
