@@ -178,7 +178,7 @@ var TopBar = React.createClass({
   },
 
   downloadExtension: function(){
-    console.log('downloading extension (fill me in)');
+    window.location.assign("http://bit.ly/1GjqyVh")
   },
 
   componentDidUpdate: function(prevProps, prevState) {
