@@ -77,7 +77,7 @@ var TreeTimeLine = React.createClass({
       this.handleQuery({
         searchTerm: searchTerm.replace(/\s\(.*$/,''),
         days: 30,
-        url: 'http://localhost:3000/api/' + this.apis[i],
+        url: 'http://192.241.209.214/api/' + this.apis[i],
         api: this.apis[i]
       });
     }

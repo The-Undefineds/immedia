@@ -16,10 +16,10 @@ var twitterStreamingConnection = require('./streamServer.js');
 
 var app = express();
 var server = http.createServer(app);
-var port = 3000;
-var url = 'localhost'; //Change url as necessary
+var port = 80;
+var url = '192.241.209.214'; //Change url as necessary
 
-// twitterStreamingConnection(); //Streaming API for Twitter
+twitterStreamingConnection(); //Streaming API for Twitter
 
 mongoose.connect('mongodb://localhost/local', function(error){
   if (error) {
