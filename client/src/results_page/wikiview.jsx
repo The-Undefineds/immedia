@@ -35,7 +35,7 @@ var WikiView = React.createClass({
         summary: 'View recent tweets, videos and articles on any topical subject '+
         'in one simple and visually pleasing format.The Immedia Team: <a href="https://github.com/jacksonsierra" target="_blank">Jackson Sierra</a>, ' + 
         '<a href="https://github.com/SlackingPalico" target="_blank">John Joel</a>, <a href="https://github.com/deeparcher" target="_blank">OJ Haugan</a>, ' +
-        '<a href="https://github.com/mtcrushmore">Ryan Smith</a>, and <a href="https://github.com/Way2nnadi" target="_blank">Uche Nnadi</a>',
+        '<a href="https://github.com/mtcrushmore" target="_blank">Ryan Smith</a>, and <a href="https://github.com/Way2nnadi" target="_blank">Uche Nnadi</a>',
         profileImage: './immedia.png',
       })
 
@@ -51,7 +51,7 @@ var WikiView = React.createClass({
         summary: 'View recent tweets, videos and articles on any topical subject '+
         'in one simple and visually pleasing format.The Immedia Team: <a href="https://github.com/jacksonsierra" target="_blank">Jackson Sierra</a>, ' + 
         '<a href="https://github.com/SlackingPalico" target="_blank">John Joel</a>, <a href="https://github.com/deeparcher" target="_blank">OJ Haugan</a>, ' +
-        '<a href="https://github.com/mtcrushmore">Ryan Smith</a>, and <a href="https://github.com/Way2nnadi" target="_blank">Uche Nnadi</a>',
+        '<a href="https://github.com/mtcrushmore" target="_blank">Ryan Smith</a>, and <a href="https://github.com/Way2nnadi" target="_blank">Uche Nnadi</a>',
         profileImage: './immedia.png'
       })
     }

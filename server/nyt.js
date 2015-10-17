@@ -235,7 +235,6 @@ var prepareMostPopularForResponse = function(){
       break
     }
   }
-
   return result;  
 };
 
