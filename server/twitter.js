@@ -53,7 +53,7 @@ var findTwitterUser = function(queryString, callback) {
   request(search, function(error, response, body) {
     if(error) callback(404, error);
     
-    body = JSON.parse(body);
+    if(body) { body = JSON.parse(body); };
     //If the user is on the home page, a general search will populate the timeline with popular recent tweets.
     if (queryString === 'news') {
       if (body.statuses) {
@@ -134,7 +134,8 @@ var processResponseData = function(response, amountToDisplay, callback) {
 
   for(var i = 0; i < response.length; i++) {
     var tweet = response[i];
-    var date = tweet['user_id'] === immediaUserId ? utils.getSimpleDate(new Date()) : utils.getSimpleDate(tweet.timestamp);
+    var date = homepage ? utils.getSimpleDate(new Date()) : utils.getSimpleDate(tweet.created_at);
+
     date = date.year + '-' + date.month + '-' + date.day;
 
     if(date > utils.getDateFromToday(-7, '-')) {
@@ -166,7 +167,7 @@ var processResponseData = function(response, amountToDisplay, callback) {
     tweetToSend = {
       date: date,
       img: tweet.profile_img,
-      tweet_id: tweet.tweet_id,
+      tweet_id: tweet.tweet_id_str,
       tweet_id_str: tweet.tweet_id_str,
       timestamp: tweet.timestamp,
     };

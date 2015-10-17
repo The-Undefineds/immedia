@@ -83,17 +83,22 @@ var TreeTimeLine = React.createClass({
     }
   },
 
-  breakPoint: null,
-
   componentDidMount: function(){
     this.query(this.props.searchTerm.toLowerCase());
+  },
+
+  componentDidUpdate: function() {
+    this.renderCanvas(0, 6, 1);    // Crucial step that (re-)renders D3 canvas
+    this.renderCanvas(7, 13, 2);
+    this.renderCanvas(14, 20, 3);
+    this.renderCanvas(21, 28, 4);
   },
 
   componentWillReceiveProps: function(newProps){
     
     //If the new search term matches the term queried for the current results, nothing will change.
-    this.renderCount = 0;
     if (this.props.searchTerm !== newProps.searchTerm) {
+      this.renderCount = 0;
       this.query(newProps.searchTerm.toLowerCase());
       this.setState({apiData: []});
     }
@@ -112,11 +117,8 @@ var TreeTimeLine = React.createClass({
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
 
-<<<<<<< HEAD
         if(typeof response === 'string') return;
 
-=======
->>>>>>> [bugfix] no more D3 bugs in the console
         component.renderCount++;
 
         // Set State to initiate a re-rendering based on new API call data
@@ -183,10 +185,10 @@ var TreeTimeLine = React.createClass({
 
   render: function() {
 
-    this.renderCanvas(0, 6, 1);    // Crucial step that (re-)renders D3 canvas
-    this.renderCanvas(7, 13, 2);
-    this.renderCanvas(14, 20, 3);
-    this.renderCanvas(21, 28, 4);
+    // this.renderCanvas(0, 6, 1);    // Crucial step that (re-)renders D3 canvas
+    // this.renderCanvas(7, 13, 2);
+    // this.renderCanvas(14, 20, 3);
+    // this.renderCanvas(21, 28, 4);
 
     this.getDynamicStyles();
 
@@ -222,7 +224,9 @@ var TreeTimeLine = React.createClass({
     } else {
       this.mousedOver = item;
     }
+
     item.hasOwnProperty('tweet_id_str') ? item.tweet_id = item.tweet_id_str : '';
+
     this.props.mouseOver({
         title: item.title,
         date: item.date,
@@ -230,7 +234,7 @@ var TreeTimeLine = React.createClass({
         img: item.img,
         source: item.parent.source,
         id: item.id,
-        tweetId: (item.hasOwnProperty('tweet_id') ? item.tweet_id : ''),
+        tweetId: (item.hasOwnProperty('tweet_id_str') ? item.tweet_id_str : ''),
         byline: (item.hasOwnProperty('byline') ? item.byline : ''),
         videoId: (item.hasOwnProperty('videoId') ? item.videoId : ''),
         abstract: (item.hasOwnProperty('abstract') ? item.abstract : ''),
@@ -257,29 +261,29 @@ var TreeTimeLine = React.createClass({
     };
 
     var width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20,
-        height = this.state.height;
+        height = this.state.height - 20;
 
     var oldestItem = this.state.apiData[this.state.apiData.length - 1] ? 
                       this.state.apiData[this.state.apiData.length - 1] : null;
 
     var canvasData = [];
     for (var i = 0; i < this.state.apiData.length; i++) {
-      if (i === startDay - 1) { continue; }
+      // if (i === startDay - 1) { continue; }
       if (this.dates[canvas].indexOf(this.state.apiData[i].date) !== -1) {
         canvasData.push(this.state.apiData[i]);
       }
     };
 
     var y = d3.time.scale()
-      .domain([new Date(this.dates[canvas][this.dates[canvas].length - 1]), d3.time.day.offset(new Date(this.dates[canvas][0]), 1)])
-      .rangeRound([height - margin.bottom, canvas === 1 ? 80 : 0])
+      .domain([new Date(this.dates[canvas][this.dates[canvas].length - 1]), new Date(this.dates[canvas][0])])
+      .rangeRound([height - margin.bottom, canvas === 1 ? 80 : 40])
 
     var yAxis = d3.svg.axis()
       .scale(y)
       .orient('left')
       .ticks(d3.time.days, 1)
       .tickFormat(d3.time.format('%a %d'))
-      .tickSize(0)
+      .tickSize(10)
       .tickPadding(10);
 
     var svg = d3.select('#d3canvas' + canvas).append('svg')
@@ -353,7 +357,7 @@ var TreeTimeLine = React.createClass({
             d.y = 0;
             return;
           }
-          d.x = y(new Date(d.date)) - 20;
+          d.x = y(new Date(d.date));
           d.y = 0;
           d.fixed = true;
         }
@@ -387,6 +391,7 @@ var TreeTimeLine = React.createClass({
           update(root, canvas); 
         })
         .on('mouseenter', function(d) {
+          console.log(d);
           d3.select(this).select('circle')
             .style({
               stroke: 'blue',
@@ -518,7 +523,7 @@ var TreeTimeLine = React.createClass({
                   }
                 })
                 .attr('x', 0)
-                .attr('y', 0)
+                .attr('y', -2)
                 .attr('width', 55)
                 .attr('height', 55)
               return 'url(/#tile-img' + d.id + ')'
@@ -573,6 +578,13 @@ var TreeTimeLine = React.createClass({
     if (canvas === 1 && canvasData[0] && canvasData[0].children[0]) {component.mouseOver(canvasData[0].children[0].children[0])}
 
 
+<<<<<<< HEAD
+=======
+    if (canvas === 1 && canvasData[0] && canvasData[0].children[0]) {component.mouseOver(canvasData[0].children[0].children[0])}
+
+    /* The toggle function hides a node's children from D3 so that the children are not rendered.
+    This way, nodes can appear and exit when certain click events occur and the canvas re-renders. */
+>>>>>>> [bugfix] d3 renders consistently
     function toggle(d) {
       if (d.children) {
         d._children = d.children;

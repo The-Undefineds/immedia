@@ -13,7 +13,6 @@ var articleSearchDate = {};
 var mostPopular = {};
 var results = {};
 
-
 var getPictureArticleSearch = function(article) {
   var baseURL = 'http://www.nytimes.com/';
   var pictures = article['multimedia'];
@@ -276,7 +275,6 @@ module.exports = {
           res.send(prepareMostPopularForResponse())
           return;
         }
-
         res.send(results);
       })
       .then(function(){

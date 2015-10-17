@@ -89,7 +89,7 @@ module.exports = {
     prepareTweetsForInsertion(tweetArray);
 
     Tweet.collection.insert(tweetArray, function(err, data) {
-      if(err) console.error(err);
+      if(err) console.error('insert timeline', err);
 
       data = Array.prototype.slice.call(data.ops);
       var since_id = getSinceId(data);
