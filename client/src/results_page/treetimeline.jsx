@@ -235,7 +235,7 @@ var TreeTimeLine = React.createClass({
     } else {
       this.mousedOver = item;
     }
-
+    item.hasOwnProperty('tweet_id_str') ? item.tweet_id = item.tweet_id_str : '';
     this.props.mouseOver({
         title: item.title,
         date: item.date,
@@ -582,8 +582,10 @@ var TreeTimeLine = React.createClass({
         d.y0 = d.y;
       });
 
-      if (canvas === 1 && canvasData[0] && canvasData[0].children[0]) {component.mouseOver(canvasData[0].children[0].children[0])}
     }
+    
+    if (canvas === 1 && canvasData[0] && canvasData[0].children[0]) {component.mouseOver(canvasData[0].children[0].children[0])}
+
 
     function toggle(d) {
       if (d.children) {
