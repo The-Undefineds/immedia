@@ -574,17 +574,11 @@ var TreeTimeLine = React.createClass({
           })
           .remove();
     }
-    
-    if (canvas === 1 && canvasData[0] && canvasData[0].children[0]) {component.mouseOver(canvasData[0].children[0].children[0])}
-
-
-<<<<<<< HEAD
-=======
+ 
     if (canvas === 1 && canvasData[0] && canvasData[0].children[0]) {component.mouseOver(canvasData[0].children[0].children[0])}
 
     /* The toggle function hides a node's children from D3 so that the children are not rendered.
     This way, nodes can appear and exit when certain click events occur and the canvas re-renders. */
->>>>>>> [bugfix] d3 renders consistently
     function toggle(d) {
       if (d.children) {
         d._children = d.children;
