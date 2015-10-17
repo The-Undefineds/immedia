@@ -62,6 +62,11 @@ var findTwitterUser = function(queryString, callback) {
     } else {
 
       if (!('errors' in body)) { 
+        if(body.length === 0) {
+         callback(204, 'No Twitter users exist for that request');
+          return;
+        }
+
         var user_id = body[0].id_str;
         var img = body[0].profile_image_url;
 
@@ -94,7 +99,12 @@ var grabTimeline = function(params, callback, cachedTweets){
       var tweetsArray = Array.prototype.slice.call(tweets);
 
       if(!tweetsArray[0]) {
-        processResponseData(cachedTweets, 5, callback);
+        if(cachedTweets) {
+          processResponseData(cachedTweets, 5, callback);
+          return;
+        }
+
+        callback(204, 'No Tweets exist for that request');
         return;
       }
 

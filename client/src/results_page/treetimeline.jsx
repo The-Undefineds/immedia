@@ -130,6 +130,8 @@ var TreeTimeLine = React.createClass({
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
 
+        if(typeof response === 'string') return;
+
         component.renderCount++;
 
         // Set State to initiate a re-rendering based on new API call data
