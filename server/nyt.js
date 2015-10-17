@@ -43,8 +43,8 @@ var searchTermListedAsKeyword = function(article, searchTerm) {
     var searchCheck = keywordCheck.get(searchTerm);
     var personCheck = keywordCheck.get(personTerm);
 
-    if( (searchCheck !== null && searchCheck[0][0] > 0.8) || 
-        (personCheck !== null && personCheck[0][0] > 0.8)) {
+    if( (searchCheck !== null && searchCheck[0][0] > 0.65) || 
+        (personCheck !== null && personCheck[0][0] > 0.65)) {
       return true;
     }
   }
