@@ -148,7 +148,7 @@ var WikiView = React.createClass({
   },
 
   getGoogleImageResult: function(infobox, searchTerm, summary) {
-    $.get('http://127.0.0.1:3000/api/googleImages?q=' + searchTerm.replace(/\s/g, '+'))
+    $.get('http://localhost:3000/api/googleImages?q=' + searchTerm.replace(/\s/g, '+'))
       .done(function(response) {
         this.finishParse.call(this, infobox, searchTerm, summary, response.image);
       }.bind(this));
@@ -161,7 +161,7 @@ var WikiView = React.createClass({
       this.loadHistoryView.call(this);
     }
 
-    $.post('http://127.0.0.1:3000/searches/incrementSearchTerm', { searchTerm: searchTerm, img: img });
+    $.post('http://localhost:3000/searches/incrementSearchTerm', { searchTerm: searchTerm, img: img });
       
     this.setState({
       infobox: infobox,

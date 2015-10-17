@@ -92,7 +92,7 @@ var SearchHistory = React.createClass({
     var component = this;
 
     if (this.props.searchTerm === 'immediahomepage') {
-      $.get('http://127.0.0.1:3000/searches/popularSearches', function(data) {
+      $.get('http://localhost:3000/searches/popularSearches', function(data) {
         for (var term in data) {
           var popSearch = { searchTerm: term, img: data[term].img };
           history.push(<PastSearch page={ popSearch } searchInit={component.props.searchInit} />);

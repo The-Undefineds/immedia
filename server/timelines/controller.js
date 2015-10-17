@@ -28,6 +28,7 @@ var prepareTweetsForInsertion = function(tweetArray) {
     var timestamp = new Date(tweet.created_at);
 
     var newTweet = {
+      tweet_id: tweet.id_str,
       tweet_id_str: tweet.id_str,
       created_at: created_at.year + '-' + created_at.month + '-' + created_at.day,
       url: undefined,
@@ -50,7 +51,7 @@ var getSinceId = function(tweetArray) {
   var since_id;
 
   for(var i = 0; i < tweetArray.length; i++) {
-    if(since_id === undefined || Number(tweetArray[i].tweet_id) > Number(since_id)) {
+    if(since_id === undefined || tweetArray[i].tweet_id > since_id) {
       since_id = tweetArray[i].tweet_id;
     }
   }

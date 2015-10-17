@@ -76,8 +76,8 @@ var TreeTimeLine = React.createClass({
     for(var i = 0; i < this.apis.length; i++){
       this.handleQuery({
         searchTerm: searchTerm.replace(/\s\(.*$/,''),
-        url: 'http://127.0.0.1:3000/api/' + this.apis[i],
         days: 30,
+        url: 'http://localhost:3000/api/' + this.apis[i],
         api: this.apis[i]
       });
     }
@@ -116,6 +116,8 @@ var TreeTimeLine = React.createClass({
 
     $.post(searchQuery.url, searchQuery)
      .done(function(response) {
+
+        if(typeof response === 'string') return;
 
         component.renderCount++;
 
@@ -222,6 +224,9 @@ var TreeTimeLine = React.createClass({
     } else {
       this.mousedOver = item;
     }
+
+    item.hasOwnProperty('tweet_id_str') ? item.tweet_id = item.tweet_id_str : '';
+
     this.props.mouseOver({
         title: item.title,
         date: item.date,
@@ -565,6 +570,7 @@ var TreeTimeLine = React.createClass({
         d.y0 = d.y;
       });
 
+
       /* Links have both a source and target based on node's ID's */
       var link = svg.selectAll('path.link')
           .data(tree.links(nodes), function(d) { return d.target.id; })
@@ -598,7 +604,7 @@ var TreeTimeLine = React.createClass({
           })
           .remove();
     }
-
+ 
     if (canvas === 1 && canvasData[0] && canvasData[0].children[0]) {component.mouseOver(canvasData[0].children[0].children[0])}
 
     /* The toggle function hides a node's children from D3 so that the children are not rendered.

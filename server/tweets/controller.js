@@ -1,8 +1,8 @@
 var Tweet = require('./model.js').model;
-var OAuth = require('../Oauth.js');
+var OAuth = require('../OAuth.js');
 var help  = require('./helpers.js');
 var searches = require('../searches/controller.js');
-
+var keys = require('../keys.js');
 
 var Q = require('q'),
     request = require('request');
@@ -46,7 +46,7 @@ var requestNewTweets = function(screenName, sinceID, maxID){
   // to only ask for the very latest tweets. If 'maxID' is defined, as it is when the function is called recursively below,
   // we set the retrieval to get all the tweets that have id's lower than it (tweets created before it). The recursion will end
   // once either (A) we reach an ID lower than 'sinceID', defined by the function above, or (B) 'created_at' becomes more than a month from the present.
-  var authorization = !maxID ? OAuth(apiUrl, 'screen_name=' + screenName, 'count=200&include_rts=false') : OAuth(apiUrl, 'screen_name=' + screenName, 'count=200&include_rts=false&max_id=' + maxID);
+  
   var search = {
     url: apiUrl,
     qs: {
@@ -55,7 +55,7 @@ var requestNewTweets = function(screenName, sinceID, maxID){
       count: '200'
     },
     headers: {
-      Authorization: authorization
+      Authorization: 'Bearer ' + keys.twitterBearerToken
     }
   }
   if (maxID) {
@@ -77,22 +77,25 @@ var requestNewTweets = function(screenName, sinceID, maxID){
           }
           var newTweet = {
             tweet_id: tweet_id,
+            tweet_id_str: tweet_id,
             created_at: created_at,
             url: help.extractUrl(tweet.text),
             retweet_count: tweet.retweet_count,
             tweeted_by: screenName,
             profile_img: tweet.user.profile_image_url_https,
             background_img: tweet.user.profile_background_image_url_https,
-            text: tweet.text
+            text: tweet.text,
+            timestamp: new Date(tweet.created_at)
           }
           if (i === body.length-1) {
             var maxID = tweet_id;
+          } else {
+            storeTweet(newTweet);
+            searches.addTweet(newTweet, tweet.text);  // Indexes search-terms parsed out of the tweet's text
           }
           if (body.length < 2) {      // Handles case in which we exceed maximum tweets from a certain account
             return updateNextNewsOrg(screenName);
           }
-          storeTweet(newTweet);
-          searches.addTweet(newTweet, tweet.text);  // Indexes search-terms parsed out of the tweet's text
         }
         setTimeout(function(){
           if (!maxID && body.length === 0) {      // (also) Handles case in which we exceed maximum tweets from a certain account
@@ -120,7 +123,9 @@ var updateNextNewsOrg = function(screenName){
 
 // Stores tweet in mongo db
 var storeTweet = function(tweet){
-  Tweet.create(tweet);
+  Tweet.create(tweet, function(err, data) {
+    if(err) console.error(err);
+  });
 };
 
-// module.exports();
+//module.exports();

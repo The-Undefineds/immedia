@@ -1,6 +1,6 @@
 var Twitter = require('twitter');
 var key = require('./keys.js');
-var Tweet = require('./tweets/model.js');
+var Tweet = require('./tweets/model.js').model;
 var help  = require('./tweets/helpers.js');
 var searches = require('./searches/controller.js');
 
@@ -25,10 +25,9 @@ function releaseTheKraken(){
   
   client.stream('user', {'with':'followings'}, function(stream) {
     stream.on('data', function(tweet) {
-      console.log('tweet', tweet);
       if (!('friends' in tweet)){
         var created_at = tweet.created_at.slice(4, 10) + tweet.created_at.slice(25);
-        var tweet_id = tweet.id;
+        var tweet_id = tweet.id_str;
         var newTweet = {
           tweet_id: tweet_id,
           tweet_id_str: tweet.id_str,

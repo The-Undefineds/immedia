@@ -10,6 +10,7 @@ var Timeline = require('./timelines/controller.js');
 var userSearchUrl = 'https://api.twitter.com/1.1/users/search.json';
 var userStatusUrl = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
 var searchTweetsUrl = 'https://api.twitter.com/1.1/search/tweets.json';
+var immediaUserId = '3752256737';
 
 var search = {
   url : '',
@@ -19,9 +20,6 @@ var search = {
     Authorization : ''
   }
 }
-
-var homepage = false;
-
 
 var sendResponse = function(response, status, data) {
   response.status(status).send(data);
@@ -63,7 +61,16 @@ var findTwitterUser = function(queryString, callback) {
       }
     } else {
 
+<<<<<<< HEAD
+      if (!('errors' in body)) { 
+        if(body.length === 0) {
+         callback(204, 'No Twitter users exist for that request');
+          return;
+        }
+
+=======
       if (!('errors' in body) && body[0]) { 
+>>>>>>> fbc2483567270d9379c8fd64c8dd4b5190c3265f
         var user_id = body[0].id_str;
         var img = body[0].profile_image_url;
 
@@ -96,7 +103,12 @@ var grabTimeline = function(params, callback, cachedTweets){
       var tweetsArray = Array.prototype.slice.call(tweets);
 
       if(!tweetsArray[0]) {
-        processResponseData(cachedTweets, 5, callback);
+        if(cachedTweets) {
+          processResponseData(cachedTweets, 5, callback);
+          return;
+        }
+
+        callback(204, 'No Tweets exist for that request');
         return;
       }
 
@@ -127,6 +139,7 @@ var processResponseData = function(response, amountToDisplay, callback) {
   for(var i = 0; i < response.length; i++) {
     var tweet = response[i];
     var date = homepage ? utils.getSimpleDate(new Date()) : utils.getSimpleDate(tweet.created_at);
+
     date = date.year + '-' + date.month + '-' + date.day;
 
     if(date > utils.getDateFromToday(-7, '-')) {
@@ -175,8 +188,7 @@ module.exports = {
   getTweetsPerson : function(request, response){
     var queryString = request.body.searchTerm;
     if (queryString === 'immediahomepage') {
-      homepage = true;
-      User.findUser('immediaHQ', handleUserSearch.bind(null, queryString, sendResponse.bind(null, response)));
+      User.findUser(queryString, handleUserSearch.bind(null, queryString, sendResponse.bind(null, response)));
       return;
     }
     

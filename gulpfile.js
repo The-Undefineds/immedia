@@ -99,12 +99,28 @@ gulp.task('nodemon', function(){
   })
 });
 
-// gulp.task('replace', function(){
-//   gulp.src(__dirname + '/server/server.js')
-    // .pipe(replace('127.0.0.1', '192.241.209.214'))
-    // .pipe(replace('3000', '80'))
-//     .pipe(gulp.dest(__dirname + '/server'))
-// })
+gulp.task('replace', function(){
+ gulp.src(__dirname + '/server/server.js')
+    .pipe(replace('127.0.0.1', '192.241.209.214'))
+    .pipe(replace('3000', '80'))
+    .pipe(gulp.dest(__dirname + '/server'))
+
+ gulp.src(__dirname + '/client/src/results_page/treetimeline.jsx')
+    .pipe(replace('127.0.0.1', '192.241.209.214'))
+    .pipe(replace('3000', '80'))
+    .pipe(gulp.dest(__dirname + '/client/src/results_page/treetimeline.jsx'))
+
+ gulp.src(__dirname + '/client/src/results_page/wikiview.jsx')
+    .pipe(replace('127.0.0.1', '192.241.209.214'))
+    .pipe(replace('3000', '80'))
+    .pipe(gulp.dest(__dirname + '/client/src/results_page/wikiview.jsx'))
+
+ gulp.src(__dirname + '/client/src/results_page/searchhistory.jsx')
+    .pipe(replace('127.0.0.1', '192.241.209.214'))
+    .pipe(replace('3000', '80'))
+    .pipe(gulp.dest(__dirname + '/client/src/results_page/searchhistory.jsx'))
+
+});
 
 gulp.task('deploy', function(){
   function send(path, remotePath){
