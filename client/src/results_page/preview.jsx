@@ -56,7 +56,7 @@ var Preview = React.createClass({
     return (
       <div id="previewContent" style={styles.container}>
         <div id="previewBlocker" style={styles.block} >
-          <div id="previewTitle" style={styles.title}>{ this.props.previewItem.source || 'immmedia' }</div>
+          <div id="previewTitle" style={styles.title}>{ this.props.previewItem.source || 'immedia' }</div>
         </div>
         { this.props.previewItem.source === '' ? 
           <EmptyPreview window={this.state} width={styles.container.width} height={styles.container.height} window={this.state}/> : null }
