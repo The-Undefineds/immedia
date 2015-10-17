@@ -61,16 +61,12 @@ var findTwitterUser = function(queryString, callback) {
       }
     } else {
 
-<<<<<<< HEAD
       if (!('errors' in body)) { 
         if(body.length === 0) {
          callback(204, 'No Twitter users exist for that request');
           return;
         }
 
-=======
-      if (!('errors' in body) && body[0]) { 
->>>>>>> fbc2483567270d9379c8fd64c8dd4b5190c3265f
         var user_id = body[0].id_str;
         var img = body[0].profile_image_url;
 
