@@ -1,10 +1,17 @@
 var Search  = require('./model.js'),
     help    = require('./helpers.js'),
-    getDate = require('../utils.js');
+    getDate = require('../utils.js'),
+    Tweet = require('../tweets/model.js'),
+    newsOrgs = require('../assets/assets.js').newsOrgsObjs;
 
 var Q = require('q');
 
 var newSearchRank = 1;
+
+var monthAgo = new Date();
+var month = monthAgo.getMonth();
+monthAgo.setMonth(month - 1);
+monthAgo = monthAgo.toString().slice(4, 15);
 
 module.exports = {
 
@@ -130,61 +137,96 @@ module.exports = {
   //from the database based on the search term
   retrieveTweets: function(queryString, response){
     queryString = help.parseQueryString(queryString);
-
-    Search.findOne({
-      search_term: queryString
-    })
-    .then(function(topic){
-      if (topic !== null){
-        var highestRetweet = [];
-        var a = 0, b = 1, c = 2, i, j = 0;
-        var tweet, weeks = [[],[],[],[]];
-        var date = [{},{},{},{}];
-        for (i = -1; i >= -28; i--){
-          date[j][getDate.getDateFromToday(i + 1, '-')] = true;
-          if (i !== 0 && i % 7 === 0) j++;
-        }
-  
-        topic.tweets.forEach(function(item){
-          tweet = JSON.parse(item);
-          for (i = 0; i < 4; i++){
-            if (date[i][help.getDate(tweet.created_at)]) {
-              weeks[i].push(tweet);
-              i += 100;
-            }
+    if (queryString !== 'immediahomepage') {
+      Search.findOne({
+        search_term: queryString
+      })
+      .then(function(topic){
+        if (topic !== null){
+          var highestRetweet = [];
+          var a = 0, b = 1, c = 2, i, j = 0;
+          var tweet, weeks = [[],[],[],[]];
+          var date = [{},{},{},{}];
+          for (i = -1; i >= -28; i--){
+            date[j][getDate.getDateFromToday(i + 1, '-')] = true;
+            if (i !== 0 && i % 7 === 0) j++;
           }
-        })
-  
-        for (i = 0; i < weeks.length; i++){
-          for (j = 0; j < weeks[i].length; j++){
-            tweet = weeks[i][j];
-  
-            if (highestRetweet.length <= (3 * i)) {
-              highestRetweet[a] = tweet;
-              highestRetweet[b] = {retweet_count:0};
-              highestRetweet[c] = {retweet_count:0};
+    
+          topic.tweets.forEach(function(item){
+            tweet = JSON.parse(item);
+            for (i = 0; i < 4; i++){
+              if (date[i][help.getDate(tweet.created_at)]) {
+                weeks[i].push(tweet);
+                i += 100;
+              }
             }
-            else {
-              if (tweet.retweet_count > highestRetweet[a].retweet_count) {
-                highestRetweet[c] = highestRetweet[b];
-                highestRetweet[b] = highestRetweet[a];
+          })
+    
+          for (i = 0; i < weeks.length; i++){
+            for (j = 0; j < weeks[i].length; j++){
+              tweet = weeks[i][j];
+    
+              if (highestRetweet.length <= (3 * i)) {
                 highestRetweet[a] = tweet;
+                highestRetweet[b] = {retweet_count:0};
+                highestRetweet[c] = {retweet_count:0};
               }
-              else if (tweet.retweet_count > highestRetweet[c].retweet_count) {
-                if (tweet.retweet_count > highestRetweet[b].retweet_count) {
+              else {
+                if (tweet.retweet_count > highestRetweet[a].retweet_count) {
                   highestRetweet[c] = highestRetweet[b];
-                  highestRetweet[b] = tweet;
+                  highestRetweet[b] = highestRetweet[a];
+                  highestRetweet[a] = tweet;
                 }
-                else highestRetweet[c] = tweet;
+                else if (tweet.retweet_count > highestRetweet[c].retweet_count) {
+                  if (tweet.retweet_count > highestRetweet[b].retweet_count) {
+                    highestRetweet[c] = highestRetweet[b];
+                    highestRetweet[b] = tweet;
+                  }
+                  else highestRetweet[c] = tweet;
+                }
               }
             }
+            a += 3;
+            b += 3;
+            c += 3;
           }
-          a += 3;
-          b += 3;
-          c += 3;
+    
+          var objToSend = {};
+          for (i = 0; i < highestRetweet.length; i++){
+            if (!highestRetweet[i] || !highestRetweet[i].created_at) continue;
+            var date = help.getDate(highestRetweet[i].created_at);
+            objToSend[date] = objToSend[date] || { source: 'twitter news', children: []};
+
+            objToSend[date].children.push({
+              date: date,
+              tweet_id: highestRetweet[i].tweet_id,
+              tweet_id_str: highestRetweet[i].tweet_id_str,
+              url: highestRetweet[i].url || '',
+              img: highestRetweet[i].profile_img || '',
+              background: highestRetweet[i].background_img || '',
+              newssource: highestRetweet[i].tweeted_by || 'The Void',
+              text: highestRetweet[i].text || ''
+            })
+          }
+          response.status(200).send(objToSend);
         }
-  
-        var objToSend = {};
+      });
+    } else {
+      var context = this;
+      Tweet.model.findOne({created_at: monthAgo})
+        .then(function(tweet) {
+           context.retrieveHomepageTweets(tweet.tweet_id, response);
+        })
+    }
+  },
+
+  retrieveHomepageTweets: function(id, response){
+    var count = 0,
+        objToSend = {};
+    // Finds top 15 news tweets in the database from the past month
+    Tweet.model.find({ $and: [{ $or: newsOrgs }, { tweet_id: { $gt: id } }]}).sort({ retweet_count: 1 })
+      .then(function(data) {
+        var highestRetweet = data.slice(data.length - 16);
         for (i = 0; i < highestRetweet.length; i++){
           if (!highestRetweet[i] || !highestRetweet[i].created_at) continue;
           var date = help.getDate(highestRetweet[i].created_at);
@@ -192,7 +234,7 @@ module.exports = {
 
           objToSend[date].children.push({
             date: date,
-            tweet_id: highestRetweet[i].tweet_id_str,
+            tweet_id: highestRetweet[i].tweet_id,
             tweet_id_str: highestRetweet[i].tweet_id_str,
             url: highestRetweet[i].url || '',
             img: highestRetweet[i].profile_img || '',
@@ -201,9 +243,35 @@ module.exports = {
             text: highestRetweet[i].text || ''
           })
         }
-        response.status(200).send(objToSend);
-      }
-    });
-  }
+        count++;
+        if (count === 2) {
+          response.status(200).send(objToSend);
+        }
+      })
+    // Finds the top 5 vocativ tweets from the past month
+    Tweet.model.find({ $and: [{ tweeted_by: 'vocativ' }, { tweet_id: { $gt: id } }]}).sort({ retweet_count: 1 })
+      .then(function(data) {
+        var highestRetweet = data.slice(data.length - 6);
+        for (i = 0; i < highestRetweet.length; i++){
+          if (!highestRetweet[i] || !highestRetweet[i].created_at) continue;
+          var date = help.getDate(highestRetweet[i].created_at);
+          objToSend[date] = objToSend[date] || { source: 'twitter news', children: []};
 
+          objToSend[date].children.push({
+            date: date,
+            tweet_id: highestRetweet[i].tweet_id,
+            tweet_id_str: highestRetweet[i].tweet_id_str,
+            url: highestRetweet[i].url || '',
+            img: highestRetweet[i].profile_img || '',
+            background: highestRetweet[i].background_img || '',
+            newssource: highestRetweet[i].tweeted_by || 'The Void',
+            text: highestRetweet[i].text || ''
+          })
+        }
+        count++;
+        if (count === 2) {
+          response.status(200).send(objToSend);
+        }
+      })
+    }
 };
