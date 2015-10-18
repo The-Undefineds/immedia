@@ -59,12 +59,6 @@ var ResultsView = React.createClass({
     this.renderPreview(this.item);
   },
 
-  queryTerm: function(searchTerm){
-    this.setState({
-      searchTerm: searchTerm
-    });
-  },
-
   mouseOver: function(item){   
     this.item = item;
     this.renderPreview(this.item);
