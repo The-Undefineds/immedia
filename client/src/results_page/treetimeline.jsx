@@ -184,12 +184,6 @@ var TreeTimeLine = React.createClass({
   },
 
   render: function() {
-
-    // this.renderCanvas(0, 6, 1);    // Crucial step that (re-)renders D3 canvas
-    // this.renderCanvas(7, 13, 2);
-    // this.renderCanvas(14, 20, 3);
-    // this.renderCanvas(21, 28, 4);
-
     this.getDynamicStyles();
 
     return (
