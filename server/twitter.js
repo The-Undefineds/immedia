@@ -134,7 +134,7 @@ var processResponseData = function(response, amountToDisplay, callback) {
 
   for(var i = 0; i < response.length; i++) {
     var tweet = response[i];
-    var date = homepage ? utils.getSimpleDate(new Date()) : utils.getSimpleDate(tweet.created_at);
+    var date = tweet.user_id === immediaUserId ? utils.getSimpleDate(new Date()) : utils.getSimpleDate(tweet.created_at);
 
     date = date.year + '-' + date.month + '-' + date.day;
 
