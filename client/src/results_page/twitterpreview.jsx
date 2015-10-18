@@ -40,6 +40,31 @@ var TwitterPreview = React.createClass({
     }
   },
 
+  componentWillMount: function() {
+    /*
+      This is code supplied by the Twitter API documentation
+      Exposes several methods, including .createTweet, which can be used to embed tweets asynchronously
+      based on the tweet ID alone.
+    */
+
+    window.twttr = (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0],
+          t = window.twttr || {};
+      if (d.getElementById(id)) return t;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://platform.twitter.com/widgets.js";
+      fjs.parentNode.insertBefore(js, fjs);
+
+      t._e = [];
+      t.ready = function(f) {
+        t._e.push(f);
+      };
+
+      return t;
+    }(document, "script", "twitter-wjs"));
+  },
+
   componentWillReceiveProps: function(nextProps) {
     this.setState({
       width: nextProps.window.width,
@@ -77,10 +102,12 @@ var TwitterPreview = React.createClass({
 
     //A new div with id "tweet" is created, and the embedded tweet is appended to it.
     $('<div id="tweet"></div>').hide().prependTo('#previewTwitter').fadeIn(800);
+    twttr.ready(function(twttr) {
       twttr.widgets.createTweet(
         tweetId,
         document.getElementById('tweet')
       );
+    });
   },
 });
 
