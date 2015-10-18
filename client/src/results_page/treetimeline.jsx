@@ -406,7 +406,6 @@ var TreeTimeLine = React.createClass({
           update(root, canvas); 
         })
         .on('mouseenter', function(d) {
-          console.log(d);
           d3.select(this).select('circle')
             .style({
               stroke: 'blue',
