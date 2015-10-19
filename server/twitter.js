@@ -70,13 +70,14 @@ var findTwitterUser = function(queryString, callback) {
         var user_id = body[0].id_str;
         var img = body[0].profile_image_url;
 
-        User.insertUser({
+        /*User.insertUser({
           'search_term': queryString.toLowerCase(),
           'user_id': user_id,
           'img': img
-        });
-
-        grabTimeline({'user_id': user_id, 'since_id': undefined}, callback);
+        });*/
+        
+        grabTimeline({'user_id': user_id}, callback);
+        //grabTimeline({'user_id': user_id, 'since_id': undefined}, callback);
       } else {
         findTwitterUser(queryString, callback);
       }
@@ -88,7 +89,7 @@ var grabTimeline = function(params, callback, cachedTweets){
   search.url = userStatusUrl;
   search.headers.Authorization = 'Bearer ' + keys.twitterBearerToken;
   search.qs = {user_id : params.user_id, include_rts : 1, exclude_replies: 0, count: 200};
-  params.since_id !== undefined ? search.qs.since_id = params.since_id : null;
+  //params.since_id !== undefined ? search.qs.since_id = params.since_id : null;
 
   request(search, function(error, response, body){
     if(error) callback(404, error);
@@ -99,22 +100,22 @@ var grabTimeline = function(params, callback, cachedTweets){
       var tweetsArray = Array.prototype.slice.call(tweets);
 
       if(!tweetsArray[0]) {
-        if(cachedTweets) {
+        /*if(cachedTweets) {
           processResponseData(cachedTweets, 5, callback);
           return;
-        }
+        }*/
 
         callback(204, 'No Tweets exist for that request');
         return;
       }
 
-      if(cachedTweets) {
+      /*if(cachedTweets) { 
         Timeline.updateTimeline(tweetsArray, cachedTweets);
         processResponseData(tweetsArray.concat(cachedTweets), 5, callback);
         return;
-      }
+      }*/
 
-      Timeline.insertTimeline(tweetsArray);
+      //Timeline.insertTimeline(tweetsArray);
       processResponseData(tweetsArray, 5, callback);
       return;
 
@@ -184,11 +185,12 @@ module.exports = {
   getTweetsPerson : function(request, response){
     var queryString = request.body.searchTerm;
     if (queryString === 'immediahomepage') {
-      User.findUser(queryString, handleUserSearch.bind(null, queryString, sendResponse.bind(null, response)));
-      return;
+      //User.findUser(queryString, handleUserSearch.bind(null, queryString, sendResponse.bind(null, response)));
+      queryString = 'immediaHQ';
     }
     
-    User.findUser(queryString.toLowerCase(), handleUserSearch.bind(null, queryString, sendResponse.bind(null, response)));
+    //User.findUser(queryString.toLowerCase(), handleUserSearch.bind(null, queryString, sendResponse.bind(null, response)));
+    findTwitterUser(queryString, sendResponse.bind(null, response));
     return;
   },
 
