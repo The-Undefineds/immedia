@@ -136,23 +136,29 @@ module.exports = {
   //Retrieve 3 tweets with the highest retweet count for each week for 1 month 
   //from the database based on the search term
   retrieveTweets: function(queryString, response){
-    queryString = help.parseQueryString(queryString);
+    queryString = help.parseQueryString(queryString); //Parses the query string
     var context = this;
     if (queryString !== 'immediahomepage') {
-      Search.findOne({
+      Search.findOne({ //Search the query string in the database
         search_term: queryString
       })
       .then(function(topic){
         if (topic !== null){
-          var highestRetweet = [];
-          var a = 0, b = 1, c = 2, i, j = 0;
-          var tweet, weeks = [[],[],[],[]];
-          var date = [{},{},{},{}];
+          //Sets up the initial variables for grabbing tweets for each week
+          var highestRetweet = [],
+          a = 0, b = 1, c = 2, i, j = 0,
+          tweet,
+          weeks = [[],[],[],[]],
+          date = [{},{},{},{}];
+          
+          //Sets up the date, putting 7 dates on each index of the array date
           for (i = -1; i >= -28; i--){
             date[j][getDate.getDateFromToday(i + 1, '-')] = true;
             if (i !== 0 && i % 7 === 0) j++;
           }
-    
+          
+          //Places each tweets on the approriate week, week 1-4, base on when the tweet was created
+          //Uses the array date to specify which week the tweets fall into
           topic.tweets.forEach(function(item){
             tweet = JSON.parse(item);
             for (i = 0; i < 4; i++){
@@ -162,16 +168,22 @@ module.exports = {
               }
             }
           })
-    
+          
+          //Loops 4 times (week 1-4), grabbing 3 tweets with the highest retweet count
           for (i = 0; i < weeks.length; i++){
             for (j = 0; j < weeks[i].length; j++){
               tweet = weeks[i][j];
-    
+              
+              //Checks the number of tweets in the array highestRetweet is below the required amount for the current week
+              //week 1 should have 0 tweets to start
+              //week 2 = 3, week 3 = 6, week 4 = 9
               if (highestRetweet.length <= (3 * i)) {
                 highestRetweet[a] = tweet;
                 highestRetweet[b] = {retweet_count:0};
                 highestRetweet[c] = {retweet_count:0};
               }
+              //If number of tweets inside the array highestRetweet is within the required amount
+              //Checks each tweet's retweet count
               else {
                 if (tweet.retweet_count > highestRetweet[a].retweet_count) {
                   highestRetweet[c] = highestRetweet[b];
@@ -192,17 +204,19 @@ module.exports = {
             c += 3;
           }
     
-          var objToSend = {};
+          var objToSend = {}; //The obj to be sent to the client
           context.processNewsTweets(highestRetweet, objToSend);
           response.status(200).send(objToSend);
         }
       });
     } else {
+      //If the query string is immediahomepage
+      //Looks in the database to find the tweet made by immediaHQ
       var context = this;
       Tweet.model.findOne({created_at: monthAgo})
-        .then(function(tweet) {
-           context.retrieveHomepageTweets(tweet.tweet_id, response);
-        })
+      .then(function(tweet){
+        context.retrieveHomepageTweets(tweet.tweet_id, response);
+      })
     }
   },
 
