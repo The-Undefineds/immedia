@@ -21,6 +21,7 @@ monthAgo = monthAgo.toString().slice(4, 15);
 monthAgo = help.convertDateToInteger(monthAgo);
 
 module.exports = function(){
+  console.log('asdlfkja', newsOrgs[0])
   lastTweetStored(newsOrgs[0]);
 };
 
@@ -46,7 +47,8 @@ var requestNewTweets = function(screenName, sinceID, maxID){
   // to only ask for the very latest tweets. If 'maxID' is defined, as it is when the function is called recursively below,
   // we set the retrieval to get all the tweets that have id's lower than it (tweets created before it). The recursion will end
   // once either (A) we reach an ID lower than 'sinceID', defined by the function above, or (B) 'created_at' becomes more than a month from the present.
-  
+  console.log(arguments);
+  var authorization = !maxID ? OAuth(apiUrl, 'screen_name=' + screenName, 'count=200&include_rts=false') : OAuth(apiUrl, 'screen_name=' + screenName, 'count=200&include_rts=false&max_id=' + maxID);
   var search = {
     url: apiUrl,
     qs: {
@@ -55,7 +57,7 @@ var requestNewTweets = function(screenName, sinceID, maxID){
       count: '200'
     },
     headers: {
-      Authorization: 'Bearer ' + keys.twitterBearerToken
+      Authorization: authorization
     }
   }
   if (maxID) {
@@ -101,6 +103,7 @@ var requestNewTweets = function(screenName, sinceID, maxID){
           if (!maxID && body.length === 0) {      // (also) Handles case in which we exceed maximum tweets from a certain account
             return updateNextNewsOrg(screenName);
           }
+          console.log('maxID: ', maxID, ' ', screenName);
           requestNewTweets(screenName, sinceID, maxID);
         }, 5500);  // Twitter's request limit approximates to one request per five seconds
       } else {
@@ -128,4 +131,4 @@ var storeTweet = function(tweet){
   });
 };
 
-//module.exports();
+// module.exports();
