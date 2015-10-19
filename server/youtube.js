@@ -3,6 +3,9 @@ var utils = require('./utils.js');
 var request = require('request');
 
 var youtube = 'https://www.googleapis.com/youtube/v3';
+var requestCount;
+var obj;
+var videoIds;
 
 module.exports = {
   search : function(request, response) {
@@ -12,17 +15,19 @@ module.exports = {
       itemToSearch = '';
     }
 
-    var date = request.body.date || 'this week'
-    callYoutube(date, itemToSearch, function(status, data){
+    callYoutube(itemToSearch, function(status, data){
       response.status(status).send(data);
     });
   }
 }
 
-//To grab videos on a specific month just add publishedBefore and publishedAfter in the query
-
-function callYoutube(date, item, callback){
+function callYoutube(item, callback){
   var search;
+  requestCount = 0;
+  obj = {};
+  videoIds = {};
+  
+  //Set the queries to be used in GET request
   if(item === ""){
     //used for popular searchs in any given week
     search = {
@@ -37,62 +42,76 @@ function callYoutube(date, item, callback){
       method : 'GET'
     }
   }
+  //Determine the dates of youtube videos to gather
+  //4 dates, each represents a week
+  var date = [];
+  date.push(utils.getDateFromToday(-6,'-') + 'T00:00:00Z');
+  date.push(utils.getDateFromToday(-13,'-') + 'T00:00:00Z'); 
+  date.push(utils.getDateFromToday(-20,'-') + 'T00:00:00Z');
+  date.push(utils.getDateFromToday(-27,'-') + 'T00:00:00Z');
   
-  if (date === 'this week'){
-    date = utils.getDateFromToday(-7,'-') + 'T00:00:00Z'
-    search.qs.publishedAfter = date;
+  for (var i = 0; i < 4; i++){
+    search.qs.publishedAfter = date[i];
+    if (i > 0) search.qs.publishedBefore = date[i - 1];
+    requestWeek(search, callback);
   }
-  else if (date === 'this month'){
-    date = utils.getDateFromToday(-30,'-') + 'T00:00:00Z'
-    search.qs.publishedAfter = date;
-  }  
-  else if (date === 'this year'){
-    date = utils.getDateFromToday(-365,'-') + 'T00:00:00Z'
-    search.qs.publishedAfter = date;
-  }
-  
+  //Deletes 2 queries to gather a video published any time
+   delete search.qs.publishedAfter;
+   delete search.qs.publishedBefore;
+   requestAllTime(search, callback);
+}
+
+function requestWeek(search, callback){
   request(search, function(error, response, body){
     if(error) {
       console.log(error);
       callback(404, error);
     } else {
       var videos = Array.prototype.slice.call(JSON.parse(body).items);
-      var obj = {};
-      //snippet.thumbnails.(key) | key = default|medium|high | access through key.url
-      for (var i = 0; i < videos.length; i++){
-        if(i === 3) break;
-        var date = videos[i].snippet.publishedAt.slice(0, 10); //Should be user defined
-        obj[date] = obj[date] || {
-          source : 'youtube',
-          children : []
-        }
-        obj[date].children.push({
-          title : videos[i].snippet.title,
-          videoId : videos[i].id.videoId,
-          thumbnail : videos[i].snippet.thumbnails
-        })        
-      }
+      
+      //Gather 3 videos
+      for (var i = 0; i < 3; i++) performOperation(videos[i], callback);
+      async(callback);
     }
-    delete search.qs.publishedAfter;
-    request(search, function(error, response, body){
-      if(error) {
-        console.log(error);
-        callback(404, error);
-      } else {
-        body = JSON.parse(body);
-        var date = body.items[0].snippet.publishedAt.slice(0, 10);
-        obj[date] = obj[date] || {
-          source : 'youtube',
-          children : []
-        }
-
-        obj[date].children.push({
-          title : body.items[i].snippet.title,
-          videoId : body.items[i].id.videoId,
-          thumbnail : body.items[i].snippet.thumbnails,
-        })
-        callback(200, obj);
-      }
-    })
   })
+}
+
+function requestAllTime(search, callback){
+  request(search, function(error, response, body){
+    if(error) {
+      console.log(error);
+      callback(404, error);
+    } else {
+      body = JSON.parse(body);
+      
+      //Gather the first video
+      performOperation(body.items[0], callback);
+      async(callback);
+    }
+  })
+}
+
+function performOperation(video, callback){
+  if (!(video.id.videoId in videoIds)){ //Checks the videoIds if it already contains this specific video
+    videoIds[video.id.videoId] = true;
+    var date = video.snippet.publishedAt.slice(0, 10);
+    
+    obj[date] = obj[date] || {
+      source : 'youtube',
+      children : []
+    }
+    
+    obj[date].children.push({
+      title : video.snippet.title,
+      videoId : video.id.videoId,
+      thumbnail : video.snippet.thumbnails //snippet.thumbnails.(key) | key = default|medium|high | access through key.url
+    })
+  }
+}
+
+function async(callback){
+  //Handles async
+  //Once requestCount hits 5, that's the only time we will send back a response to the client
+  requestCount++;
+  if (requestCount === 5) callback(200, obj);
 }
