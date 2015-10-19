@@ -43,8 +43,8 @@ var searchTermListedAsKeyword = function(article, searchTerm) {
     var searchCheck = keywordCheck.get(searchTerm);
     var personCheck = keywordCheck.get(personTerm);
 
-    if( (searchCheck !== null && searchCheck[0][0] > 0.65) || 
-        (personCheck !== null && personCheck[0][0] > 0.65)) {
+    if( (searchCheck !== null && searchCheck[0][0] > 0.5) || 
+        (personCheck !== null && personCheck[0][0] > 0.5)) {
       return true;
     }
   }
@@ -184,7 +184,6 @@ var prepareDataForResponse = function() {
     });
 
     var articles = articleSearchDate[dates[0]].concat((articleSearchDate[dates[1]] || []));
-
     for(var i = 0; i < articles.length; i++) {
       if(articles[i]['pub_date'] === undefined) continue;
       
