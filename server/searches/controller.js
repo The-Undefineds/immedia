@@ -200,7 +200,7 @@ module.exports = {
             objToSend[date].children.push({
               date: date,
               tweet_id: highestRetweet[i].tweet_id,
-              tweet_id_str: highestRetweet[i].tweet_id_str,
+              tweet_id_str: highestRetweet[i].tweet_id_str || highestRetweet[i].tweet_id,
               url: highestRetweet[i].url || '',
               img: highestRetweet[i].profile_img || '',
               background: highestRetweet[i].background_img || '',
