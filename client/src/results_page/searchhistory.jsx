@@ -52,12 +52,13 @@ var SearchHistory = React.createClass({
 
   componentWillReceiveProps: function(nextProps) {
     if(this.props.searchTerm !== nextProps.searchTerm) {
+      var searchTerm = nextProps.searchTerm;   // This line was made to fix the bug that keeps the 'recently viewed' view from updating after navigating away from the homepage
       this.setState({
         pastSearches: JSON.parse(localStorage['immedia']).slice(1),
       });
       this.compileHistory(function(history) {
         this.setState({ history: history })
-      }.bind(this));
+      }.bind(this), searchTerm);
     }
 
     if(!(this.state.width === nextProps.window.width && this.state.height === nextProps.window.height)) {
@@ -87,11 +88,12 @@ var SearchHistory = React.createClass({
     );
   },
 
-  compileHistory: function(callback) {
+  compileHistory: function(callback, searchTerm) {
     var history = [];
     var component = this;
-
-    if (this.props.searchTerm === 'immediahomepage') {
+    searchTerm = searchTerm || this.props.searchTerm;
+    console.log('this thing ', searchTerm);
+    if (searchTerm === 'immediahomepage') {
       $.get('http://localhost:3000/searches/popularSearches', function(data) {
         for (var term in data) {
           var popSearch = { searchTerm: term, img: data[term].img };
