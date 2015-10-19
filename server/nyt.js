@@ -231,7 +231,7 @@ var prepareMostPopularForResponse = function(){
     }
     counter++;
 
-    if(counter > 49){
+    if(counter > 16){
       break
     }
   }

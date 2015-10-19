@@ -137,6 +137,7 @@ module.exports = {
   //from the database based on the search term
   retrieveTweets: function(queryString, response){
     queryString = help.parseQueryString(queryString);
+    var context = this;
     if (queryString !== 'immediahomepage') {
       Search.findOne({
         search_term: queryString
@@ -192,22 +193,7 @@ module.exports = {
           }
     
           var objToSend = {};
-          for (i = 0; i < highestRetweet.length; i++){
-            if (!highestRetweet[i] || !highestRetweet[i].created_at) continue;
-            var date = help.getDate(highestRetweet[i].created_at);
-            objToSend[date] = objToSend[date] || { source: 'twitter news', children: []};
-
-            objToSend[date].children.push({
-              date: date,
-              tweet_id: highestRetweet[i].tweet_id,
-              tweet_id_str: highestRetweet[i].tweet_id_str,
-              url: highestRetweet[i].url || '',
-              img: highestRetweet[i].profile_img || '',
-              background: highestRetweet[i].background_img || '',
-              newssource: highestRetweet[i].tweeted_by || 'The Void',
-              text: highestRetweet[i].text || ''
-            })
-          }
+          context.processNewsTweets(highestRetweet, objToSend);
           response.status(200).send(objToSend);
         }
       });
@@ -222,27 +208,13 @@ module.exports = {
 
   retrieveHomepageTweets: function(id, response){
     var count = 0,
-        objToSend = {};
+        objToSend = {},
+        context = this;
     // Finds top 15 news tweets in the database from the past month
     Tweet.model.find({ $and: [{ $or: newsOrgs }, { tweet_id: { $gt: id } }]}).sort({ retweet_count: 1 })
       .then(function(data) {
         var highestRetweet = data.slice(data.length - 16);
-        for (i = 0; i < highestRetweet.length; i++){
-          if (!highestRetweet[i] || !highestRetweet[i].created_at) continue;
-          var date = help.getDate(highestRetweet[i].created_at);
-          objToSend[date] = objToSend[date] || { source: 'twitter news', children: []};
-
-          objToSend[date].children.push({
-            date: date,
-            tweet_id: highestRetweet[i].tweet_id,
-            tweet_id_str: highestRetweet[i].tweet_id_str,
-            url: highestRetweet[i].url || '',
-            img: highestRetweet[i].profile_img || '',
-            background: highestRetweet[i].background_img || '',
-            newssource: highestRetweet[i].tweeted_by || 'The Void',
-            text: highestRetweet[i].text || ''
-          })
-        }
+        context.processNewsTweets(highestRetweet, objToSend);
         count++;
         if (count === 2) {
           response.status(200).send(objToSend);
@@ -252,26 +224,30 @@ module.exports = {
     Tweet.model.find({ $and: [{ tweeted_by: 'vocativ' }, { tweet_id: { $gt: id } }]}).sort({ retweet_count: 1 })
       .then(function(data) {
         var highestRetweet = data.slice(data.length - 6);
-        for (i = 0; i < highestRetweet.length; i++){
-          if (!highestRetweet[i] || !highestRetweet[i].created_at) continue;
-          var date = help.getDate(highestRetweet[i].created_at);
-          objToSend[date] = objToSend[date] || { source: 'twitter news', children: []};
-
-          objToSend[date].children.push({
-            date: date,
-            tweet_id: highestRetweet[i].tweet_id,
-            tweet_id_str: highestRetweet[i].tweet_id_str,
-            url: highestRetweet[i].url || '',
-            img: highestRetweet[i].profile_img || '',
-            background: highestRetweet[i].background_img || '',
-            newssource: highestRetweet[i].tweeted_by || 'The Void',
-            text: highestRetweet[i].text || ''
-          })
-        }
+        context.processNewsTweets(highestRetweet, objToSend);
         count++;
         if (count === 2) {
           response.status(200).send(objToSend);
         }
       })
+    },
+
+    processNewsTweets: function(tweets, obj){
+      for (i = 0; i < tweets.length; i++){
+          if (!tweets[i] || !tweets[i].created_at) continue;
+          var date = help.getDate(tweets[i].created_at);
+          obj[date] = obj[date] || { source: 'twitter news', children: []};
+
+          obj[date].children.push({
+            date: date,
+            tweet_id: tweets[i].tweet_id,
+            tweet_id_str: tweets[i].tweet_id_str,
+            url: tweets[i].url || '',
+            img: tweets[i].profile_img || '',
+            background: tweets[i].background_img || '',
+            newssource: tweets[i].tweeted_by || 'The Void',
+            text: tweets[i].text || ''
+          })
+        }
     }
 };
