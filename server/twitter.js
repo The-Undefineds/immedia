@@ -135,7 +135,7 @@ var processResponseData = function(response, amountToDisplay, callback) {
 
   for(var i = 0; i < response.length; i++) {
     var tweet = response[i];
-    var date = tweet.user_id === immediaUserId ? utils.getSimpleDate(new Date()) : utils.getSimpleDate(tweet.created_at);
+    var date = (tweet.user_id || tweet.user.id_str) === immediaUserId ? utils.getSimpleDate(new Date()) : utils.getSimpleDate(tweet.created_at);
 
     date = date.year + '-' + date.month + '-' + date.day;
 
@@ -167,10 +167,10 @@ var processResponseData = function(response, amountToDisplay, callback) {
 
     tweetToSend = {
       date: date,
-      img: tweet.profile_img,
-      tweet_id: tweet.tweet_id_str,
-      tweet_id_str: tweet.tweet_id_str,
-      timestamp: tweet.timestamp,
+      img: tweet.profile_img || tweet.user.profile_image_url,
+      tweet_id: tweet.tweet_id_str || tweet.id_str,
+      tweet_id_str: tweet.tweet_id_str || tweet.id_str,
+      timestamp: tweet.timestamp || tweet.created_at
     };
 
     responseObj[date] = responseObj[date] || { source: 'twitter', children: [] };
