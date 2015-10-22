@@ -1,52 +1,25 @@
+/*
+    file: treetimeline.jsx
+    - - - - - - - - - - - - - 
+    An embedded D3 canvas that exists as
+    a standalone React component. This component
+    is responsible for kicking off all external
+    AJAX calls that populate immedia. It maintains
+    in its state an array of all the APIs data so 
+    that the timeline can be re-rendered when the
+    asynchronous calls return at different times.
+
+    As such, the D3 canvas' data directive is populated
+    by the data maintained in state.
+ */
+
+// Required node modules
 var React = require('react');
-var StyleSheet = require('react-style');
+
+// React StyleSheet styling
+var styles = require('../styles/results_page/treetimeline.jsx');
 
 var idCounter = 0;
-
-var styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: '50px',
-    paddingRight: '10px',
-    textAlign: 'center',
-    overflow: 'scroll',
-  },
-  title: {
-    position: 'fixed',
-    fontFamily: 'Nunito',
-    fontSize: '24px',
-    color: '#00BFFF',
-    backgroundColor: 'rgba(232, 232, 232, 1)',
-    marginTop: '10px',
-    marginBottom: '5px',
-    textAlign: 'left',
-    paddingLeft: '10px',
-  },
-  subhead: {
-    position: 'fixed',
-    fontFamily: 'Nunito',
-    fontSize: '14px',
-    color: 'rgb(128, 128, 128)',
-    backgroundColor: 'rgba(255, 255, 255, 1)',
-    marginTop: '42px',
-    marginBottom: '5px',
-    textAlign: 'left',
-    paddingLeft: '10px',
-  },
-  d3: {
-    zIndex: -1,
-    marginTop: '60px',
-  },
-  block: {
-    position: 'fixed',
-    zIndex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 1)',
-    height: '50px',
-    marginBottom: '5px',
-    paddingLeft: '10px',
-    textAlign: 'left',
-  }
-});
 
 var TreeTimeLine = React.createClass({
 
@@ -184,12 +157,6 @@ var TreeTimeLine = React.createClass({
   },
 
   render: function() {
-
-    // this.renderCanvas(0, 6, 1);    // Crucial step that (re-)renders D3 canvas
-    // this.renderCanvas(7, 13, 2);
-    // this.renderCanvas(14, 20, 3);
-    // this.renderCanvas(21, 28, 4);
-
     this.getDynamicStyles();
 
     return (
@@ -213,7 +180,6 @@ var TreeTimeLine = React.createClass({
     styles.block.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 10 + 'px';
     styles.title.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
     styles.subhead.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 'px';
-    // styles.d3.height = this.state.height - 110 + 'px';
     styles.d3.width = (this.state.width - 1350 < 0 ? 350 * (this.state.width/1350) : 350) + 20 + 'px';
     return;
   },
