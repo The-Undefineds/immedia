@@ -1,38 +1,30 @@
-var React = require('react');
-var StyleSheet = require('react-style');
+/*
+    file: preview.jsx
+    - - - - - - - - - - - - - 
+    Parent container for all embedded media
+    content previewed via the TreeTimeLine.
 
+    The component receives the item to be previewed
+    as a prop (previewItem) since the action to preview
+    is triggered in a sibling component (TreeTimeLine).
+
+    This component then determines which child preview
+    component should be rendered based on the source
+    of the prop passed.
+ */
+
+// Required node modules
+var React = require('react');
+
+// React StyleSheet styling
+var styles = require('../styles/results_page/preview.jsx');
+
+// immedia React component dependencies
+var EmptyPreview = require('./emptypreview.jsx');
 var NytPreview = require('./nytpreview.jsx');
 var TwitterPreview = require('./twitterpreview.jsx');
 var YouTubePreview = require('./youtubepreview.jsx');
-var EmptyPreview = require('./emptypreview.jsx');
 
-var styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: '50px',
-    paddingRight: '10px',
-    textAlign: 'center',
-  },
-  block: {
-    position: 'fixed',
-    zIndex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 1)',
-    marginBottom: '10px',
-    height: '40px',
-  },
-  title: {
-    fontFamily: 'Nunito',
-    fontSize: '24px',
-    color: '#00BFFF',
-    backgroundColor: 'rgb(232,232,232)',
-    marginTop: '10px',
-    marginBottom: '10px',
-    textAlign: 'left',
-    paddingLeft: '5px',
-    zIndex: '1',
-    position: 'fixed',
-  },
-});
 
 var Preview = React.createClass({
 
@@ -71,11 +63,15 @@ var Preview = React.createClass({
   },
 
   getDynamicStyles: function() {
-    styles.container.left = (this.state.width / 2) - (this.state.width - 1350 < 0 ? 500 * (this.state.width / 1350) / 2 : 250) + 'px';
-    styles.container.width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) + 'px';
-    styles.container.height = this.state.height - 60 + 'px';
-    styles.block.width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) + 'px';
-    styles.title.width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) + 'px';
+    var standardScreenSize = 1350;
+    var optimalPreviewSize = 500;
+    var previewTitleOffset = 60;
+
+    styles.container.left = (this.state.width / 2) - (this.state.width - standardScreenSize < 0 ? optimalPreviewSize * (this.state.width / standardScreenSize) / 2 : optimalPreviewSize / 2) + 'px';
+    styles.container.width = (this.state.width - standardScreenSize < 0 ? optimalPreviewSize * (this.state.width/standardScreenSize) : optimalPreviewSize) + 'px';
+    styles.container.height = this.state.height - previewTitleOffset + 'px';
+    styles.block.width = (this.state.width - standardScreenSize < 0 ? optimalPreviewSize * (this.state.width/standardScreenSize) : optimalPreviewSize) + 'px';
+    styles.title.width = (this.state.width - standardScreenSize < 0 ? optimalPreviewSize * (this.state.width/standardScreenSize) : optimalPreviewSize) + 'px';
   },
 });
 
