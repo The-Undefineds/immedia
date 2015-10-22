@@ -1,13 +1,17 @@
-var React = require('react');
-var StyleSheet = require('react-style');
+/*
+    file: pastsearch.jsx
+    - - - - - - - - - - - - - 
+    Individual components for each of a user's prior
+    ten searches. The components are clickable images
+    that initiate a new immedia search for the image
+    clicked.
+ */
 
-var styles = StyleSheet.create({
-  image: {
-    width: 'auto',
-    height: '90px',
-    cursor: 'pointer',
-  },
-})
+// Required node modules
+var React = require('react');
+
+// React StyleSheet styling
+var styles = require('../styles/results_page/pastsearch.jsx');
 
 var PastSearch = React.createClass({
 
