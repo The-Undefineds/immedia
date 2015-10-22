@@ -1,5 +1,21 @@
-var crypto = require('crypto');
-var key = require('./keys.js');
+/*
+    file: OAuth.js
+    - - - - - - - - - - - - - - 
+    Twitter's OAuth is notoriously complicated and
+    actually advised against reproducing by Twitter itself
+    (https://dev.twitter.com/oauth/overview/introduction)
+
+    That said, at the time of this application creation,
+    the libraries linked by Twitter to handle OAuth did not
+    support the Search API. As such, immedia recreated
+    our own OAuth implementation to carry out that requisite function.
+
+    For more information on Twitter's specific authentication process,
+    please see this API doc, https://dev.twitter.com/oauth/overview/authorizing-requests
+ */
+
+var crypto = require('crypto');     // Required node modules
+var key = require('./keys.js');     // API keys file with five different Twitter API keys/secrets
 
 module.exports = function(baseURL, param, aParam){
   if (aParam !== undefined) aParam += '&';
@@ -57,4 +73,3 @@ function percentEncoding(string) {
   return result;
 };
 }
-
