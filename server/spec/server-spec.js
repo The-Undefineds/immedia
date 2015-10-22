@@ -1,8 +1,16 @@
+/*
+    file: server-spec.js
+    - - - - - - - - - - - - - - - 
+    Testing for immedia server-side logic
+ */
+
+// Required node modules
 var request = require('supertest');
 var express = require('express');
 var expect = require('chai').expect;
-var server = require('../server.js');
 
+// immedia dependencies
+var server = require('../server.js');
 
 describe('server', function() {
 

@@ -1,11 +1,19 @@
+/*
+    file: db-spec.js
+    - - - - - - - - - - -
+    Testing for the MongoDB instance
+    used to cache Tweets
+ */
+
+// Required node modules
 var request = require('supertest');
 var express = require('express');
 var expect = require('chai').expect;
 var mongoose = require('mongoose');
 
+// immedia dependencies
 var Search = require('../searches/model.js');
 var Tweet = require('../tweets/model.js');
-
 var server = require('../server.js');
 
 
