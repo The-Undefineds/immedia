@@ -1,51 +1,19 @@
-var React = require('react');
-var StyleSheet = require('react-style');
+/*
+    file: nytpreview.jsx
+    - - - - - - - - - - - - - 
+    Separate component for displaying
+    New York Times articles selected for preview.
 
-var styles = StyleSheet.create({
-  preview: {
-    top: '45px',
-    paddingRight: '5px',
-    position: 'absolute',
-    overflow: 'scroll',
-    paddingBottom: '5px',
-  },
-  anchor: {
-    textDecoration: 'none',
-    color: 'inherit',
-  },
-  headline: {
-    marginTop: '0px',
-    marginBottom: '10px',
-    textAlign: 'left',
-    paddingLeft: '10px',
-  },
-  byline: {
-    marginTop: '5px',
-    marginBottom: '5px',
-    textAlign: 'left',
-    paddingLeft: '10px',
-  },
-  image: {
-    textAlign: 'center',
-  },
-  body: {
-    textAlign: 'left',
-    paddingLeft: '10px',
-  },
-  searchButton: {
-      verticalAlign: 'middle',
-      marginLeft: '2px',
-      marginTop: '10px',
-      width: '100px',
-      height: '25px',
-      fontFamily: 'Nunito',
-      fontSize: '12px',
-      color: 'white',
-      textAlign: 'center',
-      background: '#3498db',
-      cursor: 'pointer',
-  },
-});
+    Content for preview is passed through as a prop
+    (previewItem) since it is received from the
+    TreeTimeLine.
+ */
+
+// Required node modules
+var React = require('react');
+
+// React StyleSheet styling
+var styles = require('../styles/results_page/nytpreview.jsx');
 
 var NytPreview = React.createClass({
 
@@ -84,12 +52,18 @@ var NytPreview = React.createClass({
 
   getDynamicStyles: function() {
     var ratio = 1;
+    var optimalImageSize = 320;
+    var imageOffset = 20;
+    var standardScreenSize = 1350;
+    var optimalPreviewSize = 500;
+    var navigationBarOffset = 100;
+
     if(this.props.previewItem.height > this.props.previewItem.width) {
-      if((320 / this.props.previewItem.height) < 1) {
-        ratio = 320 / this.props.previewItem.height;
+      if((optimalImageSize / this.props.previewItem.height) < 1) {
+        ratio = optimalImageSize / this.props.previewItem.height;
       }
     } else {
-      var width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) - 20;
+      var width = (this.state.width - standardScreenSize < 0 ? optimalPreviewSize * (this.state.width/standardScreenSize) : optimalPreviewSize) - imageOffset;
       if((width / this.props.previewItem.width) < 1) {
         ratio = width / this.props.previewItem.width;
       }
@@ -98,8 +72,8 @@ var NytPreview = React.createClass({
     styles.image.height = this.props.previewItem.height * ratio;
     styles.image.width = this.props.previewItem.width * ratio;
 
-    styles.preview.width = (this.state.width - 1350 < 0 ? 500 * (this.state.width/1350) : 500) + 'px';
-    styles.preview.height = this.state.height - 100 + 'px';
+    styles.preview.width = (this.state.width - standardScreenSize < 0 ? optimalPreviewSize * (this.state.width/standardScreenSize) : optimalPreviewSize) + 'px';
+    styles.preview.height = this.state.height - navigationBarOffset + 'px';
   },
 
 });
