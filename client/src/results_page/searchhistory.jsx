@@ -1,39 +1,31 @@
-var React = require('react');
-var StyleSheet = require('react-style');
+/*
+    file: searchhistory.jsx
+    - - - - - - - - - - - - - 
+    Parent container for a user's past searches, which
+    is comprised of individual instances of the 
+    PastSearch component.
 
+    This component maintains in state a parsed version
+    of a user's search history from Local Storage. When 
+    new searches are initiated, an upstream component
+    adds the new search to Local Storage, among other things,
+    triggering a re-rendering that ultimately updates this component.
+
+    When a user is visiting immedia for the first time, however,
+    they will not have any recent searches. As such, this component
+    sends a GET request to our server to display the immedia's
+    most popular searches instead.
+ */
+
+// Required node modules
+var React = require('react');
+
+// React StyleSheet styling
+var styles = require('../styles/results_page/searchhistory.jsx');
+
+// immedia React component dependencies
 var PastSearch = require('./pastsearch.jsx');
 
-var styles = StyleSheet.create({
-  container: {
-    right: '0px',
-    position: 'fixed',
-    height: '130px',
-    marginRight: '5px',
-    paddingLeft: '15px',
-  },
-  title: {
-    fontFamily: 'Nunito',
-    fontSize: '24px',
-    color: '#00BFFF',
-    marginBottom: '10px',
-    textAlign: 'left',
-    paddingLeft: '5px',
-    position: 'absolute',
-    top: '0px',
-    height: '30px',
-    backgroundColor: 'rgba(232,232,232,1)',
-  },
-  searches: {
-    position: 'absolute',
-    'overflow-x': 'scroll',
-    'overflow-y': 'hidden',
-    display: 'inline-block',
-    whiteSpace: 'nowrap',
-    right: '0px',
-    top: '40px',
-    height: '90px',
-  },
-});
 
 var SearchHistory = React.createClass({
 
@@ -52,7 +44,7 @@ var SearchHistory = React.createClass({
 
   componentWillReceiveProps: function(nextProps) {
     if(this.props.searchTerm !== nextProps.searchTerm) {
-      var searchTerm = nextProps.searchTerm;   // This line was made to fix the bug that keeps the 'recently viewed' view from updating after navigating away from the homepage
+      var searchTerm = nextProps.searchTerm;
       this.setState({
         pastSearches: JSON.parse(localStorage['immedia']).slice(1),
       });
@@ -78,7 +70,6 @@ var SearchHistory = React.createClass({
   render: function(){
     this.getDynamicStyles();
 
-
     return (
       <div id="recentlyVisited" style={styles.container}>
       { this.props.searchTerm === 'immediahomepage' ? <div style={styles.title}>popular searches</div> :
@@ -88,11 +79,16 @@ var SearchHistory = React.createClass({
     );
   },
 
+  /*
+      Handles the logic for whether the most popular searches should be shown
+      for a first-time user or user returning to the homepage, or whether
+      an existing user should see their prior search history.
+   */
   compileHistory: function(callback, searchTerm) {
     var history = [];
     var component = this;
     searchTerm = searchTerm || this.props.searchTerm;
-    console.log('this thing ', searchTerm);
+
     if (searchTerm === 'immediahomepage') {
       $.get('http://localhost:3000/searches/popularSearches', function(data) {
         for (var term in data) {
@@ -112,11 +108,15 @@ var SearchHistory = React.createClass({
   },
 
   getDynamicStyles: function() {
-    styles.container.top = this.state.height - 130 + 'px';
-    styles.container.width = (this.state.width - 1350 < 0 ? 365 * (this.state.width / 1350) : 365) + 'px';
-    styles.container.right = (this.state.width < 1350 ? 0 : (this.state.width - 1350) / 2) + 'px';
-    styles.title.width = (this.state.width - 1350 < 0 ? 365 * (this.state.width / 1350) : 365) + 'px';
-    styles.searches.width = (this.state.width - 1350 < 0 ? 365 * (this.state.width / 1350) : 365) + 'px';
+    var standardScreenSize = 1350;
+    var optimalSearchHistorySize = 365;
+    var searchHistoryTitleOffset = 130;
+
+    styles.container.top = this.state.height - searchHistoryTitleOffset + 'px';
+    styles.container.width = (this.state.width - standardScreenSize < 0 ? optimalSearchHistorySize * (this.state.width / standardScreenSize) : optimalSearchHistorySize) + 'px';
+    styles.container.right = (this.state.width < standardScreenSize ? 0 : (this.state.width - standardScreenSize) / 2) + 'px';
+    styles.title.width = (this.state.width - standardScreenSize < 0 ? optimalSearchHistorySize * (this.state.width / standardScreenSize) : optimalSearchHistorySize) + 'px';
+    styles.searches.width = (this.state.width - standardScreenSize < 0 ? optimalSearchHistorySize * (this.state.width / standardScreenSize) : optimalSearchHistorySize) + 'px';
   },
 });
 
