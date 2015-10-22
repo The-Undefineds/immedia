@@ -1,32 +1,25 @@
-var React = require('react');
-var StyleSheet = require('react-style');
+/*
+    file: summary.jsx
+    - - - - - - - - - - - - - 
+    Content component for the Wikipedia
+    summary displayed on every immedia page.
 
-var styles = StyleSheet.create({
-  summary: {
-    position: 'absolute',
-    textAlign: 'center',
-    paddingRight: '5px',
-  },
-  title: {
-    fontFamily: 'Nunito',
-    fontSize: '24px',
-    color: '#00BFFF',
-    backgroundColor: 'rgb(232, 232, 232)',
-    marginBottom: '10px',
-    textAlign: 'left',
-    paddingLeft: '5px',
-  },
-  image: {
-    maxWidth: '100%',
-    maxHeight: '100%',
-  },
-  body: {
-    fontFamily: 'Nunito',
-    fontSize: '14px',
-    textAlign: 'left',
-    overflow: 'scroll',
-  },
-});
+    The component receives all the Wikipedia
+    information as props (summary, profileImage)
+    from its parent component Wikiview, which is
+    responsible for the actual GET request to Wikipedia
+    and subsequent parsing.
+
+    Of note is the jQuery click listener that any link in
+    a Wikipedia summary may have; when any such link is clicked,
+    a new immedia search for that subject is executed.
+ */
+
+// Required node modules
+var React = require('react');
+
+// React StyleSheet styling
+var styles = require('../styles/results_page/summary.jsx');
 
 
 var Summary = React.createClass({
@@ -42,14 +35,17 @@ var Summary = React.createClass({
     this.getDynamicStyles();
   },
 
+  /*
+      jQuery click listener that triggers a new immedia search
+      for the subject of the URL clicked in the Wikipedia
+      summary
+   */
   componentDidUpdate: function(prevProps, prevState) {
-    // if(prevProps.searchTerm !== this.props.searchTerm) {
-      $(function() {
-        $('.wikiLink').on('click', function(event) {
-          this.props.searchInit($(event.target).text());
-        }.bind(this));
+    $(function() {
+      $('.wikiLink').on('click', function(event) {
+        this.props.searchInit($(event.target).text());
       }.bind(this));
-    // }
+    }.bind(this));
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -72,11 +68,16 @@ var Summary = React.createClass({
   },
 
   getDynamicStyles: function() {
-    var $wikiTitle = $('#wikiTitle');
-    styles.summary.height = (this.state.height - 60 - 140) + 'px';
-    styles.title.width = (this.state.width < 1350 ? 365 * (this.state.width / 1350) : 365) + 'px';
-    styles.image.height = this.state.height * 0.4 + 'px';
-    styles.body.height = (this.state.height - 60 - 140) - 40 - (this.state.height * 0.4) + 'px';
+    var standardScreenSize = 1350;
+    var optimalSummarySize = 365;
+    var wikipediaTitleOffset = 200;
+    var summaryOffset = 40;
+    var optimalImageRatio = 0.4;
+
+    styles.summary.height = (this.state.height - wikipediaTitleOffset) + 'px';
+    styles.title.width = (this.state.width < standardScreenSize ? optimalSummarySize * (this.state.width / standardScreenSize) : optimalSummarySize) + 'px';
+    styles.image.height = this.state.height * optimalImageRatio + 'px';
+    styles.body.height = (this.state.height - wikipediaTitleOffset) - summaryOffset - (this.state.height * optimalImageRatio) + 'px';
   },
 
 });
