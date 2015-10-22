@@ -1,13 +1,15 @@
-var React = require('react');
-var StyleSheet = require('react-style');
+/*
+    file: emptypreview.jsx
+    - - - - - - - - - - - - - - 
+    An empty component that serves as a placeholder
+    when no content is previewed.
+ */
 
-var styles = StyleSheet.create({
-  directions: {
-    fontFamily: 'Nunito',
-    fontSize: '24px',
-    color: '#00BFFF',
-  }
-});
+// Required node modules
+var React = require('react');
+
+// React StyleSheet styling
+var styles = require('../styles/results_page/emptypreview.jsx');
 
 var EmptyPreview = React.createClass({
 
