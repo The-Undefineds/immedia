@@ -1,12 +1,21 @@
+/*
+    file: tweets/controller.js
+    - - - - - - - - - - - - - - - - -
+    Controller file for handling and storing Tweets
+    received from the perpetual HTTP Streaming API
+    connection
+ */
+
+// Required npm modules
+var Q = require('q'),
+var request = require('request');
+
+// immedia dependencies
 var Tweet = require('./model.js').model;
 var OAuth = require('../OAuth.js');
-var help  = require('./helpers.js');
+var utils = require('../utils.js');
 var searches = require('../searches/controller.js');
 var keys = require('../keys.js');
-
-var Q = require('q'),
-    request = require('request');
-
 var newsOrgs = require('../assets/assets.js').newsOrgs;
 
 var apiUrl = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
@@ -18,7 +27,7 @@ var month = monthAgo.getMonth();
 monthAgo.setMonth(month - 1);
 monthAgo = monthAgo.toString().slice(4, 15);
 
-monthAgo = help.convertDateToInteger(monthAgo);
+monthAgo = utils.convertDateToInteger(monthAgo);
 
 module.exports = function(){
   lastTweetStored(newsOrgs[0]);
@@ -70,7 +79,7 @@ var requestNewTweets = function(screenName, sinceID, maxID){
           var tweet = body[i];
           var created_at = tweet.created_at.slice(4, 10) + tweet.created_at.slice(25);
           var tweet_id = tweet.id_str;
-          if (tweet_id < sinceID || help.convertDateToInteger(created_at) < monthAgo) {         // Ends recursion
+          if (tweet_id < sinceID || utils.convertDateToInteger(created_at) < monthAgo) {         // Ends recursion
             updateNextNewsOrg(screenName);
             return; 
           }
@@ -78,7 +87,7 @@ var requestNewTweets = function(screenName, sinceID, maxID){
             tweet_id: tweet_id,
             tweet_id_str: tweet_id,
             created_at: created_at,
-            url: help.extractUrl(tweet.text),
+            url: utils.extractUrl(tweet.text),
             retweet_count: tweet.retweet_count,
             tweeted_by: screenName,
             profile_img: tweet.user.profile_image_url_https,

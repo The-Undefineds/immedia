@@ -1,3 +1,10 @@
+/*
+    file: tweets/model.js
+    - - - - - - - - - - - - 
+    Mongoose model for Tweet that comprises
+    the Tweets collection in the MongoDB instance
+ */
+
 var mongoose  = require('mongoose');
 
 var TweetsSchema = new mongoose.Schema({
