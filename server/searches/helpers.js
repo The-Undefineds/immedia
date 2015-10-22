@@ -1,3 +1,10 @@
+/*
+    file: searches/helpers.js
+    - - - - - - - - - - - - - - 
+    Helper functions for handling an indexed search
+    of our Twitter News sources
+ */
+
 var blackListedWords = require('../assets/assets.js').blackListedWords;
 
 var months = {
