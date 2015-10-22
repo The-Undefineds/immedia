@@ -1,21 +1,37 @@
+/*
+    file: streamServer.js
+    - - - - - - - - - - - - - - 
+    Creates a persistent HTTP connection to
+    Twitter's Streaming API. It leverages a
+    3rd-party package and its associated
+    documentation, https://www.npmjs.com/package/twitter.
+ */
+
+// Required node modules
 var Twitter = require('twitter');
-var key = require('./keys.js');
-var Tweet = require('./tweets/model.js').model;
-var help  = require('./tweets/helpers.js');
-var searches = require('./searches/controller.js');
+
+// immedia dependencies
+var key = require('./keys.js');                     // API keys file with five different Twitter API keys/secrets
+var Tweet = require('./tweets/model.js').model;     // Mongoose model for Tweets stored in MongoDB
+var searches = require('./searches/controller.js'); // Mongoose controller for Searches indexed in MongoDB
+var utils = require('./utils.js');         // Helper functions
 
 var monthAgo = new Date();
 var month = monthAgo.getMonth();
 monthAgo.setMonth(month - 1);
 monthAgo = monthAgo.toString().slice(4, 15);
 
-monthAgo = help.convertDateToInteger(monthAgo);
+monthAgo = utils.convertDateToInteger(monthAgo);
 
 var storeTweet = function(tweet){
   Tweet.create(tweet);
 };
 
-function releaseTheKraken(){
+/*
+    Creates a Twitter Streaming API connection using an
+    external OAuth library, https://www.npmjs.com/package/twitter.
+ */
+function createStreamingConnection(){
   var client = new Twitter({
     consumer_key: key.twitterConsumer,
     consumer_secret: key.twitterConsumerSecret,
@@ -32,7 +48,7 @@ function releaseTheKraken(){
           tweet_id: tweet_id,
           tweet_id_str: tweet.id_str,
           created_at: created_at,
-          url: help.extractUrl(tweet.text),
+          url: utils.extractUrl(tweet.text),
           retweet_count: tweet.retweet_count,
           tweeted_by: tweet.user['screen_name'],
           profile_img: tweet.user.profile_image_url_https,
@@ -51,4 +67,4 @@ function releaseTheKraken(){
   });
 }
 
-module.exports = releaseTheKraken;
+module.exports = createStreamingConnection;
