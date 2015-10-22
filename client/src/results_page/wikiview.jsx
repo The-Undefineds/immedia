@@ -1,20 +1,29 @@
+/*
+    file: wikiview.jsx
+    - - - - - - - - - - - - - 
+    Parent component for all content
+    displayed from Wikipedia inside the Summary
+    component. This component is responsible
+    for retrieving a given search query's
+    corresponding Wikipedia article and parsing it accordingly,
+    since there is no option for a response to return in JSON.
+
+    The component also contains fallback logic that sends a request
+    to Google's Custom Search API to retrieve an image for the
+    immedia page if none exists in the corresponding Wikipedia
+    Infobox.
+ */
+
+// Required node modules
 var React = require('react');
-var StyleSheet = require('react-style');
 
+// React StyleSheet styling
+var styles = require('../styles/results_page/wikiview.jsx');
+
+// immedia React components dependencies
 var Summary = require('./summary.jsx');
-// var Infobox = require('./infobox.jsx');
-
-var styles = StyleSheet.create({
-  container: {
-    position: 'fixed',
-    top: '60px',
-    paddingLeft: '15px',
-    paddingRight: '5px',
-    textAlign: 'center',
-  },
-});
-
 var SearchHistory = require('./searchhistory.jsx');
+
 
 var WikiView = React.createClass({
 
