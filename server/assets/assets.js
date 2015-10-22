@@ -1,5 +1,13 @@
+/*
+    file: server/assets/assets.js
+    - - - - - - - - - - - - - - - - 
+    White-listed news sources and commonly used
+    words excluded from our indexed search database
+    used to retrieve Twitter News Tweets on a certain
+    subject
+ */
 
-var assets = {
+module.exports = {
   newsOrgs: [
     "HuffingtonPost",
     "AP",
@@ -143,6 +151,4 @@ var assets = {
   },
 
   newsOrgsObjs: [{"tweeted_by":"HuffingtonPost"},{"tweeted_by":"AP"},{"tweeted_by":"Salon"},{"tweeted_by":"WhiteHouse"},{"tweeted_by":"BBCWorld"},{"tweeted_by":"Reuters"},{"tweeted_by":"TheEconomist"},{"tweeted_by":"FortuneMagazine"},{"tweeted_by":"businessinsider"},{"tweeted_by":"guardian"},{"tweeted_by":"TechCrunch"},{"tweeted_by":"Forbes"},{"tweeted_by":"CNBC"},{"tweeted_by":"NewYorker"},{"tweeted_by":"VICE"},{"tweeted_by":"WSJ"},{"tweeted_by":"RollingStone"},{"tweeted_by":"TIME"},{"tweeted_by":"AJEnglish"},{"tweeted_by":"WSJopinion"},{"tweeted_by":"politico"},{"tweeted_by":"vocativ"},{"tweeted_by":"voxdotcom"},{"tweeted_by":"WIRED"},{"tweeted_by":"MotherJones"},{"tweeted_by":"washingtonpost"},{"tweeted_by":"NatGeo"},{"tweeted_by":"RT_com"},{"tweeted_by":"espn"},{"tweeted_by":"Newsweek"},{"tweeted_by":"people"},{"tweeted_by":"THR"},{"tweeted_by":"EW"},{"tweeted_by":"MONEY"},{"tweeted_by":"Bloomberg"},{"tweeted_by":"PopSci"},{"tweeted_by":"VanityFair"},{"tweeted_by":"intlifemag"},{"tweeted_by":"WSJPolitics"},{"tweeted_by":"WSJAsia"},{"tweeted_by":"WSJSports"},{"tweeted_by":"EconCulture"},{"tweeted_by":"CNN"},{"tweeted_by":"MTV"},{"tweeted_by":"NASA"},{"tweeted_by":"google"}],
-}
-
-module.exports = assets;
+};

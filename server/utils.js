@@ -1,3 +1,26 @@
+/*
+    file: utils.js
+    - - - - - - - - - - - - 
+    Various date helper functions that handle
+    the different permutations of dates
+    required for dealing with the APIs immedia uses.
+ */
+
+var months = {
+  Jan: 0,
+  Feb: 1,
+  Mar: 2,
+  Apr: 3,
+  May: 4,
+  Jun: 5,
+  Jul: 6,
+  Aug: 7,
+  Sep: 8,
+  Oct: 9,
+  Nov: 10,
+  Dec: 11
+};
+
 module.exports = {
 
   'getDateFromToday': function(days, delimiter) {
@@ -40,6 +63,21 @@ module.exports = {
       month: (((date.getMonth()+1).toString()[1]) ? date.getMonth()+1 : "0" + (date.getMonth()+1)).toString(),
       day: ((date.getDate().toString()[1]) ? date.getDate() : "0" + date.getDate()).toString()
     };
-  }
+  },
 
+  'extractUrl': function(tweet) {
+    for (var i = tweet.length-1; i >= 0; i--) {
+      if (tweet[i] === 'h' && tweet.slice(i, i+5) === 'http:') {
+        return tweet.slice(i);
+      }
+    }
+  },
+
+ 'convertDateToInteger': function(date) {
+    var month = months[date.slice(0, 3)],
+        day   = Number(date.slice(4, 6)),
+        year  = Number(date.slice(7));
+
+    return year * 480 + month * 40 + day * 1;
+  }
 };
