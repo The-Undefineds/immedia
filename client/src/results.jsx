@@ -1,11 +1,29 @@
-var React = require('react');
-var StyleSheet = require('react-style');
+/*
+    file: results.jsx
+    - - - - - - - - - - - - - - 
+    Component that houses the majority of immedia.
+    Its state tracks window size so that child
+    components can be updated accordingly upon a 
+    resizing event with only one listener.
 
-var TreeTimeLine = require('./results_page/treetimeline.jsx'),
-    WikiView = require('./results_page/wikiview.jsx'),
-    Preview = require('./results_page/preview.jsx'),
-    TopBar = require('./results_page/topbar.jsx'),
-    SearchHistory = require('./results_page/searchhistory.jsx');
+    The Preview React component is actually housed outside
+    the render() function because it's re-rendering
+    is conditional on an action taken by a sibling component.
+    Rather than re-rendering the entire page, separating the 
+    Preview component allows us to trigger re-rendering
+    when this action occurs.
+ */
+
+// Required node modules
+var React = require('react');
+
+// immedia React component dependencies
+var TreeTimeLine = require('./results_page/treetimeline.jsx');
+var WikiView = require('./results_page/wikiview.jsx');
+var Preview = require('./results_page/preview.jsx');
+var TopBar = require('./results_page/topbar.jsx');
+var SearchHistory = require('./results_page/searchhistory.jsx');
+
 
 var ResultsView = React.createClass({
 
@@ -42,8 +60,18 @@ var ResultsView = React.createClass({
     );
   },
 
+  /*
+      Property used to keep track of which media source
+      is triggering a Preview action
+   */
   item: {source: ''},
 
+  /*
+      Manual re-rendering of the Preview component when an
+      action in a sibling component (hovering over a new media
+      bubble in the TreeTimeLine) occurs. A callback is passed
+      to the TreeTimeLine component that initiates this.
+   */
   renderPreview: function(item) {
     React.render(
       <Preview previewItem={item} window={this.state} />,
@@ -57,12 +85,6 @@ var ResultsView = React.createClass({
       height: window.innerHeight,
     });
     this.renderPreview(this.item);
-  },
-
-  queryTerm: function(searchTerm){
-    this.setState({
-      searchTerm: searchTerm
-    });
   },
 
   mouseOver: function(item){   
