@@ -1,19 +1,47 @@
+/*
+    file: mainview.jsx
+    - - - - - - - - - - - - - 
+    Serves mainly as a container for the Results
+    component that also handles parsing of a user's
+    Local Storage to display their recent search history.
+
+    This file could be merged with Results component,
+    since it initially was used as a router for immedia's
+    first landing page, which did not take the form of the
+    current immedia Results page.
+ */
+
+// Required node modules
 var React = require('react');
 
+// immedia React component dependencies
 var ResultsView = require('./results.jsx');
+
 
 var MainView = React.createClass({
 
   getInitialState: function(){
     return {
       searchTerm : 'immediahomepage',
-    }
+    };
+  },
+
+  componentWillMount: function(){
+    this.checkForSearchHistory();
+  },
+
+  render: function(){
+    return (
+      <div>
+        <ResultsView searchTerm={this.state.searchTerm} searchInit={this.searchInit} />
+      </div>
+    );
   },
 
   // Checks localStorage for history, which is stored in an array
   // with element 0 being the most recent page. The number 0 
   // corresponds with the home-page.
-  componentWillMount: function(){
+  checkForSearchHistory: function() {
     if (localStorage['immedia']) { 
       var history = JSON.parse(localStorage['immedia']);
     }
@@ -87,16 +115,6 @@ var MainView = React.createClass({
     }
     localStorage['immedia'] = JSON.stringify(history);
   },
-
-  render: function(){
-
-    return (
-      <div>
-        <ResultsView searchTerm={this.state.searchTerm} searchInit={this.searchInit} />
-      </div>
-      )
-  },
-
 });
 
 React.render(<MainView />, document.getElementById('container'));
