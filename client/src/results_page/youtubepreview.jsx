@@ -1,4 +1,21 @@
+/*
+    file: youtubepreview.jsx
+    - - - - - - - - - - - - - 
+    Separate component for displaying
+    YouTube videos selected for preview.
+
+    Content for preview is passed through as a prop
+    (previewItem) since it is received from the
+    TreeTimeLine.
+
+    Furthermore, this component requires custom embed
+    widget code provided by YouTube which asynchronously
+    embeds a video for playing.
+ */
+
+// Required node modules
 var React = require('react');
+
 
 var YouTubePreview = React.createClass({
 
@@ -20,6 +37,12 @@ var YouTubePreview = React.createClass({
     });
   },
 
+  /*
+      Because the YouTube embed widget actually injects
+      an <iframe> into the DOM, once a video is no longer
+      chosen to be previewed by the user, the <iframe>
+      needs to be replaced by a <div>.
+   */
   componentWillUpdate: function() {
     var $youtube = $('#youtube');
     if($youtube[0].localName === 'iframe') {
