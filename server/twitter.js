@@ -145,7 +145,7 @@ function grabTimeline(user_id, originalResponse){
       return;
 
     } else {
-      grabTimeline(params, originalResponse);
+      grabTimeline(user_id, originalResponse);
     }
   });
 };
