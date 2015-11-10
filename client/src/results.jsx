@@ -18,7 +18,7 @@
 var React = require('react');
 
 // immedia React component dependencies
-var TreeTimeLine = require('./results_page/treetimeline.jsx');
+var TreeTimeLine = require('./results_page/timeline/treetimeline.jsx');
 var WikiView = require('./results_page/wikiview.jsx');
 var Preview = require('./results_page/preview.jsx');
 var TopBar = require('./results_page/topbar.jsx');
