@@ -16,8 +16,15 @@
 // Required node modules
 var React = require('react');
 
+var Nodes = require('./nodes.js');
+var Links = require('./links.js');
+var Axis = require('./axis.js');
+var Query = require('./query.js');
+
+var helpers = require('./helpers.js');
+
 // React StyleSheet styling
-var styles = require('../styles/results_page/treetimeline.jsx');
+var styles = require('../../styles/results_page/treetimeline.jsx');
 
 var idCounter = 0;
 
@@ -344,7 +351,7 @@ var TreeTimeLine = React.createClass({
             d.y = 0;
             return;
           }
-          d.x = y(new Date(d.date)) - 15;
+          d.x = y(new Date(d.date)) - 30;
           d.y = 0;
           d.fixed = true;
         }
