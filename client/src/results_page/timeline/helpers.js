@@ -4,6 +4,18 @@ module.exports = {
 
 	renderCount: 0,
 
+	/* The toggle function hides a node's children from D3 so that the children are not rendered.
+	This way, nodes can appear and exit when certain click events occur and the canvas re-renders. */
+	toggle: function(d) {
+	  if (d.children) {
+	    d._children = d.children;
+	    d.children = null;
+	  } else {
+	    d.children = d._children;
+	    d._children = null;
+	  }
+	},
+
 	mouseOver: function(item, callback) {
 	  if (this.mousedOver === item) {
 	    return;

@@ -21,6 +21,7 @@ var Links = require('./links.js');
 var Axis = require('./axis.js');
 var Query = require('./query.js');
 var Dates = require('./dates.js');
+var Images = require('./images.js');
 
 var helpers = require('./helpers.js');
 
@@ -281,7 +282,7 @@ var TreeTimeLine = React.createClass({
       .attr('transform', 'translate(60, ' + canvasProps.margin.top + ')');
 
     canvasProps.yScale = Axis.yScale(canvasProps);
-    var yAxis = Axis.describeYAxis(canvasProps);
+    Axis.describeYAxis(canvasProps);
 
     // var yAxis = d3.svg.axis()
     //   .scale(yScale)
@@ -308,10 +309,10 @@ var TreeTimeLine = React.createClass({
 
 
     /* Time to create a D3 tree layout structure with diagonal projections between parent and child nodes */
-    var tree = d3.layout.tree()
+    canvasProps.tree = d3.layout.tree()
         .size([canvasProps.height, canvasProps.width])
 
-    var diagonal = d3.svg.diagonal()
+    canvasProps.diagonal = d3.svg.diagonal()
         .projection(function(d) { return [d.y, d.x]; })
 
 
@@ -321,19 +322,19 @@ var TreeTimeLine = React.createClass({
     /* When all data has been loaded, toggle the nodes so that only the first two days of each week
     will be expanded (the other days are collapsed). This makes the canvas less crowded. */
     if (helpers.renderCount === Query.apis.length) {
-      root.children.forEach(collapse);
-      toggle(root.children[0]);
-      toggle(root.children[1]);
+      root.children.forEach(helpers.toggle);
+      helpers.toggle(root.children[0]);
+      helpers.toggle(root.children[1]);
     }
 
     update(root, canvas);
 
-    function collapse(d) {
-      if (d.children) {
-        d._children = d.children;
-        d.children = null;
-      }
-    }
+    // function collapse(d) {
+    //   if (d.children) {
+    //     d._children = d.children;
+    //     d.children = null;
+    //   }
+    // }
 
     /* The update function tells D3 how to render the new canvas any time new data is entered or 
     mouse events occur. */
@@ -352,13 +353,13 @@ var TreeTimeLine = React.createClass({
 
       /* Nodes and links will be arranged in arrays for reference and when D3 needs to iterate through them
       to assign positions, attributes, etc. */
-      var nodes = tree.nodes(root).reverse();
-      var links = tree.links(nodes);
+      canvasProps.nodes = canvasProps.tree.nodes(root).reverse();
+      canvasProps.links = canvasProps.tree.links(canvasProps.nodes);
 
       /* Determine relative position of node's based on their depth in the tree.
       If an item is very old (YouTube may return a video from over a year ago that is the search term's most
       popular result) it will affix to the bottom of the canvas. */
-      nodes.forEach(function(d) { 
+      canvasProps.nodes.forEach(function(d) { 
         if (d.depth === 1) {
           if (d === oldestItem) {
             d.x = canvasProps.height - canvasProps.margin.bottom;
@@ -381,7 +382,7 @@ var TreeTimeLine = React.createClass({
 
       //Update nodes.
       var node = canvasProps.svg.selectAll('g.node')
-          .data(nodes, function(d) { return d.id || (d.id = ++helpers.idCounter); });
+          .data(canvasProps.nodes, function(d) { return d.id || (d.id = ++helpers.idCounter); });
 
       //Attribute mouse events to various nodes upon entering.
       var nodeEnter = node.enter().append('svg:g')
@@ -395,7 +396,7 @@ var TreeTimeLine = React.createClass({
             window.open('https://www.youtube.com/watch?v=' + d.videoId, '_blank');
             return;
           }
-          toggle(d); 
+          helpers.toggle(d); 
           update(root, canvas); 
         })
         .on('mouseenter', function(d) {
@@ -433,49 +434,50 @@ var TreeTimeLine = React.createClass({
             }
         });
 
-      /* Append defs & patterns to SVG in order to render various images based on source and URL.
-      Each pattern's ID will be used during node entrance and updates. */
-      var defs = canvasProps.svg.append('svg:defs');
-        defs.append('svg:pattern')
-          .attr('id', 'tile-twitter')
-          .attr('width', '20')
-          .attr('height', '20')
-          .append('svg:image')
-          .attr('xlink:href', 'https://g.twimg.com/Twitter_logo_blue.png')
-          .attr('x', 4)
-          .attr('y', 5)
-          .attr('width', 15)
-          .attr('height', 15)
-        defs.append('svg:pattern')
-          .attr('id', 'tile-nyt')
-          .attr('width', '20')
-          .attr('height', '20')
-          .append('svg:image')
-          .attr('xlink:href', 'http://www.hitthefloor.com/wp-content/uploads/2014/03/20-new-york-times-t-1.jpg')
-          .attr('x', -7)
-          .attr('y', -7)
-          .attr('width', 40)
-          .attr('height', 40)
-        defs.append('svg:pattern')
-          .attr('id', 'tile-youtube')
-          .attr('width', '20')
-          .attr('height', '20')
-          .append('svg:image')
-          .attr('xlink:href', 'https://lh5.ggpht.com/jZ8XCjpCQWWZ5GLhbjRAufsw3JXePHUJVfEvMH3D055ghq0dyiSP3YxfSc_czPhtCLSO=w300')
-          .attr('x', 4)
-          .attr('y', 5)
-          .attr('width', 15)
-          .attr('height', 15)
-        defs.append('svg:pattern')
-          .attr('id', 'tile-twitternews')
-          .attr('width', '20')
-          .attr('height', '20')
-          .append('svg:image')
-          .attr('xlink:href', 'https://pbs.twimg.com/profile_images/3756363930/c96b2ab95a4149493229210abaf1f1fa_400x400.png')
-          .attr('x', -2)
-          .attr('y', -1)
-          .attr('width', 27)
-          .attr('height', 27)
+      // /* Append defs & patterns to SVG in order to render various images based on source and URL.
+      // Each pattern's ID will be used during node entrance and updates. */
+      // var defs = canvasProps.svg.append('svg:defs');
+      //   defs.append('svg:pattern')
+      //     .attr('id', 'tile-twitter')
+      //     .attr('width', '20')
+      //     .attr('height', '20')
+      //     .append('svg:image')
+      //     .attr('xlink:href', 'https://g.twimg.com/Twitter_logo_blue.png')
+      //     .attr('x', 4)
+      //     .attr('y', 5)
+      //     .attr('width', 15)
+      //     .attr('height', 15)
+      //   defs.append('svg:pattern')
+      //     .attr('id', 'tile-nyt')
+      //     .attr('width', '20')
+      //     .attr('height', '20')
+      //     .append('svg:image')
+      //     .attr('xlink:href', 'http://www.hitthefloor.com/wp-content/uploads/2014/03/20-new-york-times-t-1.jpg')
+      //     .attr('x', -7)
+      //     .attr('y', -7)
+      //     .attr('width', 40)
+      //     .attr('height', 40)
+      //   defs.append('svg:pattern')
+      //     .attr('id', 'tile-youtube')
+      //     .attr('width', '20')
+      //     .attr('height', '20')
+      //     .append('svg:image')
+      //     .attr('xlink:href', 'https://lh5.ggpht.com/jZ8XCjpCQWWZ5GLhbjRAufsw3JXePHUJVfEvMH3D055ghq0dyiSP3YxfSc_czPhtCLSO=w300')
+      //     .attr('x', 4)
+      //     .attr('y', 5)
+      //     .attr('width', 15)
+      //     .attr('height', 15)
+      //   defs.append('svg:pattern')
+      //     .attr('id', 'tile-twitternews')
+      //     .attr('width', '20')
+      //     .attr('height', '20')
+      //     .append('svg:image')
+      //     .attr('xlink:href', 'https://pbs.twimg.com/profile_images/3756363930/c96b2ab95a4149493229210abaf1f1fa_400x400.png')
+      //     .attr('x', -2)
+      //     .attr('y', -1)
+      //     .attr('width', 27)
+      //     .attr('height', 27)
+      var defs = Images.describeDefs(canvasProps);
 
       /* Nodes will enter at a specified point on the canvas. When update is called on first render,
       the nodes will take shape with certain attributes, including radius, fills (usually with image if
@@ -552,7 +554,7 @@ var TreeTimeLine = React.createClass({
       nodeExit.select('circle')
           .attr('r', 1e-6);
 
-      nodes.forEach(function(d) {
+      canvasProps.nodes.forEach(function(d) {
         d.x0 = d.x;
         d.y0 = d.y;
       });
@@ -560,13 +562,13 @@ var TreeTimeLine = React.createClass({
 
       /* Links have both a source and target based on node's ID's */
       var link = canvasProps.svg.selectAll('path.link')
-          .data(tree.links(nodes), function(d) { return d.target.id; })
+          .data(canvasProps.tree.links(canvasProps.nodes), function(d) { return d.target.id; })
 
       link.enter().insert('svg:path', 'g')
           .attr('class', 'link')
           .attr('d', function(d) {
             var origin = { x: d.source.x0, y: d.source.y0 };
-            return diagonal({ source: origin, target: origin });
+            return canvasProps.diagonal({ source: origin, target: origin });
           })
           .style({
             fill: 'none',
@@ -580,31 +582,31 @@ var TreeTimeLine = React.createClass({
 
       link.transition()
           .duration(500)
-          .attr('d', diagonal);
+          .attr('d', canvasProps.diagonal);
 
       /* On exit, links will retract to the position of their source node */
       link.exit().transition()
           .duration(500)
           .attr('d', function(d) {
             var origin = {x: d.source.x, y: d.source.y};
-            return diagonal({source: origin, target: origin});
+            return canvasProps.diagonal({source: origin, target: origin});
           })
           .remove();
     }
  
     if (canvas === 1 && canvasData[0] && canvasData[0].children[0]) {helpers.mouseOver(canvasData[0].children[0].children[0], this.props.mouseOver)}
 
-    /* The toggle function hides a node's children from D3 so that the children are not rendered.
-    This way, nodes can appear and exit when certain click events occur and the canvas re-renders. */
-    function toggle(d) {
-      if (d.children) {
-        d._children = d.children;
-        d.children = null;
-      } else {
-        d.children = d._children;
-        d._children = null;
-      }
-    }
+    // /* The toggle function hides a node's children from D3 so that the children are not rendered.
+    // This way, nodes can appear and exit when certain click events occur and the canvas re-renders. */
+    // function toggle(d) {
+    //   if (d.children) {
+    //     d._children = d.children;
+    //     d.children = null;
+    //   } else {
+    //     d.children = d._children;
+    //     d._children = null;
+    //   }
+    // }
   },
 
 });
