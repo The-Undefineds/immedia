@@ -5,7 +5,7 @@ module.exports = {
 	yScale: function(canvasProps) {
 		return d3.time.scale()
 	      .domain([new Date(Dates.dates[canvasProps.canvas][Dates.dates[canvasProps.canvas].length - 1]), new Date(Dates.dates[canvasProps.canvas][0])]).nice()
-	      .rangeRound([canvasProps.height - canvasProps.margin.bottom, canvasProps.canvas === 1 ? 80 : 40]);
+	      .rangeRound([canvasProps.height, canvasProps.canvas === 1 ? 80 : 40]);
 	},
 
 	describeYAxis: function(canvasProps) {
@@ -16,6 +16,7 @@ module.exports = {
 	      .ticks(d3.time.days, 1)
 	      .tickFormat(d3.time.format('%a %d'))
 	      .tickSize(10)
+	      .outerTickSize(0)
 	      .tickPadding(10);
 
 	    canvasProps.svg.append('g')

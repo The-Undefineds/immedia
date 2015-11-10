@@ -18,7 +18,7 @@ module.exports = {
 		      d.y = 0;
 		      return;
 		    }
-		    d.x = canvasProps.yScale(new Date(d.date)) - 30;
+		    d.x = canvasProps.yScale(new Date(d.date)) - canvasProps.componentHeight/23.4;
 		    d.y = 0;
 		    d.fixed = true;
 		  }
@@ -118,7 +118,7 @@ module.exports = {
 		    })
 		    .style('fill', 'white')
 		    .style('fill', function(d) {
-		      return Images.describeNodeImages(d, canvasProps.defs);
+		      return Images.describeNodeImages(d, canvasProps.defs, canvasProps.colors);
 		    })
 
 		/* When the node exits (when a node is clicked, for example) the node will shrink and retract

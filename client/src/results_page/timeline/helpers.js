@@ -1,4 +1,5 @@
 var Dates = require('./dates.js');
+var Query = require('./query.js');
 
 module.exports = {
 

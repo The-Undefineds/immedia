@@ -49,7 +49,7 @@ module.exports = {
 		return defs;
 	},
 
-	describeNodeImages: function(d, defs) {
+	describeNodeImages: function(d, defs, colors) {
 
         if (d.source == 'twitter') {
           return 'url(/#tile-twitter)';
