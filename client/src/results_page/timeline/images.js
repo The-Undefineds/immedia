@@ -49,4 +49,41 @@ module.exports = {
 		return defs;
 	},
 
+	describeNodeImages: function(d, defs) {
+
+        if (d.source == 'twitter') {
+          return 'url(/#tile-twitter)';
+        } else if (d.source === 'nyt') {
+          return 'url(/#tile-nyt)';
+        } else if (d.source === 'youtube') {
+          return 'url(/#tile-youtube)';
+        } else if (d.source === 'twitter news') {
+          return 'url(/#tile-twitternews';
+        } else if (d.img === '') {
+          return colors(d.id);
+        } else if (d.depth === 3) {
+          defs.append('svg:pattern')
+            .attr('id', 'tile-img' + d.id)
+            .attr({
+              'width': '40',
+              'height': '40',
+            })
+            .append('svg:image')
+            .attr('xlink:href', function() {
+              if (d.thumbnail) {
+                return d.thumbnail.medium.url;
+              } else if (d.img) {
+                return d.img;
+              }
+            })
+            .attr('x', 0)
+            .attr('y', -2)
+            .attr('width', 55)
+            .attr('height', 55)
+          return 'url(/#tile-img' + d.id + ')'
+        }
+        return d._children ? 'lightsteelblue' : '#fff'; 
+
+	},
+
 }
