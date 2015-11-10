@@ -2,12 +2,12 @@ module.exports = {
 
 	dates: [],
 
-	generateDates: function(startTime, endTime, canvas) {
-	    this.dates[canvas] = [];
-	    for (var i = startTime; i <= endTime; i++) {
+	generateDates: function(canvasProps) {
+	    this.dates[canvasProps.canvas] = [];
+	    for (var i = canvasProps.startDay; i <= canvasProps.endDay; i++) {
 	    var date = new Date();
 	    date.setDate(date.getDate() - i);
-	    this.dates[canvas].push(date.toJSON().slice(0, 10));
+	    this.dates[canvasProps.canvas].push(date.toJSON().slice(0, 10));
 	  }
 	},
 
