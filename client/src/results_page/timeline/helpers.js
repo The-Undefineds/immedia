@@ -1,3 +1,5 @@
+var Dates = require('./dates.js');
+
 module.exports = {
 
 	idCounter: 0,
@@ -39,6 +41,22 @@ module.exports = {
 	      height: (item.hasOwnProperty('height') ? item.height : ''),
 	      width: (item.hasOwnProperty('width') ? item.width : ''),
 	    });
+	},
+
+	processCanvasData: function(data, canvas) {
+
+		/* Because each canvas represents one week in time, only data dated within that week's time period
+		will be included and rendered on the canvas */
+		var canvasData = [];
+		for (var i = 0; i < data.length; i++) {
+		  // if (i === startDay - 1) { continue; }
+		  if (Dates.dates[canvas].indexOf(data[i].date) !== -1) {
+		    canvasData.push(data[i]);
+		  }
+		};
+
+		return canvasData;
+
 	},
 
 }
